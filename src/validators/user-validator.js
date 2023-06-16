@@ -1,4 +1,4 @@
-const { selectCount } = require('../utils/model-utils');
+const { selectCount, checkRegExists } = require('../utils/model-utils');
 const { validateEmail } = require('./generic-validators');
 const { ERROR_MISSING_FIELD, ERROR_ALREDY_REGISTERED, ERROR_INVALID_FORMAT } = require('../constants/error-constants');
 
@@ -16,8 +16,8 @@ class UserValidator {
       return this.errors;
    };
 
-   validateData() {
-      Promise.all([
+   async validateData() {
+      await Promise.all([
          this.validateUsername(),
          this.validatePassword(),
          this.validateEmail(),
@@ -31,7 +31,7 @@ class UserValidator {
       if (!username) this.errors.push(ERROR_MISSING_FIELD + 'username');
 
       let where = { username: String(username) };
-      if (await selectCount('users', where) > 0) this.errors.push(ERROR_ALREDY_REGISTERED + 'username');
+      if (await checkRegExists('users', where)) this.errors.push(ERROR_ALREDY_REGISTERED + 'username');
    };
 
    async validatePassword() {
@@ -48,7 +48,7 @@ class UserValidator {
       if (!validateEmail(email)) this.errors.push(ERROR_INVALID_FORMAT + 'email');
 
       let where = { email: String(email) };
-      if (await selectCount('users', where) > 0) this.errors.push(ERROR_ALREDY_REGISTERED + 'email');
+      if (await checkRegExists('users', where)) this.errors.push(ERROR_ALREDY_REGISTERED + 'email');
    }
 
    async validateFullName() {

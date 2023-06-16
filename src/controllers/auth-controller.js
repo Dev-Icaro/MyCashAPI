@@ -7,11 +7,23 @@ class AuthController {
 
          return res.status(serviceResponse.statusCode).json(serviceResponse);
       } 
-      catch (error) {
-         console.log(error.message);
-         return res.status(500).json(error.message);
+      catch (e) {
+         console.log(e.message);
+         return res.status(500).json(e.message);
       };
    };
+
+   static async login(req, res) {
+      try {
+         let serviceResponse = await AuthService.login(req.body);
+
+         return res.status(serviceResponse.statusCode).json(serviceResponse);
+      }
+      catch(e) {
+         console.log(e.message);
+         return res.status(500).json(e.message);
+      }
+   }
 };
 
 module.exports = AuthController;

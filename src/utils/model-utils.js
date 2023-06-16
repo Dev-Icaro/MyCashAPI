@@ -1,9 +1,12 @@
 const dataBase = require('../models');
 
 async function selectCount(model, whereClouse) {
-   model = dataBase[model];
-
-   return await model.count({ where: whereClouse });
+   return await dataBase[model].count({ where: whereClouse });
 };
 
-module.exports = { selectCount };
+async function checkRegExists(model, whereClouse) {
+   return (await selectCount(model, whereClouse) > 0);
+}
+
+
+module.exports = { selectCount, checkRegExists };
