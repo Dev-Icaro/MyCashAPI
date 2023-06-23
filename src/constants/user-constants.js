@@ -7,4 +7,7 @@ module.exports = {
 
    // User error
    ERROR_USER_NOT_FOUND: "User email not found in our database"
+
+   // User validation errors:
+   //ERROR_MISSING_FIELD: ""
 };

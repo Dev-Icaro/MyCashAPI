@@ -1,5 +1,5 @@
-const { selectCount, checkRegExists } = require('../utils/model-utils');
-const { validateEmail } = require('./generic-validators');
+const { checkRegExists } = require('../utils/model-utils');
+const { validateEmailFormat } = require('./generic-validators');
 const { ERROR_MISSING_FIELD, ERROR_ALREDY_REGISTERED, ERROR_INVALID_FORMAT } = require('../constants/error-constants');
 
 class UserValidator {
@@ -19,19 +19,19 @@ class UserValidator {
    async validateData() {
       await Promise.all([
          this.validateUsername(),
-         this.validatePassword(),
+         //this.validatePassword(),
          this.validateEmail(),
-         this.validateFullName()
+         //this.validateFullName()
       ]);
    };
 
    async validateUsername() {
-      let username = this.userData.username;
+      // let username = this.userData.username;
 
-      if (!username) this.errors.push(ERROR_MISSING_FIELD + 'username');
+      // if (!username) this.errors.push(ERROR_MISSING_FIELD + 'username');
 
-      let where = { username: String(username) };
-      if (await checkRegExists('users', where)) this.errors.push(ERROR_ALREDY_REGISTERED + 'username');
+      // let where = { username: String(username) };
+      // if (await checkRegExists('users', where)) this.errors.push(ERROR_ALREDY_REGISTERED + 'username');
    };
 
    async validatePassword() {
@@ -43,17 +43,17 @@ class UserValidator {
    async validateEmail() {
       let email = this.userData.email;
 
-      if (!email) this.errors.push(ERROR_MISSING_FIELD + 'email');
+      // if (!email) this.errors.push(ERROR_MISSING_FIELD + 'email');
 
-      if (!validateEmail(email)) this.errors.push(ERROR_INVALID_FORMAT + 'email');
+      if (!validateEmailFormat(email)) this.errors.push(ERROR_INVALID_FORMAT + 'email');
 
       let where = { email: String(email) };
       if (await checkRegExists('users', where)) this.errors.push(ERROR_ALREDY_REGISTERED + 'email');
    }
 
    async validateFullName() {
-      if (!this.userData.firstName) this.errors.push(ERROR_MISSING_FIELD + 'firstName');
-      if (!this.userData.lastName) this.errors.push(ERROR_MISSING_FIELD + 'lastName');
+      // if (!this.userData.firstName) this.errors.push(ERROR_MISSING_FIELD + 'firstName');
+      // if (!this.userData.lastName) this.errors.push(ERROR_MISSING_FIELD + 'lastName');
    }
 };
 
