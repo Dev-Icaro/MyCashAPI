@@ -1,6 +1,10 @@
-function validateEmail(email) {
+function validateEmailFormat(email) {
    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
    return regex.test(email);
 };
 
-module.exports = { validateEmail };
+function isNumber(value) {
+   return typeof value === 'number';
+}
+
+module.exports = { validateEmailFormat, isNumber };
