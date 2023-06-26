@@ -14,14 +14,14 @@ class EmailConfigValidator {
       return this.errors;
    }
 
-   async validate(emailConfig) {
+   async validate(EmailConfig) {
       await Promise.all([
-         this.validateServer(emailConfig.server),
-         this.validatePort(emailConfig.port),
-         this.validateUsername(emailConfig.username),
-         this.validatePassword(emailConfig.password),
-         this.validateUseTLS(emailConfig.useTLS),
-         this.validateUseSSL(emailConfig.useSSL)
+         this.validateServer(EmailConfig.server),
+         this.validatePort(EmailConfig.port),
+         this.validateUsername(EmailConfig.username),
+         this.validatePassword(EmailConfig.password),
+         this.validateUseTLS(EmailConfig.useTLS),
+         this.validateUseSSL(EmailConfig.useSSL)
       ]);
    }
 

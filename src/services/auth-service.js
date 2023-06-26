@@ -1,49 +1,38 @@
 // Requires
-const { MSG_USER_CREATED, ERROR_USER_NOT_FOUND }             = require('../constants/user-constants');
 const { MSG_INCORRECT_PASSWORD, MSG_FORGOT_PASS_EMAIL_SENT } = require('../constants/auth-constants');
-const { ERROR_MISSING_FIELD, ERROR_INVALID_INPUT }                                = require('../constants/error-constants');
-const { hashString, isHashEqual }                            = require('../utils/bcrypt-utils');
+const { isHashEqual }                            = require('../utils/bcrypt-utils');
 const { generateToken, generateResetToken }                  = require('../utils/auth-utils');
-const UserValidator                                          = require('../validators/user-validator');
 const AuthValidator                                          = require('../validators/auth-validator');
-
-const DataBase                                               = require('../models');
-const { ApiValidationError } = require('../errors');
-const User = DataBase.users;
+const logger = require('../utils/logger');
+const models                                               = require('../models');
+const { SequelizeErrorWrapper } = require('../helpers/sequelize-error-wrapper');
+const User = models.User;
 
 class AuthService {
    static async signup(user) {
-      user = User.build(user);
-
-      await user.validate()
-         .then(async () => {
-            user.password = await hashString(user.password);
-            return User.create(user);
+      return await User.create(user)
+         .then(async (createdUser) => {
+            // deleto a prop password para não retorna-la na res
+            delete createdUser.dataValues.password;
+            return createdUser;
          })
          .catch((e) => {
-            if (e.name === 'SequelizeValidationError') {
-               // Wrap the exception throwed by sequelize
-               const validationErrors = e.errors.map((err) => err.message);
-               throw new ApiValidationError(e.message, validationErrors);  
-            } 
-            else {
-               throw e;
-            }
+            SequelizeErrorWrapper.wrapError(e);
          });
    }
 
-   static async signin(credentialsJson) {
+   static async signin(credentials) {
       let validator = new AuthValidator();
 
-      await validator.validateEmail(credentialsJson.email);
-      validator.validatePassword(credentialsJson.password);
+      await validator.validateEmail(credentials.email);
+      validator.validatePassword(credentials.password);
 
       if (!validator.isDataValid())
          return { statusCode: 400, message: validator.getErrors() };
 
-      let user = await User.findByEmail(credentialsJson.email);
+      let user = await User.findByEmail(credentials.email);
 
-      if (!await isHashEqual(credentialsJson.password, user.password)) 
+      if (!await isHashEqual(credentials.password, user.password)) 
          return { statusCode: 401, message: MSG_INCORRECT_PASSWORD };
 
       let payload = {
@@ -63,7 +52,7 @@ class AuthService {
       if (!validator.isDataValid())
          return { statusCode: 400, message: validator.getErrors() };
 
-      // Generate reset token and store it on DB
+      // Gera o token e guarda no banco
       let resetToken = generateResetToken();
       await User.update(resetToken, { where: { email: String(email) }});
 

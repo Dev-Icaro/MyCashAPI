@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class emailConfig extends Model {
+  class EmailConfig extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  emailConfig.init({
+  EmailConfig.init({
     server: DataTypes.STRING,
     port: DataTypes.INTEGER,
     username: DataTypes.STRING,
@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     useTLS: DataTypes.BOOLEAN
   }, {
     sequelize,
-    modelName: 'emailConfig',
+    modelName: 'EmailConfig',
   });
-  return emailConfig;
+  return EmailConfig;
 };

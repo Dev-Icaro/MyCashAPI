@@ -8,25 +8,25 @@ class ConfigService {
       if (!id) 
          return { statusCode: 400, message: ERROR_MISSING_PARAM + 'id' };
 
-      let emailConfig = await dataBase['emailConfig']
+      let EmailConfig = await dataBase['EmailConfig']
          .findOne({ 
             where: { id: Number(id) }
          });
 
-      if (!emailConfig) 
+      if (!EmailConfig) 
          return { statusCode: 400, message: MSG_EMAIL_NOT_FOUND }
       else 
-         return { statusCode: 200, emailConfig };
+         return { statusCode: 200, EmailConfig };
    }
 
-   static async createEmailConfig(emailConfig) {
-      let emailConfigValidator = new EmailConfigValidator();
-      emailConfigValidator.validate(emailConfig);
+   static async createEmailConfig(EmailConfig) {
+      let EmailConfigValidator = new EmailConfigValidator();
+      EmailConfigValidator.validate(EmailConfig);
 
-      if (!emailConfigValidator.isDataValid())
-         return { statusCode: 400, message: emailConfigValidator.getErrors() }
+      if (!EmailConfigValidator.isDataValid())
+         return { statusCode: 400, message: EmailConfigValidator.getErrors() }
 
-      await dataBase['emailConfig'].create(emailConfig);
+      await dataBase['EmailConfig'].create(EmailConfig);
       return { statusCode: 200, message: MSG_EMAIL_SUCCESS};
    }
 }
