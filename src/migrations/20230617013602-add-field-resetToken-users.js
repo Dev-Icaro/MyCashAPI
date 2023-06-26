@@ -3,13 +3,13 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    return queryInterface.addColumn('users', 'resetToken', {
+    return queryInterface.addColumn('User', 'resetToken', {
       type: Sequelize.STRING,
       allowNull: true
     });
   },
 
   async down (queryInterface, Sequelize) {
-    return queryInterface.removeColumn('users', 'resetToken');
+    return queryInterface.removeColumn('User', 'resetToken');
   }
 };

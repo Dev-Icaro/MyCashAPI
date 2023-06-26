@@ -1,7 +1,9 @@
 module.exports = {
    // Success
    SIGNUP_SUCCESS: 'Account created successfully',
-   SIGNIN_SUCESS: 'Signin successfully',
+   SIGNIN_SUCCESS: 'Signin successfully',
+
+   NEW_USER_CREATED: 'New user with id: {placeholder} created',
 
    // Errors
    MSG_INCORRECT_PASSWORD: 'Invalid password',

@@ -1,19 +1,25 @@
 const AuthService = require("../services/auth-service");
 const authConstants = require('../constants/auth-constants');
+const logger = require('../utils/logger');
 
 class AuthController {
    static async signup(req, res) {
       try {
-         await AuthService.signup(req.body);
-         return res.status(200).json(authConstants.SIGNUP_SUCCESS);
+         let createdUser = await AuthService.signup(req.body);
+         return res.status(200).json({ message: authConstants.SIGNUP_SUCCESS, user: createdUser });
       }
       catch (e) {
-         if (e.name === 'ApiValidationError') {
-            return res.status(400).json({ message: e.errors });
-         }
-         else {
-            console.error('Error during sigin:\n', e);
-            return res.status(500).json(e.message);
+         switch (e.name) {
+            case 'ApiValidationError': {
+               return res.status(400).json({ message: e.message, errors: e.errors });
+            }
+            case 'ApiUniqueConstraintError': {
+               return res.status(409).json({ message: e.message, errors: e.errors });
+            }
+            default: {
+               logger.error('Error during sigup:\n', e);
+               return res.status(500).json({ message: e.message });
+            }
          }
       }
    }

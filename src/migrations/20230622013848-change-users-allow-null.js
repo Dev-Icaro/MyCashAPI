@@ -3,54 +3,54 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.changeColumn('users', 'username', {
+    await queryInterface.changeColumn('User', 'username', {
         type: Sequelize.STRING,
         allowNull: false,
       });
 
-    await queryInterface.changeColumn('users', 'password', {
+    await queryInterface.changeColumn('User', 'password', {
       type: Sequelize.STRING,
       allowNull: false,
     });
 
-    await queryInterface.changeColumn('users', 'email', {
+    await queryInterface.changeColumn('User', 'email', {
       type: Sequelize.STRING,
       allowNull: false,
     });
 
-    await queryInterface.changeColumn('users', 'first_name', {
+    await queryInterface.changeColumn('User', 'first_name', {
       type: Sequelize.STRING,
       allowNull: false,
     });
     
-    await queryInterface.changeColumn('users', 'last_name', {
+    await queryInterface.changeColumn('User', 'last_name', {
       type: Sequelize.STRING,
       allowNull: false,
     });
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.changeColumn('users', 'username', {
+    await queryInterface.changeColumn('User', 'username', {
         type: Sequelize.STRING,
         allowNull: true,
     });
 
-    await queryInterface.changeColumn('users', 'password', {
+    await queryInterface.changeColumn('User', 'password', {
       type: Sequelize.STRING,
       allowNull: true,
     });
 
-    await queryInterface.changeColumn('users', 'email', {
+    await queryInterface.changeColumn('User', 'email', {
       type: Sequelize.STRING,
       allowNull: true,
     });
 
-    await queryInterface.changeColumn('users', 'first_name', {
+    await queryInterface.changeColumn('User', 'first_name', {
       type: Sequelize.STRING,
       allowNull: true,
     });
 
-    await queryInterface.changeColumn('users', 'last_name', {
+    await queryInterface.changeColumn('User', 'last_name', {
       type: Sequelize.STRING,
       allowNull: true,
     });

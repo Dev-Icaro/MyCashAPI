@@ -6,4 +6,12 @@ class ApiValidationError extends Error {
    }
 }
 
-module.exports = { ApiValidationError };
+class ApiUniqueConstraintError extends Error {
+   constructor(message, errors) {
+      super(message);
+      this.errors = errors;
+      this.name = 'ApiUniqueConstraintError';
+   }
+}
+
+module.exports = { ApiValidationError, ApiUniqueConstraintError};

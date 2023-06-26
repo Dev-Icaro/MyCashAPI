@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class account extends Model {
+  class Account extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,20 +11,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      account.hasMany(models.transactions,
+      Account.hasMany(models.Transaction,
         { foreignKey: 'account_id' });
 
-      account.hasMany(models.expenses,
+      Account.hasMany(models.Expense,
         { foreignKey: 'account_id' });
 
-      account.hasMany(models.income,
-        { foreignKey: 'income_id' });
+      Account.hasMany(models.Income,
+        { foreignKey: 'ancome_id' });
 
-      account.belongsTo(models.users,
+      Account.belongsTo(models.User,
         { foreignKey: 'user_id' });
     }
   }
-  account.init({
+  Account.init({
     account_holder_name: DataTypes.STRING,
     account_number: DataTypes.STRING,
     account_type: DataTypes.STRING,
@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
     overdraft_limit: DataTypes.DOUBLE
   }, {
     sequelize,
-    modelName: 'account',
+    modelName: 'Account',
   });
-  return account;
+  return Account;
 };
