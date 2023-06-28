@@ -4,8 +4,6 @@ const {
 } = require('sequelize');
 const { hashString } = require('../utils/bcrypt-utils');
 const errorsConsts = require('../constants/error-constants');
-const authConstants = require('../constants/auth-constants');
-const logger = require('../utils/logger');
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -36,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: errorsConsts.ERROR_NULL_FIELD.replace('{field}', 'username')
+          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{field}', 'username')
         },
         notEmpty: {
           msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{field}', 'username')
@@ -48,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: errorsConsts.ERROR_NULL_FIELD.replace('{field}', 'password')
+          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{field}', 'password')
         },
         notEmpty: {
           msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{field}', 'password')
@@ -61,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: errorsConsts.ERROR_NULL_FIELD.replace('{field}', 'email')
+          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{field}', 'email')
         },
         notEmpty: {
           msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{field}', 'email')
@@ -76,7 +74,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: errorsConsts.ERROR_NULL_FIELD.replace('{field}', 'first_name')
+          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{field}', 'first_name')
         },
         notEmpty: {
           msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{field}', 'first_name')
@@ -88,7 +86,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: errorsConsts.ERROR_NULL_FIELD.replace('{field}', 'last_name')
+          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{field}', 'last_name')
         },
         notEmpty: {
           msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{field}', 'last_name')
@@ -108,9 +106,11 @@ module.exports = (sequelize, DataTypes) => {
     user.password = await hashString(user.password);
   });
 
-  User.addHook("afterCreate", async(user, options) => {
-    logger.info(authConstants.NEW_USER_CREATED.replace('{placeholder}', user.id));
-  })
+  User.addHook("beforeUpdate", async(user, options) => {
+    if (user.changed('password')) {
+      user.password = await hashString(user.password);
+    }
+  });
 
   return User;
 };

@@ -1,12 +1,14 @@
 const AuthService = require("../services/auth-service");
-const authConstants = require('../constants/auth-constants');
+const authConsts = require('../constants/auth-constants');
+const errorsConsts = require('../constants/error-constants');
 const logger = require('../utils/logger');
+const { validationResult } = require('express-validator');
 
 class AuthController {
    static async signup(req, res) {
       try {
          let createdUser = await AuthService.signup(req.body);
-         return res.status(200).json({ message: authConstants.SIGNUP_SUCCESS, user: createdUser });
+         return res.status(200).json({ message: authConsts.SIGNUP_SUCCESS, user: createdUser });
       }
       catch (e) {
          switch (e.name) {
@@ -26,17 +28,33 @@ class AuthController {
 
    static async signin(req, res) {
       try {
-         let serviceResponse = await AuthService.signin(req.body);
-         return res.status(serviceResponse.statusCode).json(serviceResponse);
+         const errors = validationResult(req);
+         if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errorsConsts.MSG_VALIDATION_ERROR, errors: errors.array() });
+         }
+
+         let authToken = await AuthService.signin(req.body);
+         return res.status(200).json({ message: authConsts.SIGNIN_SUCCESS, token: authToken });
       }
       catch(e) {
-         console.log(e.message);
-         return res.status(500).json(e.message);
+         if (e.name === 'ApiUnauthorizedError') {
+            return res.status(401).json({ message: e.message, errors: e.errors });
+         }
+         else {
+            logger.error('Error during sigin:\n', e);
+            return res.status(500).json({ message: e.message });
+         }
+         
       }
    }
 
    static async forgotPassword(req, res) {
       try {
+         const errors = validationResult(req);
+         if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errorsConsts.MSG_VALIDATION_ERROR, errors: errors.array() });
+         }
+
          let serviceResponse = await AuthService.forgotPassword(req.params.email);
          return res.status(serviceResponse.statusCode).json(serviceResponse);
       }  

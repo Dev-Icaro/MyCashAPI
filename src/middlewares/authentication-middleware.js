@@ -1,25 +1,30 @@
-const AuthValidator = require('../validators/auth-validator');
+const { verifyToken } = require('../utils/auth-utils');
+const authConsts = require('../constants/auth-constants');
 
-function authenticateReq(req, res, next) {
-   try {
-      let authorization = req.headers.authorization;
+function authenticationMiddleware(req, res, next) {
+   const authorization = req.headers.authorization;
 
-      let validator = new AuthValidator();
-      validator.validateAuthorization(authorization);
-
-      if (!validator.isDataValid())
-         return res.status(401).json({ statusCode: 401, message: validator.getErrors() });
-
-      // success auth
-      return next()
-   } 
-   catch(e) {
-      console.log(e);
-      return res.status(500).json(e.message);
+   if (!authorization) {
+      return res.status(400).json({ message: authConsts.MSG_AUTH_HEADER_MISSING });
    }
-}  
 
+   const authValues = authorization.split(' ');
 
+   if (!isAuthFormatValid(authValues)) {
+      return res.status(400).json({ message: authConsts.MSG_INVALID_AUTH_FORMAT });
+   }
 
+   const token = authValues[1];
 
-module.exports = { authenticateReq }
+   if (!verifyToken(token)) {
+      return res.status(409).json({ message: authConsts.MSG_INVALID_TOKEN });
+   }
+
+   return next()
+}
+
+function isAuthFormatValid(authValues) {
+   return authValues.length === 2 && authValues[0] === 'Bearer'
+}
+
+module.exports = { authenticationMiddleware };

@@ -6,7 +6,7 @@ module.exports = {
    MSG_USER_FAILED: "Failed to create user",
 
    // User error
-   ERROR_USER_NOT_FOUND: "User email not found in our database"
+   ERROR_USER_NOT_FOUND: "Email not found in our database"
 
    // User validation errors:
    //ERROR_MISSING_FIELD: ""
