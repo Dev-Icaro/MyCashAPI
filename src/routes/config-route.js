@@ -1,9 +1,29 @@
-const ConfigController = require('../controllers/config-controller');
+const EmailConfigController = require('../controllers/email-config-controller');
+const { validateEmailConfigParam } = require('../validators/email-config-validator');
 const { Router } = require('express');
 
 const router = Router();
 
-router.get('/api/auth/config/email/:id', ConfigController.getEmailConfig)
-router.post('/api/auth/config/email', ConfigController.createEmailConfig)
+router.route('/api/config/email')
+   .get(
+      EmailConfigController.getAllEmailConfigs
+   )
+   .post(
+      EmailConfigController.createEmailConfig
+   );
 
+router.route('/api/config/email/:id')
+   .all(
+      validateEmailConfigParam()
+   )
+   .get(
+      EmailConfigController.getEmailConfigById
+   )
+   .delete(
+      EmailConfigController.deleteEmailConfigById
+   )
+   .put(
+      EmailConfigController.updateEmailConfigById
+   );
+   
 module.exports = router;

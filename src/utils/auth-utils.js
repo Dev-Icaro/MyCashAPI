@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const dateUtils = require('../utils/date-utils');
 
 function generateToken(payload) {
-   return jwt.sign(payload, process.env.API_SECRET);
+   return jwt.sign(payload, process.env.API_SECRET, { expiresIn: '1h' });
 };
 
 function verifyToken(token) {
@@ -29,4 +29,15 @@ function generateResetToken() {
    return resetToken;
 }
 
-module.exports = { generateToken, verifyToken, generateResetToken };
+function generateAuthToken(user) {
+   const payload = {
+      id: user.id,
+      username: user.username,
+      tokenType: 'auth'
+   }
+   let authToken = generateToken(payload);
+
+   return authToken;
+}
+
+module.exports = { generateToken, verifyToken, generateResetToken, generateAuthToken };

@@ -10,10 +10,10 @@ async function hashString(s) {
          } 
          else {
             resolve(hashedString);
-         };
+         }
       });
    });
-};
+}
 
 async function isHashEqual(value1, value2) {
    return await new Promise((resolve, reject) => {
@@ -23,9 +23,9 @@ async function isHashEqual(value1, value2) {
          }
          else {
             resolve(result);
-         };
+         }
       });
    });
-};
+}
 
 module.exports = { hashString, isHashEqual };

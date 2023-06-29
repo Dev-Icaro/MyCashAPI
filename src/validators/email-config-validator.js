@@ -1,62 +1,19 @@
-const errorConstants = require('../constants/error-constants');
-const { isNumber } = require('../validators/generic-validators.js');
+const errorsConsts = require('../constants/error-constants');
+const emailConfigConsts = require('../constants/email-config-constants');
+const models = require('../models');
+const EmailConfig = models.EmailConfig;
+const { param } = require('express-validator');
 
-class EmailConfigValidator {
-   constructor() {
-      this.errors = [];
-   }
+const validateEmailConfigParam = () => [
+   param('id')
+      .exists().withMessage(errorsConsts.ERROR_REQUIRED_PARAM.replace('{param}', 'id')).bail()
+      .trim()
+      .notEmpty().withMessage(errorsConsts.ERROR_EMPTY_FIELD).bail()
+      .isInt().withMessage(errorsConsts.ERROR_NOT_INT.replace('{placeholder}', 'id')).bail()
+      .custom(async id => {
+        if (!await EmailConfig.getEmailConfigById(id))
+            throw new Error(emailConfigConsts.EMAIL_CONFIG_NOT_FOUND.replace('{placeholder}', id));
+      })
+]
 
-   isDataValid() {
-      return this.errors.length === 0;
-   }
-
-   getErrors() {
-      return this.errors;
-   }
-
-   async validate(EmailConfig) {
-      await Promise.all([
-         this.validateServer(EmailConfig.server),
-         this.validatePort(EmailConfig.port),
-         this.validateUsername(EmailConfig.username),
-         this.validatePassword(EmailConfig.password),
-         this.validateUseTLS(EmailConfig.useTLS),
-         this.validateUseSSL(EmailConfig.useSSL)
-      ]);
-   }
-
-   validateServer(server) {
-      if (!server)
-         this.errors.push(errorConstants.ERROR_MISSING_FIELD + 'server');
-   }
-
-   validatePort(port) {
-      if (!port)
-         return this.errors.push(errorConstants.ERROR_MISSING_FIELD + 'port');
-
-      if (!isNumber(port))
-         this.errors.push(errorConstants.ERROR_INVALID_FORMAT + 'port');
-   }
-
-   validateUsername(username) {
-      if (!username)
-         this.errors.push(errorConstants.ERROR_MISSING_FIELD + 'username');
-   }
-
-   validatePassword(password) {
-      if (!password)
-         this.errors.push(errorConstants.ERROR_MISSING_FIELD + 'password');
-   }
-
-   validateUseSSL(useSSL) {
-      if (typeof useSSL !== 'boolean')
-         this.errors.push(errorConstants.ERROR_INVALID_FORMAT + 'useSSL');
-   }
-
-   validateUseTLS(useTLS) {
-      if (typeof useTLS !== 'boolean')
-         this.errors.push(errorConstants.ERROR_INVALID_FORMAT + 'useTLS');
-   }
-}
-
-module.exports = EmailConfigValidator
+module.exports = { validateEmailConfigParam };
