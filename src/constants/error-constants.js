@@ -12,6 +12,9 @@ module.exports = {
    // Headers
    ERROR_EMPTY_HEADER: 'Header {placeholder} cannot be empty',
 
+   // Fles
+   ERROR_FILE_NOT_FOUND: 'File {placeholder} not found',
+
    // Generics
    ERROR_UNIQUE_CONSTRAINT: '{path} violation with value: {value}',
    ERROR_NOT_FOUND: '{placeholder} not found in our database',

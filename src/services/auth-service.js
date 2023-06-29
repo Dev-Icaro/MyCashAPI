@@ -1,7 +1,7 @@
 // Requires
 const { isHashEqual } = require('../utils/bcrypt-utils');
 const { generateResetToken, generateAuthToken } = require('../utils/auth-utils');
-const { ApiUnauthorizedError } = require('../errors');
+const { ApiUnauthorizedError } = require('../errors/auth-errors');
 const { SequelizeErrorWrapper } = require('../helpers/sequelize-error-wrapper');
 const authConsts = require('../constants/auth-constants');
 const models = require('../models');
