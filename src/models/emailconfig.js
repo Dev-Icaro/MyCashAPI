@@ -22,10 +22,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{field}', 'server')
+          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{placeholder}', 'server')
         },
         notEmpty: {
-          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{field}', 'server')
+          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', 'server')
         }
       }
     },
@@ -34,10 +34,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{field}', 'port')
+          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{placeholder}', 'port')
         },
         notEmpty: {
-          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{field}', 'port')
+          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', 'port')
         },
         isNumeric: {
           msg: errorsConsts.ERROR_NOT_NUMERIC.replace('{placeholder}', 'port')
@@ -49,10 +49,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{field}', 'username')
+          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{placeholder}', 'username')
         },
         notEmpty: {
-          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{field}', 'username')
+          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', 'username')
         }
       }
     }, 
@@ -61,10 +61,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{field}', 'password')
+          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{placeholder}', 'password')
         },
         notEmpty: {
-          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{field}', 'password')
+          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', 'password')
         }
       }
     },
@@ -74,10 +74,10 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false,
       validate: {
         notNull: {
-          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{field}', 'useSSL')
+          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{placeholder}', 'useSSL')
         },
         notEmpty: {
-          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{field}', 'useSSL')
+          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', 'useSSL')
         }
       }
     },
@@ -87,10 +87,10 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false,
       validate: {
         notNull: {
-          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{field}', 'useTLS')
+          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{placeholder}', 'useTLS')
         },
         notEmpty: {
-          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{field}', 'useTLS')
+          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', 'useTLS')
         }
       }
     } 

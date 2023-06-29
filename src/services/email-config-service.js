@@ -12,10 +12,11 @@ class EmailConfigService {
    }
 
    static async updateEmailConfigById(updatedConfig, id) {
-      return await EmailConfig.update(
-         updatedConfig, 
-         { where: { id: Number(id) }}
-      )
+      return await EmailConfig.update(updatedConfig, {
+         where: { 
+            id: Number(id) 
+         }
+      })
          .then(async () => {
             return await EmailConfig.getEmailConfigById(id);
          })

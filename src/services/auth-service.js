@@ -31,8 +31,13 @@ class AuthService {
    static async forgotPassword(email) {
       // Gera o token e guarda no banco
       let resetToken = generateResetToken();
-      await User.update(resetToken, { where: { email: String(email) }});
+      await User.update(resetToken, {
+          where: {
+             email: String(email) 
+         }
+      });
 
+   
       return { statusCode: 200, message: MSG_FORGOT_PASS_EMAIL_SENT };
    }
 }

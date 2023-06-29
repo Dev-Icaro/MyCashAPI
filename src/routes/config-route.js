@@ -4,18 +4,26 @@ const { Router } = require('express');
 
 const router = Router();
 
-// Email config 
 router.route('/api/config/email')
-   .get(EmailConfigController.getAllEmailConfigs)
-   .post(EmailConfigController.createEmailConfig);
+   .get(
+      EmailConfigController.getAllEmailConfigs
+   )
+   .post(
+      EmailConfigController.createEmailConfig
+   );
 
-router
-   .get('/api/config/email/:id',
-      validateEmailConfigParam(),
+router.route('/api/config/email/:id')
+   .all(
+      validateEmailConfigParam()
+   )
+   .get(
       EmailConfigController.getEmailConfigById
    )
+   .delete(
+      EmailConfigController.deleteEmailConfigById
+   )
+   .put(
+      EmailConfigController.updateEmailConfigById
+   );
    
-
-
-
 module.exports = router;

@@ -1,9 +1,9 @@
 module.exports = {
    // Field messages
-   ERROR_EMPTY_FIELD: 'Field {field} cannot be empty',
-   ERROR_REQUIRED_FIELD: 'Field {field} is required',
-   ERROR_INVALID_FORMAT: 'Invalid format for field {field}',
-   ERROR_INVALID_INPUT: 'Invalid input value for {field}',
+   ERROR_EMPTY_FIELD: 'Field {placeholder} cannot be empty',
+   ERROR_REQUIRED_FIELD: 'Field {placeholder} is required',
+   ERROR_INVALID_FORMAT: 'Invalid format for field {placeholder}',
+   ERROR_INVALID_INPUT: 'Invalid input value for {placeholder}',
 
    // Params
    ERROR_REQUIRED_PARAM: 'Param {param} is required',

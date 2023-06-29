@@ -34,10 +34,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{field}', 'username')
+          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{placeholder}', 'username')
         },
         notEmpty: {
-          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{field}', 'username')
+          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', 'username')
         }
       }
     },
@@ -46,10 +46,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{field}', 'password')
+          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{placeholder}', 'password')
         },
         notEmpty: {
-          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{field}', 'password')
+          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', 'password')
         }
       }
     },
@@ -59,13 +59,13 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{field}', 'email')
+          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{placeholder}', 'email')
         },
         notEmpty: {
-          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{field}', 'email')
+          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', 'email')
         },
         isEmail: {
-          msg: errorsConsts.ERROR_INVALID_FORMAT.replace('{field}', 'email')
+          msg: errorsConsts.ERROR_INVALID_FORMAT.replace('{placeholder}', 'email')
         }
       }
     },
@@ -74,10 +74,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{field}', 'first_name')
+          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{placeholder}', 'first_name')
         },
         notEmpty: {
-          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{field}', 'first_name')
+          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', 'first_name')
         }
       }
     },
@@ -86,10 +86,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notNull: {
-          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{field}', 'last_name')
+          msg: errorsConsts.ERROR_REQUIRED_FIELD.replace('{placeholder}', 'last_name')
         },
         notEmpty: {
-          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{field}', 'last_name')
+          msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', 'last_name')
         }
       }
     },
