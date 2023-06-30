@@ -19,7 +19,7 @@ const validateEmail = () =>
       .notEmpty().withMessage(errorsConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', 'email')).bail()
       .isEmail().withMessage(errorsConsts.ERROR_INVALID_FORMAT.replace('{placeholder}', 'email')).bail()
       .custom(async value => {
-         if (!await User.findByEmail(value)) 
+         if (!await User.findUserByEmail(value)) 
             throw ERROR_USER_NOT_FOUND;
    });
 

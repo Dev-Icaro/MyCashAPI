@@ -8,7 +8,7 @@ const errorsConsts = require('../constants/error-constants');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
 
-    static async findByEmail(email) {
+    static async findUserByEmail(email) {
       return await this.findOne({ where: { email: String(email) } });
     }
 

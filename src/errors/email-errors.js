@@ -6,4 +6,4 @@ class ApiEmailSendError extends Error {
    }
 }
 
-module.exports = { ApiEmailSendError, ApiInvalidEmailAdressError };
+module.exports = { ApiEmailSendError };
