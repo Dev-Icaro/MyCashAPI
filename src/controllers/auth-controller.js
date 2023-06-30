@@ -55,7 +55,7 @@ class AuthController {
             return res.status(400).json({ message: errorsConsts.MSG_VALIDATION_ERROR, errors: errors.array() });
          }
 
-         let serviceResponse = await AuthService.forgotPassword(req.params.email);
+         let serviceResponse = await AuthService.forgotPassword(req.body.email);
          return res.status(serviceResponse.statusCode).json(serviceResponse);
       }  
       catch(e) {

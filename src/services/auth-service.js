@@ -1,8 +1,9 @@
 // Requires
 const { isHashEqual } = require('../utils/bcrypt-utils');
 const { generateResetToken, generateAuthToken } = require('../utils/auth-utils');
-const { ApiUnauthorizedError } = require('../errors');
+const { ApiUnauthorizedError } = require('../errors/auth-errors');
 const { SequelizeErrorWrapper } = require('../helpers/sequelize-error-wrapper');
+const EmailService = require('../services/email-service');
 const authConsts = require('../constants/auth-constants');
 const models = require('../models');
 const User = models.User;
@@ -19,7 +20,7 @@ class AuthService {
    }
 
    static async signin(credentials) {
-      let user = await User.findByEmail(credentials.email);
+      let user = await User.findUserByEmail(credentials.email);
 
       if (!await isHashEqual(credentials.password, user.password)) {
          throw new ApiUnauthorizedError(authConsts.MSG_UNAUTHORIZED_SIGIN, [ authConsts.MSG_INCORRECT_PASSWORD ]);
@@ -30,15 +31,24 @@ class AuthService {
 
    static async forgotPassword(email) {
       // Gera o token e guarda no banco
-      let resetToken = generateResetToken();
-      await User.update(resetToken, {
-          where: {
-             email: String(email) 
-         }
-      });
+      //let resetToken = generateResetToken();
 
-   
-      return { statusCode: 200, message: MSG_FORGOT_PASS_EMAIL_SENT };
+      let user = await User.findUserByEmail(email);
+      let resetToken = generateResetToken();
+
+      user.resetToken           = resetToken.token;
+      user.resetTokenExpiration = resetToken.expiration;
+
+      await user.save();
+
+      // await User.update(resetToken, {
+      //     where: {
+      //        email: String(email) 
+      //    }
+      // });
+
+      let emailInfo = await EmailService.sendResetTokenEmail(user);
+      return emailInfo;
    }
 }
 

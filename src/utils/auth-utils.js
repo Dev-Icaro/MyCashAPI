@@ -22,8 +22,8 @@ function generateResetToken() {
    tokenExpiration.setMinutes(tokenExpiration.getMinutes() + 30);
 
    let resetToken = {
-      resetToken: token,
-      resetTokenExpiration: dateUtils.formatMySqlDateTime(tokenExpiration)
+      token: token,
+      expiration: dateUtils.formatMySqlDateTime(tokenExpiration)
    }
 
    return resetToken;
