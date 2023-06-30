@@ -1,7 +1,14 @@
+// Service
 const AuthService = require("../services/auth-service");
+
+// Cosntants
 const authConsts = require('../constants/auth-constants');
 const errorsConsts = require('../constants/error-constants');
+
+// Helpers / Utils
 const logger = require('../utils/logger');
+
+// Validators
 const { validationResult } = require('express-validator');
 
 class AuthController {

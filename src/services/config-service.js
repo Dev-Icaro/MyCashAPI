@@ -1,7 +1,6 @@
 const dataBase = require('../models');
 const { ERROR_MISSING_PARAM } = require('../constants/error-constants');
-const { MSG_EMAIL_NOT_FOUND, MSG_EMAIL_SUCCESS, MSG_MISSING_EMAIL_JSON } = require('../constants/config-contants');
-const EmailConfigValidator = require('../validators/email-config-validator');
+const { MSG_EMAIL_NOT_FOUND, MSG_EMAIL_SUCCESS } = require('../constants/config-contants');
 
 class ConfigService {
    static async getEmailConfigById(id) {

@@ -1,7 +1,14 @@
+// Services
 const EmailConfigService = require('../services/email-config-service');
+
+// Constants
 const emailConfigConsts = require('../constants/email-config-constants');
 const errorsConsts = require('../constants/error-constants');
+
+// Helpers / Utils 
 const logger = require('../utils/logger');
+
+// Validators
 const { validationResult } = require('express-validator');
 
 class EmailConfigController {

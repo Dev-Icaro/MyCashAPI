@@ -1,8 +1,11 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+// Sequelize
+const { Model } = require('sequelize');
+
+// Utils
 const { hashString } = require('../utils/bcrypt-utils');
+
+// Constants
 const errorsConsts = require('../constants/error-constants');
 
 module.exports = (sequelize, DataTypes) => {

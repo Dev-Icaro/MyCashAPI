@@ -1,4 +1,7 @@
+// Utils
 const { verifyToken } = require('../utils/auth-utils');
+
+// Constants
 const authConsts = require('../constants/auth-constants');
 
 function authenticationMiddleware(req, res, next) {
