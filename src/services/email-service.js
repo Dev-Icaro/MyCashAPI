@@ -44,13 +44,14 @@ class EmailService {
    static async sendResetTokenEmail(user) {
       const email = new Email();
 
-      email.setFrom('icarokiilermelo@gmail.com');
-      email.setSubject('MyCash - Recuperation email');
-      email.addReceiverAddress(user.email);
-      email.setHtml(
-         `<p> Here is your recuperation code: <br> 
-         <strong> ${user.resetToken} <strong>`
-      );
+      email
+         .setFrom('icarokiilermelo@gmail.com')
+         .setSubject('MyCash - Recuperation email')
+         .addReceiverAddress(user.email)
+         .setHtml(
+            `<p> Here is your recuperation code: <br> 
+            <strong> ${user.resetToken} <strong>`
+         )
 
       const emailInfo = await this.sendEmail(email);
       return emailInfo;
@@ -83,27 +84,36 @@ class Email {
       this.text = text;
    }
 
-   addAtthachment(filename, path) {
+   addAtthachment(path, filename) {
+      if (validator.isEmpty(path)) {
+         throw new ApiValidationError(errorConsts.ERROR_EMPTY_PARAM.replace('{placeholder}', '"filename"')); 
+      }
+
       if (!fileExists(path)) {
          throw new ApiInvalidFileError(errorConsts.ERROR_FILE_NOT_FOUND.replace('{placeholder}', path));
       }
 
+      
       this.attachments.push({
          filename: filename,
          path: path
       });
    }
 
-   addReceiverAddress(emailAdress) {
-      if (!emailAdress) {
-         throw new ApiValidationError(errorConsts.ERROR_EMPTY_PARAM.replace('{placeholder}', 'emailAdress'));
+   addReceiverAddress(emailAddress) {
+      if (!emailAddress) {
+         throw new ApiValidationError(errorConsts.ERROR_EMPTY_PARAM.replace('{placeholder}', 'emailAddress'));
       }
 
-      if (!validator.isEmail(emailAdress)) {
-         throw new ApiValidationError(emailConsts.ERROR_INVALID_EMAIL.replace('{placeholder}', emailAdress));
+      if (!validator.isEmail(emailAddress)) {
+         throw new ApiValidationError(emailConsts.ERROR_INVALID_EMAIL.replace('{placeholder}', emailAddress));
       }
 
-      this.to = this.to.trim().length() > 0 ? ',' + emailAdress : emailAdress;
+      this.to += this.hasReceiverAddress() ? `, ${emailAddress}` : emailAddress;
+   }
+
+   hasReceiverAddress() {
+      return (this.to.length() > 0);
    }
 
    validate() {
@@ -119,25 +129,26 @@ function validateEmail(email) {
    const errors = new ErrorHelper();
 
    // From
-   if (!email.from) {
+   if (validator.isEmpty(email.from)) {
       errors.addError(errorConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', '"from"'));
-   }
-   if (!validator.isEmail(email.from)) {
+   } 
+   // Só valido o formato do email caso a condição anterior tenha passado
+   else if (!validator.isEmail(email.from)) {
       errors.addError(emailConsts.ERROR_INVALID_EMAIL.replace('{placeholder}', email.from));
    }
-
+      
    // Subject
-   if (!email.subject) {
+   if (validator.isEmpty(email.subject)) {
       errors.addError(errorConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', '"subject"'));
    }
 
-   // Valida se o email está vazio
-   if (!email.text && !email.html) {
+   // Valida se o conteudo do email está vazio
+   if (validator.isEmpty(email.text) && validator.isEmpty(email.html)) {
       errors.addError(emailConsts.ERROR_EMPTY_EMAIL_BODY);
    }
 
    // To 
-   if (email.to.length() <= 0) {
+   if (!email.hasReceiverAddress()) {
       errors.addError(emailConsts.ERROR_EMPTY_RECEIVER);
    }
 
