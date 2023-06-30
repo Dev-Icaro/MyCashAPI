@@ -1,4 +1,7 @@
+// Errors
 const { ApiUniqueConstraintError, ApiValidationError } = require('../errors/validation-errors');
+
+// Constants
 const errorsConsts = require('../constants/error-constants');
 
 class SequelizeErrorWrapper {

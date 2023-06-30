@@ -1,10 +1,17 @@
-// Requires
+// Helpers / Utils
 const { isHashEqual } = require('../utils/bcrypt-utils');
 const { generateResetToken, generateAuthToken } = require('../utils/auth-utils');
+
+// Errors
 const { ApiUnauthorizedError } = require('../errors/auth-errors');
-const { SequelizeErrorWrapper } = require('../helpers/sequelize-error-wrapper');
+
+// Services
 const EmailService = require('../services/email-service');
+
+//Constants
 const authConsts = require('../constants/auth-constants');
+
+// Models
 const models = require('../models');
 const User = models.User;
 
