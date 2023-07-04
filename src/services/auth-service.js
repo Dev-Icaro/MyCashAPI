@@ -1,6 +1,7 @@
 // Helpers / Utils
-const { isHashEqual } = require('../utils/bcrypt-utils');
+const { isHashEqual } = require('../utils/crypt-utils');
 const { generateResetToken, generateAuthToken } = require('../utils/auth-utils');
+const SequelizeErrorWrapper = require('../helpers/sequelize-error-wrapper');
 
 // Errors
 const { ApiUnauthorizedError } = require('../errors/auth-errors');
@@ -37,9 +38,7 @@ class AuthService {
    }
 
    static async forgotPassword(email) {
-      // Gera o token e guarda no banco
-      //let resetToken = generateResetToken();
-
+      // Gero o reset token e guardo no banco
       let user = await User.findUserByEmail(email);
       let resetToken = generateResetToken();
 
@@ -48,14 +47,13 @@ class AuthService {
 
       await user.save();
 
-      // await User.update(resetToken, {
-      //     where: {
-      //        email: String(email) 
-      //    }
-      // });
-
-      let emailInfo = await EmailService.sendResetTokenEmail(user);
-      return emailInfo;
+      try {
+         let emailInfo = await EmailService.sendResetTokenEmail(user);
+         return emailInfo;
+      }
+      catch(e) {
+         throw e;
+      }
    }
 }
 

@@ -6,4 +6,12 @@ class ApiEmailSendError extends Error {
    }
 }
 
-module.exports = { ApiEmailSendError };
+class ApiEmailConfigurationError extends Error {
+   constructor(message, errors) {
+      super(message);
+      this.errors = errors;
+      this.name = 'ApiEmailConfigurationError'
+   }
+}
+
+module.exports = { ApiEmailSendError, ApiEmailConfigurationError };

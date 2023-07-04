@@ -4,6 +4,7 @@ const AuthService = require("../services/auth-service");
 // Cosntants
 const authConsts = require('../constants/auth-constants');
 const errorsConsts = require('../constants/error-constants');
+const emailConsts = require("../constants/email-constants");
 
 // Helpers / Utils
 const logger = require('../utils/logger');
@@ -62,12 +63,19 @@ class AuthController {
             return res.status(400).json({ message: errorsConsts.MSG_VALIDATION_ERROR, errors: errors.array() });
          }
 
-         let serviceResponse = await AuthService.forgotPassword(req.body.email);
-         return res.status(serviceResponse.statusCode).json(serviceResponse);
+         await AuthService.forgotPassword(req.body.email);
+         return res.status(200).json({ message: emailConsts.EMAIL_RESET_TOKEN_SUCCESS });
       }  
       catch(e) {
-         console.log(e.message);
-         return res.status(500).json(e.message);
+         switch(e.name) {
+            case "ApiEmailConfigurationError": {
+               return res.status(400).json({ message: e.message, errors: e.errors });
+            }
+            default: {
+               logger.error(e.message);
+               return res.status(500).json({ message: e.message });
+            }
+         }
       }
    }
 }

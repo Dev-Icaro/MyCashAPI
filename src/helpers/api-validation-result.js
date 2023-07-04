@@ -1,4 +1,4 @@
-class ErrorHelper {
+class ApiValidationResult {
    constructor() {
       this.errors = [];
    }
@@ -16,8 +16,8 @@ class ErrorHelper {
    }
 
    isEmpty() {
-      return (this.errors.length() === 0);
+      return (this.errors.length === 0);
    }
 }
 
-module.exports = ErrorHelper;
+module.exports = ApiValidationResult;

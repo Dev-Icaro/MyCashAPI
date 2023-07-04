@@ -2,7 +2,7 @@
 const {
   Model
 } = require('sequelize');
-const { hashString } = require('../utils/bcrypt-utils');
+const { hashString } = require('../utils/crypt-utils');
 const errorsConsts = require('../constants/error-constants');
 
 module.exports = (sequelize, DataTypes) => {

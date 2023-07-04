@@ -3,7 +3,7 @@
 const { Model } = require('sequelize');
 
 // Utils
-const { hashString } = require('../utils/bcrypt-utils');
+const { encrypt } = require('../utils/crypt-utils');
 
 // Constants
 const errorsConsts = require('../constants/error-constants');
@@ -13,6 +13,15 @@ module.exports = (sequelize, DataTypes) => {
 
     static async getEmailConfigById(id) {
       return await this.findOne({ where: { id: Number(id) }});
+    }
+
+    static async getDefaultEmailConfig() {
+      // Pega o primeiro registro ordenao pelo campo dafault e id
+      const emailConfig = await this.findOne({
+        order: [['default', 'ASC'], ['id', 'ASC']]
+      });
+
+      return emailConfig;
     }
     
     static associate(models) {
@@ -96,6 +105,11 @@ module.exports = (sequelize, DataTypes) => {
           msg: errorsConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', 'useTLS')
         }
       }
+    },
+    default: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 0
     } 
   }, {
     sequelize,
@@ -103,12 +117,12 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   EmailConfig.addHook('beforeCreate', async (emailConfig, options) => {
-    emailConfig.password = await hashString(emailConfig.password);
+    emailConfig.password = await encrypt(emailConfig.password);
   });
 
   EmailConfig.addHook('beforeUpdate', async (emailConfig, options) => {
     if (EmailConfig.changed('password')) {
-      emailConfig.password = await hashString(emailConfig.password);
+      emailConfig.password = await encrypt(emailConfig.password);
     }
   });
 

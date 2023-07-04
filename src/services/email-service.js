@@ -7,21 +7,19 @@ const emailConsts = require('../constants/email-constants');
 const errorConsts = require('../constants/error-constants');
 
 // Errors
-const { ApiEmailSendError } = require('../errors/email-errors');
+const { ApiEmailSendError, ApiEmailConfigurationError } = require('../errors/email-errors');
 const { ApiInvalidFileError } = require('../errors/file-errors');
 const { ApiValidationError } = require('../errors/validation-errors');
 
 // Helpers / Utils
 const { fileExists } = require('../utils/file-utils');
-const ErrorHelper = require('../helpers/error-helper');
+const { decrypt } = require('../utils/crypt-utils');
+const ApiValidationResult = require('../helpers/api-validation-result');
 
-let transporter = nodemailer.createTransport({
-   service: 'gmail',
-   auth: {
-      user: "icarokiilermelo@gmail.com",
-      pass: ""
-   }
-});
+// Models
+const models = require('../models');
+const EmailConfig = models.EmailConfig;
+
 
 class EmailService {
    static async sendEmail(email) {
@@ -30,14 +28,24 @@ class EmailService {
          throw new ApiValidationError(errorConsts.MSG_VALIDATION_ERROR, errors.getErrors());
       }
 
-      await transporter.sendMail(email, (err, info) => {
+      let transporter = await getTransporter();
+      
+      try {
+         await transporter.verify();
+         await transporter.sendEmail(email);
+      } 
+      catch(e) {
+         throw new ApiEmailConfigurationError(emailConsts.ERROR_INVALID_EMAIL_CONFIG, err);
+      }
+
+      /*transporter.sendMail(email, (err, info) => {
          if (err) {
             throw new ApiEmailSendError(emailConsts.EMAIL_SEND_FAIL, err);
-         } 
+         }
          else {
             return info;
          }
-      });
+      });*/
    }
 
    static async sendResetTokenEmail(user) {
@@ -69,21 +77,25 @@ class Email {
 
    setFrom(from) {
       this.from = from.trim();
+      return this;
    }
 
    setSubject(subject) {
       this.subject = subject;
+      return this;
    }
 
    setHtml(html) {
       this.html = html;
+      return this;
    }
 
    setText(text) {
       this.text = text;
+      return this;
    }
 
-   addAtthachment(filename, path) {
+   addAtthachment(path, filename) {
       if (validator.isEmpty(path)) {
          throw new ApiValidationError(errorConsts.ERROR_EMPTY_PARAM.replace('{placeholder}', '"path"'))
       }
@@ -92,10 +104,16 @@ class Email {
          throw new ApiInvalidFileError(errorConsts.ERROR_FILE_NOT_FOUND.replace('{placeholder}', path));
       }
 
-      this.attachments.push({
-         filename: filename,
+      const attachment = {
          path: path
-      });
+      }
+
+      // Uso a atribuição condicional para criar a propriedade apenas se filename tiver um valor
+      filename !== undefined && (attachment['filename'] = filename);
+
+      this.attachments.push(attachment);
+
+      return this;
    }
 
    addReceiverAddress(emailAddress) {
@@ -107,11 +125,14 @@ class Email {
          throw new ApiValidationError(emailConsts.ERROR_INVALID_EMAIL.replace('{placeholder}', emailAddress));
       }
 
-      this.to += this.hasReceiverAddress() ? `, ${this.to}` : emailAddress;
+      // Verifico se já existe algum endereço, se sim adiciono com "," para manter a formatação
+      this.to += this.hasReceiverAddress() ? `, ${emailAddress}` : emailAddress;
+
+      return this;
    }
 
    hasReceiverAddress() {
-      return (this.to.length() > 0);
+      return (this.to.length > 0);
    }
 
    validate() {
@@ -124,9 +145,8 @@ class Email {
 }
 
 function validateEmail(email) {  
-   const errors = new ErrorHelper();
+   const errors = new ApiValidationResult();
 
-   // From
    if (validator.isEmpty(email.from)) {
       errors.addError(errorConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', '"from"'));
    }
@@ -135,22 +155,38 @@ function validateEmail(email) {
       errors.addError(emailConsts.ERROR_INVALID_EMAIL.replace('{placeholder}', email.from));
    }
 
-   // Subject
    if (validator.isEmpty(email.subject)) {
       errors.addError(errorConsts.ERROR_EMPTY_FIELD.replace('{placeholder}', '"subject"'));
    }
 
-   // Valida se o email está vazio
    if (validator.isEmpty(email.text) && validator.isEmail(email.html)) {
       errors.addError(emailConsts.ERROR_EMPTY_EMAIL_BODY);
    }
 
-   // To 
    if (!email.hasReceiverAddress()) {
       errors.addError(emailConsts.ERROR_EMPTY_RECEIVER);
    }
 
    return errors;
+}
+
+async function getTransporter() {
+   const emailConfig = await EmailConfig.getDefaultEmailConfig();
+   if (!emailConfig) {
+      throw new ApiEmailConfigurationError(emailConsts.EMAIL_SEND_FAIL, emailConsts.ERROR_EMAIL_NOT_CONFIGURATED);
+   }
+
+   let smtpConfig = {
+      host: emailConfig.server,
+      port: emailConfig.port,
+      secure: (emailConfig.useSSL || emailConfig.useTLS),
+      auth: {
+         user: emailConfig.username,
+         pass: await decrypt(emailConfig.password)
+      }
+   }
+
+   return nodemailer.createTransport(smtpConfig); 
 }
 
 module.exports = EmailService;
