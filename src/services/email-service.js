@@ -65,7 +65,14 @@ class EmailService {
    }
 }
 
+/**
+ * Classe representando um Email, que poderá ser enviado
+ * pelo EmailService no método SendEmail.
+ */
 class Email {
+   /**
+    * Cria uma instância de email;
+    */
    constructor() {
       this.from        = '';
       this.subject     = '';
@@ -75,26 +82,76 @@ class Email {
       this.attachments = [];
    }
 
+   /**
+    * Define o from do email.
+    * 
+    * @param {string} from - Email de quem está enviando.
+    * @returns {Object} - Retorna this para poder efetuar o
+    * chaining
+    */
    setFrom(from) {
       this.from = from.trim();
       return this;
    }
 
+   /**
+    * Define o subject(assunto) do email.
+    * 
+    * @param {string} subject - Assunto do email. 
+    * @returns {this} - Retorna this para poder efetuar o
+    * chaining
+    */
    setSubject(subject) {
       this.subject = subject;
       return this;
    }
-
+   
+   /**
+    * Define o conteúdo HTML do email.
+    * 
+    * @param {string} html - Conteúdo HTML que dejamos
+    * inserir no corpo do email. 
+    * @returns {this} - Retorna this para poder efetuar o   
+    * chaining.
+    * 
+    * @example 
+    * const email = new Email();
+    * email.setHtml(
+    *    <div> 
+    *       <p>
+    *          Hello World!
+    *       </p>
+    *    </div>
+    * );
+    * 
+    */
    setHtml(html) {
       this.html = html;
       return this;
    }
 
+   /**
+    * Define o conteúdo texto do email.
+    * 
+    * @param {string} text - Conteúdo texto doque desejamos
+    * inserir no corpo do email.
+    * @returns {this} - Retorna o this para poder efetuar o
+    * chaining.
+    */
    setText(text) {
       this.text = text;
       return this;
    }
 
+   /**
+    * Adiciona um anexo ao email, podendo anexar inúmeros
+    * anexos apenas invocando o método novamente.
+    * 
+    * @param {string} path - Local do arquivo computador.
+    * @param {string} [filename] - Nome do arquivo (opcional).
+    * @returns {this} - Retorna o this para poder efetuar o
+    * chaining.
+    */
    addAtthachment(path, filename) {
       if (validator.isEmpty(path)) {
          throw new ApiValidationError(errorConsts.ERROR_EMPTY_PARAM.replace('{placeholder}', '"path"'))
