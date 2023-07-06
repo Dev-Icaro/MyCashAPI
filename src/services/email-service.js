@@ -72,6 +72,9 @@ class EmailService {
 class Email {
    /**
     * Cria uma instância de email;
+    * 
+    * @param {void}
+    * @return {void}
     */
    constructor() {
       this.from        = '';
@@ -86,8 +89,7 @@ class Email {
     * Define o from do email.
     * 
     * @param {string} from - Email de quem está enviando.
-    * @returns {Object} - Retorna this para poder efetuar o
-    * chaining
+    * @returns {Object} - Retorno this para permitir o chaining.
     */
    setFrom(from) {
       this.from = from.trim();
@@ -98,8 +100,7 @@ class Email {
     * Define o subject(assunto) do email.
     * 
     * @param {string} subject - Assunto do email. 
-    * @returns {this} - Retorna this para poder efetuar o
-    * chaining
+    * @returns {this} - Retorno this para permitir o chaining.
     */
    setSubject(subject) {
       this.subject = subject;
@@ -111,8 +112,7 @@ class Email {
     * 
     * @param {string} html - Conteúdo HTML que dejamos
     * inserir no corpo do email. 
-    * @returns {this} - Retorna this para poder efetuar o   
-    * chaining.
+    * @returns {this} - Retorno this para permitir o chaining.
     * 
     * @example 
     * const email = new Email();
@@ -135,8 +135,7 @@ class Email {
     * 
     * @param {string} text - Conteúdo texto doque desejamos
     * inserir no corpo do email.
-    * @returns {this} - Retorna o this para poder efetuar o
-    * chaining.
+    * @returns {this} - Retorno this para permitir o chaining.
     */
    setText(text) {
       this.text = text;
@@ -145,12 +144,16 @@ class Email {
 
    /**
     * Adiciona um anexo ao email, podendo anexar inúmeros
-    * anexos apenas invocando o método novamente.
+    * anexos invocando o método novamente.
     * 
     * @param {string} path - Local do arquivo computador.
     * @param {string} [filename] - Nome do arquivo (opcional).
-    * @returns {this} - Retorna o this para poder efetuar o
-    * chaining.
+    * @returns {this} - Retorno this para permitir o chaining.
+    * @throws {ApiValidationError} - Exceção contendo o erro de validação.
+    * 
+    * @example 
+    * const email = new Email();
+    * email.addAtthachment('C:\RelatorioBancario.xls', 'Relatório bancário');
     */
    addAtthachment(path, filename) {
       if (validator.isEmpty(path)) {
@@ -173,6 +176,19 @@ class Email {
       return this;
    }
 
+   /**
+    * Adiciona um email de destino, você pode adicionar mais de um email,
+    * basta invocar o método multiplas vezes ou criar uma string com os emails separados
+    * por vírgulas.
+    * 
+    * @param {string} emailAddress - Email de destíno
+    * @returns {this} - Retorno this para permitir o chaining.
+    * @throws {ApiValidationError} - Exceção contendo o erro de validação.
+    * 
+    * @example
+    * const email = new Email();
+    * Email.addReceiverAdress('projetomycash@gmail.com');
+    */
    addReceiverAddress(emailAddress) {
       if (validator.isEmpty(emailAddress)) {
          throw new ApiValidationError(errorConsts.ERROR_EMPTY_PARAM.replace('{placeholder}', 'emailAddress'));
@@ -188,12 +204,27 @@ class Email {
       return this;
    }
 
+   /**
+    * Verifica se exite um email de destino setado.
+    * 
+    * @param {void}
+    * @returns {boolean} - Booleana indicando se existe um email de destino setado
+    */
    hasReceiverAddress() {
       return (this.to.length > 0);
    }
 
+   /**
+    * Método que valida as informações contidas em sua instância.
+    * 
+    * @param {void} 
+    * @returns {void}
+    * @throws {ApiValidationError} - Exceção contendo os erros de validação
+    * @example 
+    * const email = new Email();
+    * email.validate(); // Saída: ApiValidationError devido a não ter dados válidos.
+    */
    validate() {
-      // Método para a classe se auto validar por conveniência
       const errors = validateEmail(this);
       if (!errors.isEmpty()) {
          throw new ApiValidationError(errorConsts.MSG_VALIDATION_ERROR, errors.getErrors());
@@ -201,6 +232,16 @@ class Email {
    }
 }
 
+/**
+ * Valida uma instânica de Email
+ * 
+ * @param {Email} email - Instância da classe email que desejamos validar.
+ * @returns {ApiValidationResult} - Instância de ApiValidationResult, um helper que visa
+ * manipular os resultados da validação, consulte sua documentação para maior entendimento.
+ * 
+ * @example
+ * const isValidEmail = validateEmail(email);
+ */
 function validateEmail(email) {  
    const errors = new ApiValidationResult();
 
@@ -227,6 +268,17 @@ function validateEmail(email) {
    return errors;
 }
 
+/**
+ * Retorna uma instânica do Transporter da lib nodemailer configurado
+ * com o email padrão definido no model EmailConfig
+ * 
+ * @param {void}
+ * @returns {Transport} - Instância de transporter.
+ * 
+ * @example 
+ * const transporter = getTransporter();
+ * transporter.sendEmail(email);
+ */
 async function getTransporter() {
    const emailConfig = await EmailConfig.getDefaultEmailConfig();
    if (!emailConfig) {

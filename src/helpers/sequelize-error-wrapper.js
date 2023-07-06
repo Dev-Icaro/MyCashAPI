@@ -33,4 +33,4 @@ class SequelizeErrorWrapper {
    }
 }
 
-module.exports = { SequelizeErrorWrapper };
+module.exports = SequelizeErrorWrapper;
