@@ -43,7 +43,7 @@ class EmailService {
       // Antes de enviar o email verifico se as configurações de email são válidas.
       return await transporter.verify()
          .then(async (info) => {
-            return await transporter.sendEmail(email);
+            return await transporter.sendMail(email);
          })
          .then((emailInfo) => {
             return emailInfo;
@@ -73,7 +73,7 @@ class EmailService {
 
 /**
  * Classe representando um Email, que poderá ser enviado
- * pelo EmailService no método SendEmail.
+ * pelo EmailService no método SendMail.
  */
 class Email {
    /**
@@ -292,9 +292,10 @@ async function getTransporter() {
    }
 
    let smtpConfig = {
-      host: emailConfig.server,
-      port: emailConfig.port,
-      secure: (emailConfig.useSSL || emailConfig.useTLS),
+      service: 'gmail',
+//      host: emailConfig.server,
+//      port: emailConfig.port,
+//      secure: (emailConfig.useSSL || emailConfig.useTLS),
       auth: {
          user: emailConfig.username,
          pass: await decrypt(emailConfig.password, emailConfig.iv)
@@ -302,6 +303,32 @@ async function getTransporter() {
    }
 
    return nodemailer.createTransport(smtpConfig); 
+}
+
+async function createSmtpConfig(emailConfig) {
+   const GMAIL_SMTP = 'smtp.gmail.com';
+   let smtpConfig;
+
+   if (emailConfig.server === GMAIL_SMTP) {
+      smtpConfig = {
+         service: 'gmail',
+         auth: {
+            user: emailConfig.username,
+            pass: await decrypt(emailConfig.password, emailConfig.iv)
+         }
+      }
+   } 
+   else {
+      smtpConfig = {
+         host: emailConfig.server,
+         port: emailConfig.port,
+         secure: (emailConfig.useSSL || emailConfig.useTLS),
+         auth: {
+            user: emailConfig.username,
+            pass: await decrypt(emailConfig.password, emailConfig.iv)
+         }
+      }
+   }
 }
 
 module.exports = EmailService;
