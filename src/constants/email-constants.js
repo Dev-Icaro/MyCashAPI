@@ -7,6 +7,6 @@ module.exports = {
    ERROR_INVALID_EMAIL: 'Invalid email address: {placeholder}',
    ERROR_EMPTY_EMAIL_BODY: 'Email body is empty, you must set HTML or Text at least',
    ERROR_EMPTY_RECEIVER: 'You must set at least one receiver for email',
-   ERROR_EMAIL_NOT_CONFIGURATED: 'Email not configurated, please create the email configurations on the route "/config/email"',
+   ERROR_EMAIL_NOT_CONFIGURATED: 'Email not configurated, please create the email configurations on the route "\/config\/email"',
    ERROR_INVALID_EMAIL_CONFIG: 'Email configuration is not valid'
 }

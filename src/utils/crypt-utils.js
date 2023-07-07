@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
-const algorithm = 'aes-256-cbc';
+const algorithm = 'aes-128-cbc';
 
 /**
  * @param {string} s - string que queremos criar efetuar o hash
@@ -52,18 +52,26 @@ async function isHashEqual(value1, value2) {
  * Criptografa uma string com a lib crypto. 
  * 
  * @param {string} text - String que queremos criptografar.
- * @returns {Promise<string>} - Promise onde o resolve é a string criptografada.
+ * @returns {Promise<string>} - Promise onde o resolve é a string criptografada e
+ * o iv utilizado na criptografia para poder ser armazenado.
  * 
  * @example
- * const encryptedString = await encrypt(string);
+ * const [encryptedString, iv] = await encrypt(string);
  */
 async function encrypt(text) {
    return new Promise((resolve, reject) => {
-      const cipher = crypto.createCipheriv(algorithm, process.env.API_SECRET);
+      let iv = crypto.randomBytes(16);
+      const key = process.env.API_SECRET;
+
+      const cipher = crypto.createCipheriv(algorithm, key, iv);
+
       let encrypted = cipher.update(text, 'utf8', 'hex');
       encrypted += cipher.final('hex');
 
-      resolve(encrypted);
+      // Converto o buffer em um base64 para armazenar no banco.
+      iv = iv.toString('base64');
+
+      resolve([encrypted, iv]);
    })
 }
 
@@ -71,14 +79,21 @@ async function encrypt(text) {
  * Descriptografa a criptografia gerada pela função encrypt.
  * 
  * @param {string} encrypted - String que desejamos descriptografar.
+ * @param {string} iv - Iv (Initialization vector) utilizado na criptografia.
  * @returns {Promise<string>} - Promise onde o resolve é a string descriptografada
  * 
  * @example
- * const decryptedString = await decrypt(encryptedString);
+ * const iv = getIv();
+ * const decryptedString = await decrypt(encryptedString, iv);
  */
-async function decrypt(encrypted) {
+async function decrypt(encrypted, iv) {
    return new Promise((resolve, reject) => {
-      const decipher = crypto.createDecipheriv(algorithm, process.env.API_SECRET);
+      // Converto o iv base64 em buffer novamente.
+      iv = Buffer.from(iv, 'base64');
+      const key = process.env.API_SECRET;
+
+      const decipher = crypto.createDecipheriv(algorithm, key, iv);
+
       let decrypted = decipher.update(encrypted, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
 

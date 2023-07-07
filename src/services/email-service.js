@@ -22,6 +22,16 @@ const EmailConfig = models.EmailConfig;
 
 
 class EmailService {
+   /**
+    * Método para enviar emails.
+    * 
+    * @param {Email} email - Instância de Email que desejamos enviar.
+    * @returns {Promise<import('nodemailer').SentMessageInfo>} - Uma promessa que resolve
+    * em um objeto contendo informações do envio.
+    * @throws {ApiValidationError} - Erro relacionados a validação dos dados.
+    * @throws {ApiEmailConfigurationError} - Erro relacionado a configurações de email.
+    * @throws {ApiEmailSendError} - Erro relacionado ao envio do email.
+    */
    static async sendEmail(email) {
       const errors = validateEmail(email);
       if (!errors.isEmpty()) {
@@ -29,23 +39,19 @@ class EmailService {
       }
 
       let transporter = await getTransporter();
-      
-      try {
-         await transporter.verify();
-         await transporter.sendEmail(email);
-      } 
-      catch(e) {
-         throw new ApiEmailConfigurationError(emailConsts.ERROR_INVALID_EMAIL_CONFIG, err);
-      }
-
-      /*transporter.sendMail(email, (err, info) => {
-         if (err) {
-            throw new ApiEmailSendError(emailConsts.EMAIL_SEND_FAIL, err);
-         }
-         else {
-            return info;
-         }
-      });*/
+  
+      // Antes de enviar o email verifico se as configurações de email são válidas.
+      return await transporter.verify()
+         .then(async (info) => {
+            return await transporter.sendEmail(email);
+         })
+         .then((emailInfo) => {
+            return emailInfo;
+         })
+         .catch((err) => {
+            //throw new ApiEmailConfigurationError(emailConsts.ERROR_INVALID_EMAIL_CONFIG, err);
+            throw err;
+         })
    }
 
    static async sendResetTokenEmail(user) {
@@ -291,7 +297,7 @@ async function getTransporter() {
       secure: (emailConfig.useSSL || emailConfig.useTLS),
       auth: {
          user: emailConfig.username,
-         pass: await decrypt(emailConfig.password)
+         pass: await decrypt(emailConfig.password, emailConfig.iv)
       }
    }
 

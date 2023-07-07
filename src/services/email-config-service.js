@@ -1,6 +1,6 @@
 const models = require('../models');
 const EmailConfig = models.EmailConfig;
-const { SequelizeErrorWrapper } = require('../helpers/sequelize-error-wrapper');
+const SequelizeErrorWrapper = require('../helpers/sequelize-error-wrapper');
 
 class EmailConfigService {
    static async getEmailConfigById(id) {

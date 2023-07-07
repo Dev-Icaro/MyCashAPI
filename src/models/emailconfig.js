@@ -110,19 +110,20 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: true,
       defaultValue: 0
-    } 
+    },
+    iv: DataTypes.STRING 
   }, {
     sequelize,
     modelName: 'EmailConfig',
   });
 
   EmailConfig.addHook('beforeCreate', async (emailConfig, options) => {
-    emailConfig.password = await encrypt(emailConfig.password);
+    [emailConfig.password, emailConfig.iv] = await encrypt(emailConfig.password);
   });
 
   EmailConfig.addHook('beforeUpdate', async (emailConfig, options) => {
     if (EmailConfig.changed('password')) {
-      emailConfig.password = await encrypt(emailConfig.password);
+      [emailConfig.password, emailConfig.iv] = await encrypt(emailConfig.password);
     }
   });
 

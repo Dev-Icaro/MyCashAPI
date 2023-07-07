@@ -47,13 +47,8 @@ class AuthService {
 
       await user.save();
 
-      try {
-         let emailInfo = await EmailService.sendResetTokenEmail(user);
-         return emailInfo;
-      }
-      catch(e) {
-         throw e;
-      }
+      let emailInfo = await EmailService.sendResetTokenEmail(user);
+      return emailInfo;
    }
 }
 

@@ -4,7 +4,7 @@ const dateUtils = require('../utils/date-utils');
 /**
  * Gera JWT's.
  * 
- * @param {Object} payload - Objecto contendo o payload que sera. 
+ * @param {Object} payload - Objeto contendo o payload que sera. 
  * usado na geração do jwt.
  * @returns {string} - JWT gerado.
  * 
@@ -58,7 +58,7 @@ function generateResetToken() {
  * Gera um token de autenticação baseado nas informações de um
  * usuário
  * 
- * @param {Object} user - Recebe uma instância do model User.
+ * @param {User} user - Recebe uma instância do model User.
  * @returns {string} - Token de autenticação.
  */
 function generateAuthToken(user) {
