@@ -4,6 +4,15 @@ const { verifyToken } = require("../utils/auth-utils");
 // Constants
 const authConsts = require("../constants/auth-constants");
 
+/**
+ * Middleware de autenticação.
+ *
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ * @param {Express.next} next
+ * @returns {void} - Retorna uma resposta com erro ou next, dependendo
+ * do fluxo que a função seguir.
+ */
 function authenticationMiddleware(req, res, next) {
    const authorization = req.headers.authorization;
 

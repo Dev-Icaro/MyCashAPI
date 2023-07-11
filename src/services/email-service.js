@@ -14,6 +14,9 @@ const { ApiValidationError } = require("../errors/validation-errors");
 const { fileExists } = require("../utils/file-utils");
 const { validateEmail, getTransporter } = require("../helpers/email-helpers");
 
+/**
+ * Serviço de envio de emails.
+ */
 class EmailService {
    /**
     * Método para enviar emails.
