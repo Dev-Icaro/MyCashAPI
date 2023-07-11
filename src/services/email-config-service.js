@@ -1,6 +1,6 @@
-const models = require('../models');
+const models = require("../models");
 const EmailConfig = models.EmailConfig;
-const SequelizeErrorWrapper = require('../helpers/sequelize-error-wrapper');
+const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
 
 class EmailConfigService {
    static async getEmailConfigById(id) {
@@ -13,9 +13,9 @@ class EmailConfigService {
 
    static async updateEmailConfigById(updatedConfig, id) {
       return await EmailConfig.update(updatedConfig, {
-         where: { 
-            id: Number(id) 
-         }
+         where: {
+            id: Number(id),
+         },
       })
          .then(async () => {
             return await EmailConfig.getEmailConfigById(id);
@@ -28,6 +28,7 @@ class EmailConfigService {
    static async createEmailConfig(emailConfig) {
       return await EmailConfig.create(emailConfig)
          .then((createdEmailConfig) => {
+            delete createdEmailConfig.dataValues.password;
             return createdEmailConfig;
          })
          .catch((e) => {
@@ -36,7 +37,7 @@ class EmailConfigService {
    }
 
    static async deleteEmailConfigById(id) {
-      return await EmailConfig.destroy({ where: { id: Number(id) }});
+      return await EmailConfig.destroy({ where: { id: Number(id) } });
    }
 }
 

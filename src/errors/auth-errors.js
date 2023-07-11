@@ -2,8 +2,16 @@ class ApiUnauthorizedError extends Error {
    constructor(message, errors) {
       super(message);
       this.errors = errors;
-      this.name = 'ApiUnauthorizedError'
+      this.name = "ApiUnauthorizedError";
    }
 }
 
-module.exports = { ApiUnauthorizedError }
+class ApiUnauthorizedResetPassError extends Error {
+   constructor(message, errors) {
+      super(message);
+      this.errors = errors;
+      this.name = "ApiUnauthorizedResetPassError";
+   }
+}
+
+module.exports = { ApiUnauthorizedError, ApiUnauthorizedResetPassError };
