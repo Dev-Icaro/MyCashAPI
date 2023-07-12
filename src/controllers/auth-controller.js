@@ -21,9 +21,9 @@ class AuthController {
    /**
     * Recebe a requisição de signup, e passa os parâmetros para a camada Service.
     *
-    * @param {express.Request} req - Requisição contendo as informações do usuário a ser criado.
-    * @param {express.Response} res - Objeto de resposta.
-    * @returns {express.Response} - Retorna diferentes valores dependendo do fluxo da função.
+    * @param {Express.Request} req - Requisição contendo as informações do usuário a ser criado.
+    * @param {Express.Response} res - Objeto de resposta.
+    * @returns {Express.Response} - Retorna diferentes valores dependendo do fluxo da função.
     */
    static async signup(req, res) {
       try {
@@ -55,9 +55,9 @@ class AuthController {
     * Recebe a requisição de sigin(login), verifica o resultado da validação do express validator e
     * passa os parâmetros para a camada Service.
     *
-    * @param {express.Request} req - Requisição contendo as credenciais do usuário a ser criado.
-    * @param {express.Response} res - Objeto de resposta.
-    * @returns {express.Response} - Retorna diferentes valores dependendo do fluxo da função.
+    * @param {Express.Request} req - Requisição contendo as credenciais do usuário a ser criado.
+    * @param {Express.Response} res - Objeto de resposta.
+    * @returns {Express.Response} - Retorna diferentes valores dependendo do fluxo da função.
     */
    static async signin(req, res) {
       try {
@@ -86,12 +86,12 @@ class AuthController {
    }
 
    /**
-    * Recebe a requisição de recuperação de senha, verifica o resultado da validação do express validator
+    * Recebe a requisição de recuperação de senha, verifica o resultado da validação do Express validator
     * e passa os parâmetros para a camada Service.
     *
-    * @param {express.Request} req - Requisição contendo as credenciais do usuário a ser criado.
-    * @param {express.Response} res - Objeto de resposta.
-    * @returns {express.Response} - Retorna diferentes valores dependendo do fluxo da função.
+    * @param {Express.Request} req - Requisição contendo as credenciais do usuário a ser criado.
+    * @param {Express.Response} res - Objeto de resposta.
+    * @returns {Express.Response} - Retorna diferentes valores dependendo do fluxo da função.
     */
    static async forgotPassword(req, res) {
       try {
@@ -123,12 +123,12 @@ class AuthController {
    }
 
    /**
-    * Recebe a requisição de resetPassword, verifica o resultado da validação do express validator e passa
+    * Recebe a requisição de resetPassword, verifica o resultado da validação do Express validator e passa
     * para a camada Service.
     *
-    * @param {express.Request} req Requisição contendo: {email, token, password}.
-    * @param {express.Response} res Objeto de resposta.
-    * @returns {express.Response} Retorna diferentes valores dependendo do fluxo da função.
+    * @param {Express.Request} req Requisição contendo: {email, token, password}.
+    * @param {Express.Response} res Objeto de resposta.
+    * @returns {Express.Response} Retorna diferentes valores dependendo do fluxo da função.
     */
    static async resetPassword(req, res) {
       try {
