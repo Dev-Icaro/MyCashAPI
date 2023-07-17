@@ -1,17 +1,17 @@
 class ApiValidationError extends Error {
-   constructor(message, errors) {
-      super(message);
-      this.errors = errors;
-      this.name = 'ApiValidationError';
-   }
+  constructor(message, errors) {
+    super(message);
+    this.errors = errors;
+    this.name = "ApiValidationError";
+  }
 }
 
 class ApiUniqueConstraintError extends Error {
-   constructor(message, errors) {
-      super(message);
-      this.errors = errors;
-      this.name = 'ApiUniqueConstraintError';
-   }
+  constructor(message, errors) {
+    super(message);
+    this.errors = errors;
+    this.name = "ApiUniqueConstraintError";
+  }
 }
 
-module.exports = { ApiUniqueConstraintError, ApiValidationError }
+module.exports = { ApiUniqueConstraintError, ApiValidationError };

@@ -1,6 +1,6 @@
-const express = require('express');
-const routes = require('./routes');
-require('dotenv').config({ path: 'config/.env' });
+const express = require("express");
+const routes = require("./routes");
+require("dotenv").config({ path: "config/.env" });
 
 app = express();
 routes(app);
