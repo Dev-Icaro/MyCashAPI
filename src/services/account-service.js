@@ -19,7 +19,7 @@ class AccountService {
          .catch((err) => SequelizeErrorWrapper.wrapError(err));
    }
 
-   static async updateAccount(updatedAccount, id) {
+   static async updateAccountById(updatedAccount, id) {
       return await Account.update(updatedAccount, {
          where: {
             id: Number(id),

@@ -6,72 +6,120 @@ const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
  * Service de configuração de email, contém um CRUD para a manipulação dos dados.
  */
 class EmailConfigService {
-   /**
-    * Getter pelo ID.
-    *
-    * @param {integer} id - Id do Email no banco de dados.
-    * @returns {EmailConfig} - JSON contendo as configurações de email.
-    */
-   static async getEmailConfigById(id) {
-      return await EmailConfig.getEmailConfigById(id);
-   }
+  /**
+   * Instância EmailConfigService armazenando o id do
+   * usuário para efetuar as querys.
+   *
+   * @param {integer} userId
+   */
+  constructor(userId) {
+    this.userId = userId;
+  }
 
-   /**
-    * Getter all.
-    *
-    * @returns {EmailConfig} - JSON Array contendo todas as configurações de email.
-    */
-   static async getAllEmailConfigs() {
-      return await EmailConfig.findAll();
-   }
+  /**
+   * Getter pelo ID.
+   *
+   * @param {integer} id - Id do Email no banco de dados.
+   * @returns {EmailConfig} - JSON contendo as configurações de email.
+   */
+  async getEmailConfigById(id) {
+    return await EmailConfig.findOne({
+      where: {
+        user_id: Number(this.userId),
+        id: Number(id),
+      },
+    }).then((emailConfig) => deleteSensitiveProps(emailConfig));
+  }
 
-   /**
-    * Atualiza uma configuração de email pelo id.
-    *
-    * @param {EmailConfig} updatedConfig - Novos dados.
-    * @param {integer} id - Id do registro na tabela que desejamos alterar
-    * @returns
-    */
-   static async updateEmailConfigById(updatedConfig, id) {
-      return await EmailConfig.update(updatedConfig, {
-         where: {
-            id: Number(id),
-         },
+  /**
+   * Getter all.
+   *
+   * @returns {EmailConfig} - JSON Array contendo todas as configurações de email.
+   */
+  async getAllEmailConfigs() {
+    return await EmailConfig.findAll({
+      where: {
+        user_id: Number(this.userId),
+      },
+    }).then((results) => {
+      return results.map((emailConfig) => deleteSensitiveProps(emailConfig));
+    });
+  }
+
+  /**
+   * Atualiza uma configuração de email pelo id.
+   *
+   * @param {EmailConfig} updatedConfig - Novos dados.
+   * @param {integer} id - Id do registro na tabela que desejamos alterar
+   * @returns
+   */
+  async updateEmailConfigById(updatedConfig, id) {
+    return await EmailConfig.update(updatedConfig, {
+      where: {
+        id: Number(id),
+        user_id: Number(this.userId),
+      },
+    })
+      .then(async () => {
+        return await EmailConfig.getEmailConfigById(id).then((emailConfig) =>
+          deleteSensitiveProps(emailConfig)
+        );
       })
-         .then(async () => {
-            return await EmailConfig.getEmailConfigById(id);
-         })
-         .catch((e) => {
-            SequelizeErrorWrapper.wrapError(e);
-         });
-   }
+      .catch((e) => {
+        SequelizeErrorWrapper.wrapError(e);
+      });
+  }
 
-   /**
-    * Cria uma nova configuração de email.
-    *
-    * @param {EmailConfig} emailConfig - Dados da nova configuração de email
-    * @returns {EmailConfig} - Dados da configuração de email criada.
-    */
-   static async createEmailConfig(emailConfig) {
-      return await EmailConfig.create(emailConfig)
-         .then((createdEmailConfig) => {
-            delete createdEmailConfig.dataValues.password;
-            return createdEmailConfig;
-         })
-         .catch((e) => {
-            SequelizeErrorWrapper.wrapError(e);
-         });
-   }
+  /**
+   * Cria uma nova configuração de email.
+   *
+   * @param {EmailConfig} emailConfig - Dados da nova configuração de email
+   * @returns {EmailConfig} - Dados da configuração de email criada.
+   */
+  async createEmailConfig(emailConfig) {
+    emailConfig.user_id = this.userId;
 
-   /**
-    * Deleta uma configuração de email pelo id.
-    *
-    * @param {integer} id - Id do registro que desejamos deletar.
-    * @returns {void}
-    */
-   static async deleteEmailConfigById(id) {
-      await EmailConfig.destroy({ where: { id: Number(id) } });
-   }
+    return await EmailConfig.create(emailConfig)
+      .then((createdEmailConfig) => {
+        return deleteSensitiveProps(createdEmailConfig);
+      })
+      .catch((e) => {
+        SequelizeErrorWrapper.wrapError(e);
+      });
+  }
+
+  /**
+   * Deleta uma configuração de email pelo id.
+   *
+   * @param {integer} id - Id do registro que desejamos deletar.
+   * @returns {void}
+   */
+  async deleteEmailConfigById(id) {
+    await EmailConfig.destroy({
+      where: {
+        id: Number(id),
+        user_id: Number(this.userId),
+      },
+    });
+  }
+
+  async getDefaultEmailConfig() {
+    return await EmailConfig.findOne({
+      where: {
+        user_id: Number(this.userId),
+      },
+      order: [
+        ["defaultEmail", "DESC"],
+        ["id", "ASC"],
+      ],
+    });
+  }
+}
+
+function deleteSensitiveProps(emailConfig) {
+  delete emailConfig.dataValues.password;
+  delete emailConfig.dataValues.iv;
+  return emailConfig;
 }
 
 module.exports = EmailConfigService;

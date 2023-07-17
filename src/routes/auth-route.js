@@ -5,23 +5,39 @@ const {
    validateEmail,
    validateResetPassReq,
 } = require("../validators/auth-validator");
+const {
+   validationErrorHandler,
+   authErrorHandler,
+   emailErrorHandler,
+} = require("../middlewares/error-handlers");
+const validationHandler = require("../middlewares/validation-handler");
 
 const router = Router();
 
-router.post("/api/auth/signup", AuthController.signup);
+router.post("/api/auth/signup", AuthController.signup, validationErrorHandler);
 
-router.post("/api/auth/signin", validateSiginReq(), AuthController.signin);
+router.post(
+   "/api/auth/signin",
+   validateSiginReq(),
+   validationHandler,
+   AuthController.signin,
+   authErrorHandler
+);
 
 router.post(
    "/api/auth/forgot-password",
    validateEmail(),
-   AuthController.forgotPassword
+   validationHandler,
+   AuthController.forgotPassword,
+   emailErrorHandler
 );
 
 router.post(
    "/api/auth/reset-password",
    validateResetPassReq(),
-   AuthController.resetPassword
+   validationHandler,
+   AuthController.resetPassword,
+   authErrorHandler
 );
 
 module.exports = router;

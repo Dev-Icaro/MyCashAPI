@@ -27,13 +27,15 @@ function generateToken(payload) {
  * const isValidToken = verifyToken(token);
  */
 function verifyToken(token) {
-   try {
-      jwt.verify(token, process.env.API_SECRET);
-      return true;
-   } catch (e) {
-      console.log(e);
-      return false;
-   }
+   return new Promise((resolve, reject) => {
+      jwt.verify(token, process.env.API_SECRET, (err, decoded) => {
+         if (err) {
+            reject(err);
+         }
+
+         resolve(decoded);
+      });
+   });
 }
 
 /**
@@ -64,7 +66,7 @@ function generateResetToken() {
  */
 function generateAuthToken(user) {
    const payload = {
-      id: user.id,
+      userId: user.id,
       username: user.username,
       tokenType: "auth",
    };
