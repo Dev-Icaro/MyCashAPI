@@ -1,6 +1,7 @@
 // Libs
 const validator = require("validator");
 const nodemailer = require("nodemailer");
+const fs = require("fs");
 
 // Constants
 const errorConsts = require("../constants/error-constants");
@@ -11,9 +12,8 @@ const ApiValidationResult = require("./api-validation-result");
 const { decrypt } = require("../utils/crypt-utils");
 
 // Models
-const models = require("../models");
-const EmailConfigService = require("../services/email-config-service");
-const EmailConfig = models.EmailConfig;
+const { fileExists } = require("../utils/file-utils");
+const { ApiEmailConfigurationError } = require("../errors/email-errors");
 
 /**
  * Valida uma instânica de Email
@@ -30,19 +30,19 @@ function validateEmail(email) {
 
   if (validator.isEmpty(email.from)) {
     errors.addError(
-      errorConsts.ERROR_EMPTY_FIELD.replace("{placeholder}", '"from"')
+      errorConsts.ERROR_EMPTY_FIELD.replace("{placeholder}", '"from"'),
     );
   }
   // Apenas valido o formato do email se ele passar pela condição anterior
   else if (!validator.isEmail(email.from)) {
     errors.addError(
-      emailConsts.ERROR_INVALID_EMAIL.replace("{placeholder}", email.from)
+      emailConsts.ERROR_INVALID_EMAIL.replace("{placeholder}", email.from),
     );
   }
 
   if (validator.isEmpty(email.subject)) {
     errors.addError(
-      errorConsts.ERROR_EMPTY_FIELD.replace("{placeholder}", '"subject"')
+      errorConsts.ERROR_EMPTY_FIELD.replace("{placeholder}", '"subject"'),
     );
   }
 
@@ -68,77 +68,19 @@ function validateEmail(email) {
  * const transporter = createTransporter();
  * transporter.sendEmail(email);
  */
-async function createTransporter(userId) {
-  const emailConfigService = new EmailConfigService(userId);
-  const emailConfig = await emailConfigService.getDefaultEmailConfig();
+async function createTransporter() {
+  const emailConfigPath = "./config/email-config.json";
 
-  if (!emailConfig) {
+  if (!fs.existsSync(emailConfigPath)) {
     throw new ApiEmailConfigurationError(
-      emailConsts.EMAIL_SEND_FAIL,
-      emailConsts.ERROR_EMAIL_NOT_CONFIGURATED
+      emailConsts.ERROR_EMAIL_NOT_CONFIGURATED,
+      'Missing "email-config.json" in config folder',
     );
   }
 
-  let smtpConfig = await createSmtpConfig(emailConfig);
+  const emailConfig = JSON.parse(fs.readFileSync(emailConfigPath, "utf-8"));
 
-  return nodemailer.createTransport(smtpConfig);
-}
-
-/**
- * Cria um objeto SmtpConfig baseado em uma configuração de Email (EmailConfig)
- * idêntificando qual o host e criando o objeto correspondente.
- *
- * @param {EmailConfig} emailConfig - Instância do model EmailConfig que desejamos
- * criar a SmtpConfig.
- * @returns {SmtpConfig} - Objeto que representa uma configuração de email válida para
- * ser utilizado no nodemailer.
- */
-async function createSmtpConfig(emailConfig) {
-  const host = emailConfig.server;
-
-  if (host.includes("gmail")) {
-    return await createGmailSmtpConfig(emailConfig);
-  } else {
-    return await createDefaultSmtpConfig(emailConfig);
-  }
-}
-
-/**
- * Cria um objeto SmtpConfig no padrão Gmail.
- *
- * @param {EmailConfig} emailConfig - Instância do model EmailConfig que desejamos
- * criar a SmtpConfig.
- * @returns {SmtpConfig} - Objeto que representa uma configuração de email válida para
- * ser utilizado no nodemailer
- */
-async function createGmailSmtpConfig(emailConfig) {
-  return {
-    service: "gmail",
-    auth: {
-      user: emailConfig.username,
-      pass: await decrypt(emailConfig.password, emailConfig.iv),
-    },
-  };
-}
-
-/**
- * Cria um objeto SmtpConfig padrão.
- *
- * @param {EmailConfig} emailConfig - Instância do model EmailConfig que desejamos
- * criar a SmtpConfig.
- * @returns {SmtpConfig} - Objeto que representa uma configuração de email válida para
- * ser utilizado no nodemailer.
- */
-async function createDefaultSmtpConfig(emailConfig) {
-  return {
-    host: emailConfig.server,
-    port: emailConfig.port,
-    secure: emailConfig.useSSL || emailConfig.useTLS,
-    auth: {
-      user: emailConfig.username,
-      pass: await decrypt(emailConfig.password, emailConfig.iv),
-    },
-  };
+  return nodemailer.createTransport(emailConfig);
 }
 
 module.exports = {

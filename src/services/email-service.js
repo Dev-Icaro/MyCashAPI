@@ -1,5 +1,4 @@
 // Libs
-const nodemailer = require("nodemailer");
 const validator = require("validator");
 
 // Constants
@@ -10,7 +9,7 @@ const errorConsts = require("../constants/error-constants");
 const { ApiInvalidFileError } = require("../errors/file-errors");
 const { ApiValidationError } = require("../errors/validation-errors");
 const { ApiInvalidArgumentError } = require("../errors/argument-errors");
-const { ApiEmailConfigurationError } = require("../errors/email-errors");
+const { ApiEmailSendError } = require("../errors/email-errors");
 
 // Helpers / Utils
 const { fileExists } = require("../utils/file-utils");
@@ -24,7 +23,7 @@ class EmailService {
     if (!transporter) {
       throw new ApiInvalidArgumentError(
         errorConsts.ERROR_MISSING_ARGUMENT,
-        "'transporter' at EmailService constructor"
+        "'transporter' at EmailService constructor",
       );
     }
 
@@ -38,7 +37,6 @@ class EmailService {
    * @returns {Promise<import('nodemailer').SentMessageInfo>} - Uma promessa que resolve
    * em um objeto contendo informações do envio.
    * @throws {ApiValidationError} - Erro relacionados a validação dos dados.
-   * @throws {ApiEmailConfigurationError} - Erro relacionado a configurações de email.
    * @throws {ApiEmailSendError} - Erro relacionado ao envio do email.
    */
   async sendEmail(email) {
@@ -46,7 +44,7 @@ class EmailService {
     if (!errors.isEmpty()) {
       throw new ApiValidationError(
         errorConsts.MSG_VALIDATION_ERROR,
-        errors.getErrors()
+        errors.getErrors(),
       );
     }
 
@@ -54,15 +52,15 @@ class EmailService {
     await this.transporter
       .verify()
       .then(async (info) => {
-        await transporter.sendMail(email);
+        await this.transporter.sendMail(email);
       })
       .then((emailInfo) => {
         return emailInfo;
       })
       .catch((err) => {
-        throw new ApiEmailConfigurationError(
+        throw new ApiEmailSendError(
           emailConsts.ERROR_INVALID_EMAIL_CONFIG,
-          err
+          err,
         );
       });
   }
@@ -82,7 +80,7 @@ class EmailService {
       .addReceiverAddress(user.email)
       .setHtml(
         `<p> Here is your reset token, use it to reset your password: <br> 
-            ${user.resetToken}</p>`
+            ${user.resetToken}</p>`,
       );
 
     return await this.sendEmail(email);
@@ -182,13 +180,13 @@ class Email {
   addAtthachment(path, filename) {
     if (validator.isEmpty(path)) {
       throw new ApiValidationError(
-        errorConsts.ERROR_EMPTY_PARAM.replace("{placeholder}", '"path"')
+        errorConsts.ERROR_EMPTY_PARAM.replace("{placeholder}", '"path"'),
       );
     }
 
     if (!fileExists(path)) {
       throw new ApiInvalidFileError(
-        errorConsts.ERROR_FILE_NOT_FOUND.replace("{placeholder}", path)
+        errorConsts.ERROR_FILE_NOT_FOUND.replace("{placeholder}", path),
       );
     }
 
@@ -220,13 +218,13 @@ class Email {
   addReceiverAddress(emailAddress) {
     if (validator.isEmpty(emailAddress)) {
       throw new ApiValidationError(
-        errorConsts.ERROR_EMPTY_PARAM.replace("{placeholder}", "emailAddress")
+        errorConsts.ERROR_EMPTY_PARAM.replace("{placeholder}", "emailAddress"),
       );
     }
 
     if (!validator.isEmail(emailAddress)) {
       throw new ApiValidationError(
-        emailConsts.ERROR_INVALID_EMAIL.replace("{placeholder}", emailAddress)
+        emailConsts.ERROR_INVALID_EMAIL.replace("{placeholder}", emailAddress),
       );
     }
 
@@ -261,7 +259,7 @@ class Email {
     if (!errors.isEmpty()) {
       throw new ApiValidationError(
         errorConsts.MSG_VALIDATION_ERROR,
-        errors.getErrors()
+        errors.getErrors(),
       );
     }
   }

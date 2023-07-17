@@ -74,7 +74,7 @@ class AuthService {
 
     await user.save();
 
-    const transporter = await createTransporter(user.id);
+    const transporter = await createTransporter();
     const emailService = new EmailService(transporter);
 
     return await emailService.sendResetTokenEmail(user);

@@ -20,8 +20,6 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.Income, { foreignKey: "user_id" });
 
       User.hasMany(models.Category, { foreignKey: "user_id" });
-
-      User.hasMany(models.EmailConfig, { foreignKey: "user_id" });
     }
   }
   User.init(
