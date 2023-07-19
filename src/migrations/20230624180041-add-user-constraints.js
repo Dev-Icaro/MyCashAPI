@@ -3,13 +3,13 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.addConstraint("User", {
+    await queryInterface.addConstraint("Users", {
       fields: ["username"],
       type: "unique",
       name: "unique_username_constraint",
     });
 
-    await queryInterface.addConstraint("User", {
+    await queryInterface.addConstraint("Users", {
       fields: ["email"],
       type: "unique",
       name: "unique_email_constraint",
@@ -17,7 +17,10 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.removeConstraint("User", "unique_username_constraint");
-    await queryInterface.removeConstraint("User", "unique_email_constraint");
+    await queryInterface.removeConstraint(
+      "Users",
+      "unique_username_constraint",
+    );
+    await queryInterface.removeConstraint("Users", "unique_email_constraint");
   },
 };
