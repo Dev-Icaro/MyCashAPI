@@ -1,8 +1,8 @@
 const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
 const { ApiInvalidArgumentError } = require("../errors/argument-errors");
-const { ERROR_MISSING_ARGUMENT } = require("../constants/error-constants");
-const models = require("../models");
-const Account = models.Account;
+const ErrorMessageFormatter = require("../helpers/error-message-formatter");
+const accountConsts = require("../constants/account-constants");
+const Account = require("../models").Account;
 
 /**
  * Serviço de contas bancárias.
@@ -16,8 +16,7 @@ class AccountService {
   constructor(userId) {
     if (!userId) {
       throw new ApiInvalidArgumentError(
-        ERROR_MISSING_ARGUMENT,
-        "userId in AccountService",
+        ErrorMessageFormatter.formatMissingArgumentErr("userId"),
       );
     }
 
@@ -101,6 +100,16 @@ class AccountService {
         user_id: Number(this.userId),
       },
     });
+  }
+
+  async increaseAccountBalance(accountId, amount) {
+    const account = await this.getAccountById(accountId);
+
+    if (!account) {
+      throw new Error(accountConsts.ACCOUNT_NOT_FOUND);
+    }
+
+    return await account.addToBalance(amount);
   }
 }
 

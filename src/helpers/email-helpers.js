@@ -9,10 +9,9 @@ const emailConsts = require("../constants/email-constants");
 
 // Helpers / Utils
 const ApiValidationResult = require("./api-validation-result");
-const { decrypt } = require("../utils/crypt-utils");
+const ErrorMessageFormatter = require("./error-message-formatter");
 
 // Models
-const { fileExists } = require("../utils/file-utils");
 const { ApiEmailConfigurationError } = require("../errors/email-errors");
 
 /**
@@ -29,9 +28,7 @@ function validateEmail(email) {
   const errors = new ApiValidationResult();
 
   if (validator.isEmpty(email.from)) {
-    errors.addError(
-      errorConsts.ERROR_EMPTY_FIELD.replace("{placeholder}", '"from"'),
-    );
+    errors.addError(ErrorMessageFormatter.formatNotEmptyErr("from"));
   }
   // Apenas valido o formato do email se ele passar pela condição anterior
   else if (!validator.isEmail(email.from)) {
@@ -41,9 +38,7 @@ function validateEmail(email) {
   }
 
   if (validator.isEmpty(email.subject)) {
-    errors.addError(
-      errorConsts.ERROR_EMPTY_FIELD.replace("{placeholder}", '"subject"'),
-    );
+    errors.addError(ErrorMessageFormatter.formatNotEmptyErr("subject"));
   }
 
   if (validator.isEmpty(email.text) && validator.isEmail(email.html)) {

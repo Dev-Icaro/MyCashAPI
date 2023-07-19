@@ -9,9 +9,8 @@ const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
 const { ApiUnauthorizedError } = require("../errors/auth-errors");
 const EmailService = require("../services/email-service");
 const authConsts = require("../constants/auth-constants");
-const models = require("../models");
 const { createTransporter } = require("../helpers/email-helpers");
-const User = models.User;
+const User = require("../models").User;
 
 /**
  *  Serviço de Autenticação, Contém funcionalidades relacionadas.

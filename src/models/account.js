@@ -1,8 +1,14 @@
 "use strict";
 const { Model } = require("sequelize");
 const errorConsts = require("../constants/error-constants");
+const ErrorMessageFormatter = require("../helpers/error-message-formatter");
 module.exports = (sequelize, DataTypes) => {
   class Account extends Model {
+    static async addToBalance(amount) {
+      this.balance += amount;
+      return await this.save();
+    }
+
     static associate(models) {
       // define association here
       Account.hasMany(models.Transaction, { foreignKey: "account_id" });
@@ -25,22 +31,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: errorConsts.ERROR_REQUIRED_FIELD.replace(
-              "{placeholder}",
-              "account_number",
-            ),
+            msg: ErrorMessageFormatter.formatNotNullErr("account_number"),
           },
           notEmpty: {
-            msg: errorConsts.ERROR_EMPTY_FIELD.replace(
-              "{placeholder}",
-              "account_number",
-            ),
+            msg: ErrorMessageFormatter.formatNotEmptyErr("account_number"),
           },
           isInt: {
-            msg: errorConsts.ERROR_NOT_INT.replace(
-              "{placeholder}",
-              "account_number",
-            ),
+            msg: ErrorMessageFormatter.formatNotEmptyErr("account_number"),
           },
         },
       },
@@ -49,16 +46,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: errorConsts.ERROR_REQUIRED_FIELD.replace(
-              "{placeholder}",
-              "account_type",
-            ),
+            msg: ErrorMessageFormatter.formatNotNullErr("account_type"),
           },
           notEmpty: {
-            msg: errorConsts.ERROR_EMPTY_FIELD.replace(
-              "{placeholder}",
-              "account_type",
-            ),
+            msg: ErrorMessageFormatter.formatNotNullErr("account_type"),
           },
         },
       },
@@ -76,10 +67,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "active",
         validate: {
           isAlpha: {
-            msg: errorConsts.ERROR_INVALID_FORMAT.replace(
-              "{placeholder}",
-              "status",
-            ),
+            msg: ErrorMessageFormatter.formatInvalidFormatErr("status"),
           },
         },
       },
@@ -88,16 +76,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: errorConsts.ERROR_REQUIRED_FIELD.replace(
-              "{placeholder}",
-              "institution",
-            ),
+            msg: ErrorMessageFormatter.formatNotNullErr("institution"),
           },
           notEmpty: {
-            msg: errorConsts.ERROR_EMPTY_FIELD.replace(
-              "{placeholder}",
-              "institution",
-            ),
+            msg: ErrorMessageFormatter.formatNotEmptyErr("institution"),
           },
         },
       },
@@ -107,10 +89,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 0.0,
         validate: {
           isFloat: {
-            msg: errorConsts.ERROR_NOT_NUMERIC.replace(
-              "{placeholder}",
-              "overdraft_limit",
-            ),
+            msg: ErrorMessageFormatter.formatNotFloatErr("overdraft_limit"),
           },
         },
       },
