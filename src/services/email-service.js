@@ -23,7 +23,7 @@ class EmailService {
   constructor(transporter) {
     if (!transporter) {
       throw new ApiInvalidArgumentError(
-        ErrorMessageFormatter.formatMissingArgumentErr("transporter"),
+        ErrorMessageFormatter.missingArgument("transporter"),
       );
     }
 
@@ -180,7 +180,7 @@ class Email {
   addAtthachment(path, filename) {
     if (validator.isEmpty(path)) {
       throw new ApiValidationError(
-        ErrorMessageFormatter.formatMissingArgumentErr("path"),
+        ErrorMessageFormatter.missingArgument("path"),
       );
     }
 
@@ -218,7 +218,7 @@ class Email {
   addReceiverAddress(emailAddress) {
     if (validator.isEmpty(emailAddress)) {
       throw new ApiValidationError(
-        ErrorMessageFormatter.formatMissingArgumentErr("emailAdress"),
+        ErrorMessageFormatter.missingArgument("emailAdress"),
       );
     }
 

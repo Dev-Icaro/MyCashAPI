@@ -31,13 +31,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.formatNotNullErr("account_number"),
+            msg: ErrorMessageFormatter.notNull("account_number"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.formatNotEmptyErr("account_number"),
+            msg: ErrorMessageFormatter.notEmpty("account_number"),
           },
           isInt: {
-            msg: ErrorMessageFormatter.formatNotEmptyErr("account_number"),
+            msg: ErrorMessageFormatter.notEmpty("account_number"),
           },
         },
       },
@@ -46,10 +46,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.formatNotNullErr("account_type"),
+            msg: ErrorMessageFormatter.notNull("account_type"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.formatNotNullErr("account_type"),
+            msg: ErrorMessageFormatter.notNull("account_type"),
           },
         },
       },
@@ -67,7 +67,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "active",
         validate: {
           isAlpha: {
-            msg: ErrorMessageFormatter.formatInvalidFormatErr("status"),
+            msg: ErrorMessageFormatter.invalidFormat("status"),
           },
         },
       },
@@ -76,10 +76,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.formatNotNullErr("institution"),
+            msg: ErrorMessageFormatter.notNull("institution"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.formatNotEmptyErr("institution"),
+            msg: ErrorMessageFormatter.notEmpty("institution"),
           },
         },
       },
@@ -89,7 +89,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 0.0,
         validate: {
           isFloat: {
-            msg: ErrorMessageFormatter.formatNotFloatErr("overdraft_limit"),
+            msg: ErrorMessageFormatter.notFloat("overdraft_limit"),
           },
         },
       },

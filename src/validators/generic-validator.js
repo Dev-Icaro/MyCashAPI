@@ -8,10 +8,10 @@ const validateIdParam = () => [
     .bail()
     .trim()
     .notEmpty()
-    .withMessage(ErrorMessageFormatter.formatMissingParamErr("id"))
+    .withMessage(ErrorMessageFormatter.missingParam("id"))
     .bail()
     .isInt()
-    .withMessage(ErrorMessageFormatter.formatNotIntegerErr("id"))
+    .withMessage(ErrorMessageFormatter.notInteger("id"))
     .bail(),
 ];
 

@@ -26,13 +26,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.formatNotNullErr("amount"),
+            msg: ErrorMessageFormatter.notNull("amount"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.formatNotEmptyErr("amount"),
+            msg: ErrorMessageFormatter.notEmpty("amount"),
           },
           isFloat: {
-            msg: ErrorMessageFormatter.formatNotFloatErr("amount"),
+            msg: ErrorMessageFormatter.notFloat("amount"),
           },
         },
       },
@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: new Date(),
         validate: {
           isDate: {
-            msg: ErrorMessageFormatter.formatInvalidDateTimeErr("date"),
+            msg: ErrorMessageFormatter.invalidDateTime("date"),
           },
         },
       },
@@ -51,10 +51,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.formatNotNullErr("description"),
+            msg: ErrorMessageFormatter.notNull("description"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.formatNotEmptyErr("description"),
+            msg: ErrorMessageFormatter.notEmpty("description"),
           },
         },
       },
@@ -63,10 +63,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.formatNotNullErr("payment_method"),
+            msg: ErrorMessageFormatter.notNull("payment_method"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.formatNotEmptyErr("payment_method"),
+            msg: ErrorMessageFormatter.notEmpty("payment_method"),
           },
         },
       },
@@ -75,13 +75,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.formatNotNullErr("account_id"),
+            msg: ErrorMessageFormatter.notNull("account_id"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.formatNotEmptyErr("account_id"),
+            msg: ErrorMessageFormatter.notEmpty("account_id"),
           },
           isInt: {
-            msg: ErrorMessageFormatter.formatNotIntegerErr("account_id"),
+            msg: ErrorMessageFormatter.notInteger("account_id"),
           },
         },
       },
@@ -90,13 +90,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.formatNotNullErr("user_id"),
+            msg: ErrorMessageFormatter.notNull("user_id"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.formatNotEmptyErr("user_id"),
+            msg: ErrorMessageFormatter.notEmpty("user_id"),
           },
           isInt: {
-            msg: ErrorMessageFormatter.formatNotIntegerErr("user_id"),
+            msg: ErrorMessageFormatter.notInteger("user_id"),
           },
         },
       },
@@ -105,13 +105,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.formatNotNullErr("category_id"),
+            msg: ErrorMessageFormatter.notNull("category_id"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.formatNotEmptyErr("category_id"),
+            msg: ErrorMessageFormatter.notEmpty("category_id"),
           },
           isInt: {
-            msg: ErrorMessageFormatter.formatNotIntegerErr("category_id"),
+            msg: ErrorMessageFormatter.notInteger("category_id"),
           },
         },
       },

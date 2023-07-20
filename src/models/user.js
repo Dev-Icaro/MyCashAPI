@@ -31,10 +31,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.formatNotNullErr("username"),
+            msg: ErrorMessageFormatter.notNull("username"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.formatNotEmptyErr("username"),
+            msg: ErrorMessageFormatter.notEmpty("username"),
           },
         },
       },
@@ -43,10 +43,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.formatNotNullErr("password"),
+            msg: ErrorMessageFormatter.notNull("password"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.formatNotEmptyErr("password"),
+            msg: ErrorMessageFormatter.notEmpty("password"),
           },
         },
       },
@@ -56,13 +56,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.formatNotNullErr("email"),
+            msg: ErrorMessageFormatter.notNull("email"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.formatNotEmptyErr("email"),
+            msg: ErrorMessageFormatter.notEmpty("email"),
           },
           isEmail: {
-            msg: ErrorMessageFormatter.formatInvalidEmailErr(this.email),
+            msg: ErrorMessageFormatter.invalidEmail(this.email),
           },
         },
       },
@@ -71,10 +71,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.formatNotNullErr("first_name"),
+            msg: ErrorMessageFormatter.notNull("first_name"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.formatNotEmptyErr("first_name"),
+            msg: ErrorMessageFormatter.notEmpty("first_name"),
           },
         },
       },
@@ -83,10 +83,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.formatNotNullErr("last_name"),
+            msg: ErrorMessageFormatter.notNull("last_name"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.formatNotEmptyErr("last_name"),
+            msg: ErrorMessageFormatter.notEmpty("last_name"),
           },
         },
       },

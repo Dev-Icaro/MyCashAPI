@@ -16,7 +16,7 @@ class AccountService {
   constructor(userId) {
     if (!userId) {
       throw new ApiInvalidArgumentError(
-        ErrorMessageFormatter.formatMissingArgumentErr("userId"),
+        ErrorMessageFormatter.missingArgument("userId"),
       );
     }
 
@@ -106,7 +106,7 @@ class AccountService {
     const account = await this.getAccountById(accountId);
 
     if (!account) {
-      throw new Error(accountConsts.ACCOUNT_NOT_FOUND);
+      throw new Error(accountConsts.MSG_NOT_FOUND);
     }
 
     return await account.addToBalance(amount);

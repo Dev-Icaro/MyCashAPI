@@ -5,6 +5,10 @@ class CategoryService extends ModelService {
   constructor(userId) {
     super(userId, Category);
   }
+
+  async isUserCategory(idCategory) {
+    return (await this.getById(idCategory)) ? true : false;
+  }
 }
 
 module.exports = CategoryService;

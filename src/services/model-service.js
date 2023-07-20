@@ -15,13 +15,13 @@ class ModelService {
   constructor(userId, model) {
     if (!userId) {
       throw new ApiInvalidArgumentError(
-        ErrorMessageFormatter.formatMissingArgumentErr("userId"),
+        ErrorMessageFormatter.missingArgument("userId"),
       );
     }
 
     if (!model) {
       throw new ApiInvalidArgumentError(
-        ErrorMessageFormatter.formatMissingArgumentErr("model"),
+        ErrorMessageFormatter.missingArgument("model"),
       );
     }
 

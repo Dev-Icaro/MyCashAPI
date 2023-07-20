@@ -1,10 +1,10 @@
 const ExpenseService = require("../services/expense-service");
 
 class ExpenseController {
-  static async getAllExpenses(req, res, next) {
+  static async getAll(req, res, next) {
     try {
       const expenseService = new ExpenseService(req.userId);
-      const expenses = await expenseService.getAllExpenses();
+      const expenses = await expenseService.getAll();
 
       return res.status(200).json(expenses);
     } catch (err) {
@@ -12,11 +12,11 @@ class ExpenseController {
     }
   }
 
-  static async getExpenseById(req, res, next) {
+  static async getById(req, res, next) {
     try {
       const { id } = req.params;
       const expenseService = new ExpenseService(req.userId);
-      const expense = await expenseService.getExpenseById(id);
+      const expense = await expenseService.getById(id);
 
       return res.status(200).json(expense);
     } catch (err) {
@@ -24,10 +24,10 @@ class ExpenseController {
     }
   }
 
-  static async createExpense(req, res, next) {
+  static async create(req, res, next) {
     try {
       const expenseService = new ExpenseService(req.userId);
-      const createdExpense = await expenseService.createExpense(req.body);
+      const createdExpense = await expenseService.create(req.body);
 
       return res.status(200).json(createdExpense);
     } catch (err) {
@@ -35,11 +35,11 @@ class ExpenseController {
     }
   }
 
-  static async updateExpenseById(req, res, next) {
+  static async updateById(req, res, next) {
     try {
       const { id } = req.params;
       const expenseService = new ExpenseService(req.userId);
-      const updatedExpense = await expenseService.updateExpenseById(id);
+      const updatedExpense = await expenseService.updateById(id);
 
       return res.status(200).json(updatedExpense);
     } catch (err) {
@@ -47,11 +47,11 @@ class ExpenseController {
     }
   }
 
-  static async deleteExpenseById(req, res, next) {
+  static async deleteById(req, res, next) {
     try {
       const { id } = req.params;
       const expenseService = new ExpenseService(req.userId);
-      const updatedExpense = await expenseService.deleteExpenseById(id);
+      const updatedExpense = await expenseService.deleteById(id);
 
       return res.status(200).json(updatedExpense);
     } catch (err) {

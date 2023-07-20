@@ -1,30 +1,13 @@
 const Expense = require("../models").Expense;
 const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
-const AccountService = require("./account-service");
+const ModelService = require("./model-service");
 
-class ExpenseService {
+class ExpenseService extends ModelService {
   constructor(userId) {
-    this.userId = userId;
+    super(userId, Expense);
   }
 
-  async getAllExpenses() {
-    return await Expense.findAll({
-      where: {
-        user_id: Number(this.userId),
-      },
-    });
-  }
-
-  async getExpenseById(id) {
-    return await Expense.findOne({
-      where: {
-        id: Number(id),
-        user_id: Number(this.userId),
-      },
-    });
-  }
-
-  async createExpense(expense, accountId) {
+  async create(expense) {
     expense.user_id = this.userId;
 
     // const accountService = new AccountService(this.userId);
@@ -36,26 +19,6 @@ class ExpenseService {
     return await Expense.create(expense).catch((err) =>
       SequelizeErrorWrapper.wrapError(err),
     );
-  }
-
-  async updateExpenseById(expense, id) {
-    return await Expense.update(expense, {
-      where: {
-        id: Number(id),
-        user_id: Number(this.userId),
-      },
-    })
-      .then(() => this.getExpenseById(id))
-      .catch((err) => SequelizeErrorWrapper.wrapError(err));
-  }
-
-  async deleteExpenseById(id) {
-    return await Expense.destroy({
-      where: {
-        id: Number(id),
-        user_id: Number(this.userId),
-      },
-    });
   }
 }
 

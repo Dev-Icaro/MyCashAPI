@@ -24,10 +24,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.formatNotNullErr("description"),
+            msg: ErrorMessageFormatter.notNull("description"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.formatNotEmptyErr("description"),
+            msg: ErrorMessageFormatter.notEmpty("description"),
           },
         },
       },

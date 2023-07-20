@@ -11,15 +11,15 @@ const validateAccountId = () => [
     .bail()
     .trim()
     .notEmpty()
-    .withMessage(ErrorMessageFormatter.formatMissingParamErr("id"))
+    .withMessage(ErrorMessageFormatter.missingParam("id"))
     .bail()
     .isInt()
-    .withMessage(ErrorMessageFormatter.formatNotIntegerErr("id"))
+    .withMessage(ErrorMessageFormatter.notInteger("id"))
     .bail()
     .custom(async (id, { req }) => {
       const accountService = new AccountService(req.userId);
       if (!(await accountService.getAccountById(id)))
-        throw new Error(accountConsts.ACCOUNT_NOT_FOUND);
+        throw new Error(accountConsts.MSG_NOT_FOUND);
     }),
 ];
 

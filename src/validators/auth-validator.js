@@ -12,25 +12,23 @@ const validateResetPassReq = () => [
   validatePass(),
   body("token")
     .exists()
-    .withMessage(ErrorMessageFormatter.formatNotNullErr("token"))
+    .withMessage(ErrorMessageFormatter.notNull("token"))
     .bail()
     .isInt()
-    .withMessage(ErrorMessageFormatter.formatNotIntegerErr("token")),
+    .withMessage(ErrorMessageFormatter.notInteger("token")),
 ];
 
 const validateEmail = () =>
   body("email")
     .exists()
-    .withMessage(ErrorMessageFormatter.formatNotNullErr("email"))
+    .withMessage(ErrorMessageFormatter.notNull("email"))
     .bail()
     .trim()
     .notEmpty()
-    .withMessage(ErrorMessageFormatter.formatNotEmptyErr("email"))
+    .withMessage(ErrorMessageFormatter.notEmpty("email"))
     .bail()
     .isEmail()
-    .withMessage((email, { req }) =>
-      ErrorMessageFormatter.formatInvalidEmailErr(email),
-    )
+    .withMessage((email, { req }) => ErrorMessageFormatter.invalidEmail(email))
     .bail()
     .custom(async (value) => {
       if (!(await User.findUserByEmail(value))) throw ERROR_USER_NOT_FOUND;
@@ -39,11 +37,11 @@ const validateEmail = () =>
 const validatePass = () => [
   body("password")
     .exists()
-    .withMessage(ErrorMessageFormatter.formatNotNullErr("password"))
+    .withMessage(ErrorMessageFormatter.notNull("password"))
     .bail()
     .trim()
     .notEmpty()
-    .withMessage(ErrorMessageFormatter.formatNotEmptyErr("password")),
+    .withMessage(ErrorMessageFormatter.notEmpty("password")),
 ];
 
 module.exports = { validateSiginReq, validateEmail, validateResetPassReq };
