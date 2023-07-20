@@ -18,7 +18,7 @@ const validateAccountId = () => [
     .bail()
     .custom(async (id, { req }) => {
       const accountService = new AccountService(req.userId);
-      if (!(await accountService.getAccountById(id)))
+      if (!(await accountService.getById(id)))
         throw new Error(accountConsts.MSG_NOT_FOUND);
     }),
 ];

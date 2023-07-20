@@ -11,15 +11,15 @@ router.use("/api/account", authMiddleware);
 
 router
   .route("/api/account")
-  .get(AccountController.getAllAccounts)
-  .post(AccountController.createAccount);
+  .get(AccountController.getAll)
+  .post(AccountController.create);
 
 router
   .route("/api/account/:id")
   .all(validateAccountId(), validationResultHandler)
-  .get(AccountController.getAccountById)
-  .put(AccountController.updateAccountById)
-  .delete(AccountController.deleteAccountById);
+  .get(AccountController.getById)
+  .put(AccountController.updateById)
+  .delete(AccountController.deleteById);
 
 router.use("/api/account", validationErrorHandler);
 
