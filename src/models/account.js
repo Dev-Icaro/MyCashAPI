@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
             msg: ErrorMessageFormatter.notEmpty("account_number"),
           },
           isInt: {
-            msg: ErrorMessageFormatter.notEmpty("account_number"),
+            msg: ErrorMessageFormatter.notInteger("account_number"),
           },
         },
       },

@@ -18,8 +18,7 @@ class AccountController {
    */
   static async getAll(req, res, next) {
     try {
-      const accountService = new AccountService(req.userId);
-      const accounts = await accountService.getAll();
+      const accounts = await AccountService.getAll(req.userId);
 
       return res.status(200).json(accounts);
     } catch (e) {
@@ -38,8 +37,7 @@ class AccountController {
   static async getById(req, res, next) {
     try {
       const { id } = req.params;
-      const accountService = new AccountService(req.userId);
-      const account = await accountService.getById(id);
+      const account = await AccountService.getById(id, req.userId);
 
       return res.status(200).json(account);
     } catch (e) {
@@ -57,8 +55,7 @@ class AccountController {
    */
   static async create(req, res, next) {
     try {
-      const accountService = new AccountService(req.userId);
-      const createdAccount = await accountService.create(req.body);
+      const createdAccount = await AccountService.create(req.body, req.userId);
 
       return res.status(200).json(createdAccount);
     } catch (e) {
@@ -77,8 +74,11 @@ class AccountController {
   static async updateById(req, res, next) {
     try {
       const { id } = req.params;
-      const accountService = new AccountService(req.userId);
-      const updatedAccount = await accountService.updateById(req.body, id);
+      const updatedAccount = await AccountService.updateById(
+        req.body,
+        id,
+        req.userId,
+      );
 
       return res.status(200).json(updatedAccount);
     } catch (e) {
@@ -97,8 +97,7 @@ class AccountController {
   static async deleteById(req, res, next) {
     try {
       const { id } = req.params;
-      const accountService = new AccountService(req.userId);
-      await accountService.deleteById(id);
+      await AccountService.deleteById(id, req.userId);
 
       return res
         .status(200)

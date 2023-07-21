@@ -1,4 +1,4 @@
-const SequelizeErrorWrapper = require("../helpers/Sequelize-error-wrapper");
+const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
 const Expense = require("../models/Expense");
 
 /**
@@ -41,8 +41,8 @@ class ExpenseService {
    * @param {Object} expense - O objeto da despesa a ser criada.
    * @returns {Promise<Object>} Uma Promise que resolve no objeto da despesa criada.
    */
-  static async create(expense) {
-    return await Expense.create(expense).catch((err) =>
+  static async create(expense, userId) {
+    return await Expense.create({ ...expense, user_id: userId }).catch((err) =>
       SequelizeErrorWrapper.wrapError(err),
     );
   }

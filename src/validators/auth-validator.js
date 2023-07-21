@@ -1,8 +1,10 @@
 const { body } = require("express-validator");
 const { ERROR_USER_NOT_FOUND } = require("../constants/user-constants.js");
 const errorsConsts = require("../constants/error-constants.js");
+const validator = require("validator");
 const models = require("../models");
 const ErrorMessageFormatter = require("../helpers/error-message-formatter.js");
+const { ApiInvalidArgumentError } = require("../errors/argument-errors.js");
 const User = models.User;
 
 const validateSiginReq = () => [validateEmail(), validatePass()];
@@ -44,4 +46,26 @@ const validatePass = () => [
     .withMessage(ErrorMessageFormatter.notEmpty("password")),
 ];
 
-module.exports = { validateSiginReq, validateEmail, validateResetPassReq };
+async function validateUserId(id) {
+  if (validator.isEmpty(id))
+    throw new ApiInvalidArgumentError(
+      ErrorMessageFormatter.notEmpty("user_id"),
+    );
+
+  if (!validator.isInt(id))
+    throw new ApiInvalidArgumentError(
+      ErrorMessageFormatter.notInteger("user_id"),
+    );
+
+  if (!(await User.findByPk(id)))
+    throw new ApiInvalidArgumentError(
+      ErrorMessageFormatter.notFound("user_id"),
+    );
+}
+
+module.exports = {
+  validateSiginReq,
+  validateEmail,
+  validateResetPassReq,
+  validateUserId,
+};
