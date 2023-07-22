@@ -7,20 +7,20 @@ const { validationErrorHandler } = require("../middlewares/error-handlers");
 
 const router = Router();
 
-router.use("/api/expense", authMiddleware);
+router.use("/api/expenses", authMiddleware);
 
 router
-  .route("/api/expense")
+  .route("/api/expenses")
   .get(ExpenseController.getAll)
   .post(ExpenseController.create);
 
 router
-  .route("/api/expense/:id")
-  .all(validateExpenseIdParam, validationResultHandler)
+  .route("/api/expenses/:id")
+  .all(validateExpenseIdParam(), validationResultHandler)
   .get(ExpenseController.getById)
   .put(ExpenseController.updateById)
   .delete(ExpenseController.deleteById);
 
-router.use("/api/expense", validationErrorHandler);
+router.use("/api/expenses", validationErrorHandler);
 
 module.exports = router;

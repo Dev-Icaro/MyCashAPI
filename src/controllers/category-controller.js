@@ -1,11 +1,21 @@
 const CategoryService = require("../services/category-service");
 const categoryConsts = require("../constants/category-constants");
 
+/**
+ * Controller handling HTTP requests related to categories in the application.
+ */
 class CategoryController {
+  /**
+   * Get all categories for the authenticated user.
+   *
+   * @param {object} req - Express request object.
+   * @param {object} res - Express response object.
+   * @param {function} next - Next middleware function.
+   * @returns {object} - JSON object containing the categories data.
+   */
   static async getAll(req, res, next) {
     try {
-      const categoryService = new CategoryService(req.userId);
-      const categories = await categoryService.getAll();
+      const categories = await CategoryService.getAll(req.userId);
 
       return res.status(200).json(categories);
     } catch (err) {
@@ -13,11 +23,18 @@ class CategoryController {
     }
   }
 
+  /**
+   * Get a specific category by its ID for the authenticated user.
+   *
+   * @param {object} req - Express request object.
+   * @param {object} res - Express response object.
+   * @param {function} next - Next middleware function.
+   * @returns {object} - JSON object containing the category data.
+   */
   static async getById(req, res, next) {
     try {
       const { id } = req.params;
-      const categoryService = new CategoryService(req.userId);
-      const category = await categoryService.getById(id);
+      const category = await CategoryService.getById(id, req.userId);
 
       return res.status(200).json(category);
     } catch (err) {
@@ -25,10 +42,20 @@ class CategoryController {
     }
   }
 
+  /**
+   * Create a new category for the authenticated user.
+   *
+   * @param {object} req - Express request object.
+   * @param {object} res - Express response object.
+   * @param {function} next - Next middleware function.
+   * @returns {object} - JSON object containing the created category data.
+   */
   static async create(req, res, next) {
     try {
-      const categoryService = new CategoryService(req.userId);
-      const createdCategory = await categoryService.create(req.body);
+      const createdCategory = await CategoryService.create(
+        req.body,
+        req.userId,
+      );
 
       return res.status(200).json(createdCategory);
     } catch (err) {
@@ -36,11 +63,18 @@ class CategoryController {
     }
   }
 
+  /**
+   * Delete a category by its ID for the authenticated user.
+   *
+   * @param {object} req - Express request object.
+   * @param {object} res - Express response object.
+   * @param {function} next - Next middleware function.
+   * @returns {object} - JSON object with a success message.
+   */
   static async deleteById(req, res, next) {
     try {
       const { id } = req.params;
-      const categoryService = new CategoryService(req.userId);
-      await categoryService.deleteById(id);
+      await CategoryService.deleteById(id, req.userId);
 
       return res.status(200).json({ message: categoryConsts.MSG_DELETED });
     } catch (err) {
@@ -48,11 +82,22 @@ class CategoryController {
     }
   }
 
+  /**
+   * Update a category by its ID for the authenticated user.
+   *
+   * @param {object} req - Express request object.
+   * @param {object} res - Express response object.
+   * @param {function} next - Next middleware function.
+   * @returns {object} - JSON object containing the updated category data.
+   */
   static async updateById(req, res, next) {
     try {
       const { id } = req.params;
-      const categoryService = new CategoryService(req.userId);
-      const updatedCategory = await categoryService.updateById(req.body, id);
+      const updatedCategory = await CategoryService.updateById(
+        req.body,
+        id,
+        req.userId,
+      );
 
       return res.status(200).json(updatedCategory);
     } catch (err) {

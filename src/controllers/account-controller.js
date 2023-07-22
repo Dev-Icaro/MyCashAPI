@@ -99,9 +99,9 @@ class AccountController {
       const { id } = req.params;
       await AccountService.deleteById(id, req.userId);
 
-      return res
-        .status(200)
-        .json(accountConsts.ACCOUNT_DELETED.replace("{placeholder}", id));
+      return res.status(200).json({
+        mesage: accountConsts.MSG_DELETED.replace("{placeholder}", id),
+      });
     } catch (e) {
       next(e);
     }

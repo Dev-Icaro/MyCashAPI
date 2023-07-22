@@ -7,8 +7,7 @@ const categoryConsts = require("../constants/category-constants");
 const validateCategoryIdParam = () => [
   validateIdParam(),
   param("id").custom(async (id, { req }) => {
-    const categoryService = new CategoryService(req.userId);
-    if (!(await categoryService.getById(id)))
+    if (!(await CategoryService.getById(id, req.userId)))
       throw new ApiInvalidArgumentError(categoryConsts.MSG_NOT_FOUND);
   }),
 ];

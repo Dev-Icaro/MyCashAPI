@@ -1,4 +1,5 @@
 const ExpenseService = require("../services/expense-service");
+const expenseConsts = require("../constants/expense-constants");
 
 /**
  * Controller responsável por manipular as requisições relacionadas a despesas.
@@ -98,9 +99,9 @@ class ExpenseController {
   static async deleteById(req, res, next) {
     try {
       const { id } = req.params;
-      const deletedRows = await ExpenseService.deleteById(id, req.userId);
+      await ExpenseService.deleteById(id, req.userId);
 
-      return res.status(200).json(deletedRows);
+      return res.status(200).json(expenseConsts.MSG_DELETED);
     } catch (err) {
       next(err);
     }

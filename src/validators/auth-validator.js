@@ -47,12 +47,12 @@ const validatePass = () => [
 ];
 
 async function validateUserId(id) {
-  if (validator.isEmpty(id))
+  if (!id)
     throw new ApiInvalidArgumentError(
       ErrorMessageFormatter.notEmpty("user_id"),
     );
 
-  if (!validator.isInt(id))
+  if (!typeof id === "number")
     throw new ApiInvalidArgumentError(
       ErrorMessageFormatter.notInteger("user_id"),
     );

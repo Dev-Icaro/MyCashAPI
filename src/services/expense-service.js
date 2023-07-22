@@ -1,5 +1,5 @@
 const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
-const Expense = require("../models/Expense");
+const Expense = require("../models").Expense;
 
 /**
  * Classe responsável por fornecer serviços relacionados a despesas.
@@ -55,7 +55,7 @@ class ExpenseService {
    * @param {number} userId - O ID do usuário dono da despesa.
    * @returns {Promise<Object>} Uma Promise que resolve no objeto da despesa atualizada.
    */
-  async updateById(expense, id, userId) {
+  static async updateById(expense, id, userId) {
     return await Expense.update(expense, {
       where: {
         id: Number(id),
@@ -77,7 +77,7 @@ class ExpenseService {
    * @param {number} userId - O ID do usuário dono da despesa.
    * @returns {Promise<number>} Uma Promise que resolve com o número de linhas excluídas (0 ou 1).
    */
-  async deleteById(id, userId) {
+  static async deleteById(id, userId) {
     return await Expense.destroy({
       where: {
         id: Number(id),

@@ -1,4 +1,6 @@
-const Category = require("../models/category");
+const Category = require("../models").Category;
+const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
+const { validateUserId } = require("../validators/auth-validator");
 
 /**
  * Classe responsável por fornecer serviços relacionados a categorias.
@@ -12,6 +14,8 @@ class CategoryService {
    * @throws {Error} Se ocorrer algum erro durante a execução do método.
    */
   static async getAll(userId) {
+    await validateUserId(userId);
+
     return await Category.findAll({
       where: {
         user_id: Number(userId),
@@ -28,6 +32,8 @@ class CategoryService {
    * @throws {Error} Se ocorrer algum erro durante a execução do método.
    */
   static async getById(id, userId) {
+    await validateUserId(userId);
+
     return await Category.findOne({
       where: {
         id: Number(id),
@@ -44,6 +50,8 @@ class CategoryService {
    * @throws {Error} Se ocorrer algum erro durante a execução do método.
    */
   static async create(category, userId) {
+    await validateUserId(userId);
+
     return await Category.create({ ...category, user_id: userId }).catch(
       (err) => SequelizeErrorWrapper.wrapError(err),
     );
@@ -58,7 +66,9 @@ class CategoryService {
    * @returns {Promise<Object>} Uma Promise que resolve no objeto da categoria atualizada.
    * @throws {Error} Se ocorrer algum erro durante a execução do método.
    */
-  async updateById(category, id, userId) {
+  static async updateById(category, id, userId) {
+    await validateUserId(userId);
+
     return await Category.update(category, {
       where: {
         id: Number(id),
@@ -81,7 +91,9 @@ class CategoryService {
    * @returns {Promise<number>} Uma Promise que resolve com o número de linhas excluídas (0 ou 1).
    * @throws {Error} Se ocorrer algum erro durante a execução do método.
    */
-  async deleteById(id, userId) {
+  static async deleteById(id, userId) {
+    await validateUserId(userId);
+
     return await Category.destroy({
       where: {
         id: Number(id),
