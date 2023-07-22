@@ -1,5 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
+const ErrorMessageFormatter = require("../helpers/error-message-formatter");
 module.exports = (sequelize, DataTypes) => {
   class Category extends Model {
     /**
@@ -18,12 +19,23 @@ module.exports = (sequelize, DataTypes) => {
   }
   Category.init(
     {
-      description: DataTypes.STRING,
+      description: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: ErrorMessageFormatter.notNull("description"),
+          },
+          notEmpty: {
+            msg: ErrorMessageFormatter.notEmpty("description"),
+          },
+        },
+      },
     },
     {
       sequelize,
       modelName: "Category",
-    }
+    },
   );
   return Category;
 };

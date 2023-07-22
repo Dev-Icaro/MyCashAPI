@@ -16,10 +16,9 @@ class AccountController {
    * @param {import("express").NextFunction} next
    * @returns {Account} - JSON contendo todas as contas do usuário.
    */
-  static async getAllAccounts(req, res, next) {
+  static async getAll(req, res, next) {
     try {
-      const accountService = new AccountService(req.userId);
-      const accounts = await accountService.getAllAccounts();
+      const accounts = await AccountService.getAll(req.userId);
 
       return res.status(200).json(accounts);
     } catch (e) {
@@ -35,11 +34,10 @@ class AccountController {
    * @param {import("express").NextFunction} next
    * @returns {Account} - JSON contendo a conta solicitada.
    */
-  static async getAccountById(req, res, next) {
+  static async getById(req, res, next) {
     try {
       const { id } = req.params;
-      const accountService = new AccountService(req.userId);
-      const account = await accountService.getAccountById(id);
+      const account = await AccountService.getById(id, req.userId);
 
       return res.status(200).json(account);
     } catch (e) {
@@ -55,10 +53,9 @@ class AccountController {
    * @param {import("express").NextFunction} next
    * @returns {Account} - JSON contendo a conta criada.
    */
-  static async createAccount(req, res, next) {
+  static async create(req, res, next) {
     try {
-      const accountService = new AccountService(req.userId);
-      const createdAccount = await accountService.createAccount(req.body);
+      const createdAccount = await AccountService.create(req.body, req.userId);
 
       return res.status(200).json(createdAccount);
     } catch (e) {
@@ -74,13 +71,13 @@ class AccountController {
    * @param {import("express").NextFunction} next
    * @returns {Account} - JSON contendo as informações atualizadas.
    */
-  static async updateAccountById(req, res, next) {
+  static async updateById(req, res, next) {
     try {
       const { id } = req.params;
-      const accountService = new AccountService(req.userId);
-      const updatedAccount = await accountService.updateAccountById(
+      const updatedAccount = await AccountService.updateById(
         req.body,
         id,
+        req.userId,
       );
 
       return res.status(200).json(updatedAccount);
@@ -97,15 +94,14 @@ class AccountController {
    * @param {import("express").NextFunction} next
    * @returns {string} - Mensagem de conta deletada com sucesso.
    */
-  static async deleteAccountById(req, res, next) {
+  static async deleteById(req, res, next) {
     try {
       const { id } = req.params;
-      const accountService = new AccountService(req.userId);
-      await accountService.deleteAccountById(id);
+      await AccountService.deleteById(id, req.userId);
 
-      return res
-        .status(200)
-        .json(accountConsts.ACCOUNT_DELETED.replace("{placeholder}", id));
+      return res.status(200).json({
+        mesage: accountConsts.MSG_DELETED.replace("{placeholder}", id),
+      });
     } catch (e) {
       next(e);
     }

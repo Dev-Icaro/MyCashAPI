@@ -2,23 +2,23 @@ const errorConsts = require("../constants/error-constants");
 const accountConsts = require("../constants/account-constants");
 const { param } = require("express-validator");
 const AccountService = require("../services/account-service");
+const ErrorMessageFormatter = require("../helpers/error-message-formatter");
 
 const validateAccountId = () => [
   param("id")
     .exists()
-    .withMessage(errorConsts.ERROR_REQUIRED_PARAM.replace("{param}", "id"))
+    .withMessage()
     .bail()
     .trim()
     .notEmpty()
-    .withMessage(errorConsts.ERROR_EMPTY_FIELD.replace("{placeholder}", "id"))
+    .withMessage(ErrorMessageFormatter.missingParam("id"))
     .bail()
     .isInt()
-    .withMessage(errorConsts.ERROR_NOT_INT.replace("{placeholder}", "id"))
+    .withMessage(ErrorMessageFormatter.notInteger("id"))
     .bail()
     .custom(async (id, { req }) => {
-      const accountService = new AccountService(req.userId);
-      if (!(await accountService.getAccountById(id)))
-        throw new Error(accountConsts.ACCOUNT_NOT_FOUND);
+      if (!(await AccountService.getById(id, req.userId)))
+        throw new Error(accountConsts.MSG_NOT_FOUND);
     }),
 ];
 

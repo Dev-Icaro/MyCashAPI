@@ -1,106 +1,118 @@
+const accountConsts = require("../constants/account-constants");
 const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
-const { ApiInvalidArgumentError } = require("../errors/argument-errors");
-const { ERROR_MISSING_ARGUMENT } = require("../constants/error-constants");
-const models = require("../models");
-const Account = models.Account;
+const Account = require("../models").Account;
+const { validateUserId } = require("../validators/auth-validator");
 
 /**
  * Serviço de contas bancárias.
  */
 class AccountService {
   /**
-   * Cria uma instância de AccountService
+   * Obtém todas as contas bancárias associadas a um determinado usuário.
    *
-   * @param {integer} userId - Id do usuário que iremos efetuar as operações
+   * @param {number} userId - O ID do usuário proprietário das contas.
+   * @returns {Promise<Array>} Uma promise que resolve para uma lista de contas bancárias.
    */
-  constructor(userId) {
-    if (!userId) {
-      throw new ApiInvalidArgumentError(
-        ERROR_MISSING_ARGUMENT,
-        "userId in AccountService",
-      );
-    }
+  static async getAll(userId) {
+    await validateUserId(userId);
 
-    this.userId = userId;
-  }
-
-  /**
-   * Pega todas as contas do usuário.
-   *
-   * @returns {Account} - JSON contendo as contas bancárias do usuário.
-   */
-  async getAllAccounts() {
     return await Account.findAll({
       where: {
-        user_id: Number(this.userId),
+        user_id: Number(userId),
       },
     });
   }
 
   /**
-   * Retorna uma conta do usuário pelo id.
+   * Obtém os detalhes de uma conta bancária específica com base no ID da conta e no ID do usuário proprietário.
    *
-   * @param {integer} id - Id da conta do usuário.
-   * @returns {Account}
+   * @param {number} id - O ID da conta bancária a ser buscada.
+   * @param {number} userId - O ID do usuário proprietário da conta.
+   * @returns {Promise<Object>} Uma promise que resolve para os detalhes da conta bancária encontrada.
    */
-  async getAccountById(id) {
+  static async getById(id, userId) {
+    await validateUserId(userId);
+
     return await Account.findOne({
       where: {
-        user_id: Number(this.userId),
         id: Number(id),
+        user_id: Number(userId),
       },
     });
   }
 
   /**
-   * Cria uma conta bancária vinculada ao usuário.
+   * Cria uma nova conta bancária associada a um usuário.
    *
-   * @param {Account} account - JSON contendo as informações necessárias
-   * para a criação da conta.
-   * @returns {Account} - JSON contendo a conta bancária criada.
+   * @param {Object} account - Um objeto contendo as informações da nova conta bancária.
+   * @param {number} userId - O ID do usuário proprietário da nova conta.
+   * @returns {Promise<Object>} Uma promise que resolve para os detalhes da nova conta criada.
    */
-  async createAccount(account) {
-    account.user_id = this.userId;
+  static async create(account, userId) {
+    await validateUserId(userId);
 
-    return await Account.create(account)
-      .then((createdAccount) => {
-        return createdAccount;
-      })
-      .catch((err) => SequelizeErrorWrapper.wrapError(err));
+    return await Account.create({ ...account, user_id: userId }).catch((err) =>
+      SequelizeErrorWrapper.wrapError(err),
+    );
   }
 
   /**
-   * Atualiza uma conta bancária do usuário pelo ID.
+   * Atualiza os detalhes de uma conta bancária existente com base no ID da conta e do usuário proprietário.
    *
-   * @param {Account} updatedAccount - Dados que desejamos atualizar na conta.
-   * @param {integer} id - Id da conta que desejamos atualizar.
-   * @returns {Account} - Dados atualizados da conta.
+   * @param {Object} account - Um objeto contendo as informações atualizadas da conta bancária.
+   * @param {number} id - O ID da conta bancária a ser atualizada.
+   * @param {number} userId - O ID do usuário proprietário da conta.
+   * @returns {Promise<Object>} Uma promise que resolve para os detalhes atualizados da conta bancária.
    */
-  async updateAccountById(updatedAccount, id) {
-    return await Account.update(updatedAccount, {
+  static async updateById(account, id, userId) {
+    await validateUserId(userId);
+
+    return await Account.update(account, {
       where: {
         id: Number(id),
-        user_id: Number(this.userId),
+        user_id: Number(userId),
       },
     })
-      .then(async () => {
-        return await this.getAccountById(id);
-      })
+      .then(async () => await this.getById(id, userId))
       .catch((err) => SequelizeErrorWrapper.wrapError(err));
   }
 
   /**
-   * Deleta uma conta bancária do usuário.
+   * Exclui uma conta bancária existente com base no ID da conta e do usuário proprietário.
    *
-   * @param {integer} id - Id da conta que desejamos deletar.
+   * @param {number} id - O ID da conta bancária a ser excluída.
+   * @param {number} userId - O ID do usuário proprietário da conta.
+   * @returns {Promise<boolean>} Uma promise que resolve para verdadeiro (true) se a conta foi excluída com sucesso.
    */
-  async deleteAccountById(id) {
-    await Account.destroy({
+  static async deleteById(id, userId) {
+    await validateUserId(userId);
+
+    return await Account.destroy({
       where: {
         id: Number(id),
-        user_id: Number(this.userId),
+        user_id: Number(userId),
       },
-    });
+    }).catch((err) => SequelizeErrorWrapper.wrapError(err));
+  }
+
+  /**
+   * Aumenta o saldo de uma conta bancária específica.
+   *
+   * @param {number} accountId - O ID da conta bancária cujo saldo será aumentado.
+   * @param {number} amount - O valor a ser adicionado ao saldo atual da conta.
+   * @param {number} userId - O ID do usuário proprietário da conta.
+   * @returns {Promise<number>} Uma promise que resolve para o novo saldo atual da conta.
+   * @throws {Error} Lança um erro se a conta não for encontrada.
+   */
+  static async increaseAccountBalance(accountId, amount, userId) {
+    await validateUserId(userId);
+
+    const account = await this.getById(accountId);
+    if (!account) {
+      throw new Error(accountConsts.MSG_NOT_FOUND);
+    }
+
+    return await account.addToBalance(amount);
   }
 }
 

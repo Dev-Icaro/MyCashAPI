@@ -14,6 +14,7 @@ const { ApiEmailSendError } = require("../errors/email-errors");
 // Helpers / Utils
 const { fileExists } = require("../utils/file-utils");
 const { validateEmail } = require("../helpers/email-helpers");
+const ErrorMessageFormatter = require("../helpers/error-message-formatter");
 
 /**
  * Serviço de envio de emails.
@@ -22,8 +23,7 @@ class EmailService {
   constructor(transporter) {
     if (!transporter) {
       throw new ApiInvalidArgumentError(
-        errorConsts.ERROR_MISSING_ARGUMENT,
-        "'transporter' at EmailService constructor",
+        ErrorMessageFormatter.missingArgument("transporter"),
       );
     }
 
@@ -180,7 +180,7 @@ class Email {
   addAtthachment(path, filename) {
     if (validator.isEmpty(path)) {
       throw new ApiValidationError(
-        errorConsts.ERROR_EMPTY_PARAM.replace("{placeholder}", '"path"'),
+        ErrorMessageFormatter.missingArgument("path"),
       );
     }
 
@@ -218,7 +218,7 @@ class Email {
   addReceiverAddress(emailAddress) {
     if (validator.isEmpty(emailAddress)) {
       throw new ApiValidationError(
-        errorConsts.ERROR_EMPTY_PARAM.replace("{placeholder}", "emailAddress"),
+        ErrorMessageFormatter.missingArgument("emailAdress"),
       );
     }
 

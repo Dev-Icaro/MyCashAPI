@@ -23,11 +23,16 @@ module.exports = (sequelize, DataTypes) => {
       description: DataTypes.STRING,
       payment_method: DataTypes.STRING,
       receipt: DataTypes.STRING,
+      is_paid: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
     },
     {
       sequelize,
       modelName: "Income",
-    }
+    },
   );
   return Income;
 };

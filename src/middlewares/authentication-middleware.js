@@ -18,7 +18,7 @@ async function authenticationMiddleware(req, res, next) {
 
   if (!authorization) {
     return res
-      .status(400)
+      .status(401)
       .json({ message: authConsts.MSG_AUTH_HEADER_MISSING });
   }
 
@@ -26,7 +26,7 @@ async function authenticationMiddleware(req, res, next) {
 
   if (!isAuthFormatValid(authValues)) {
     return res
-      .status(400)
+      .status(401)
       .json({ message: authConsts.MSG_INVALID_AUTH_FORMAT });
   }
 
@@ -38,7 +38,12 @@ async function authenticationMiddleware(req, res, next) {
       req.userId = decoded.userId;
     })
     .catch((err) => {
-      return res.status(409).json({ message: authConsts.MSG_INVALID_TOKEN });
+      const errMessage =
+        err.name === "TokenExpiredError"
+          ? authConsts.ERROR_TOKEN_EXPIRED
+          : authConsts.MSG_INVALID_TOKEN;
+
+      return res.status(401).json({ message: errMessage });
     });
 
   return next();

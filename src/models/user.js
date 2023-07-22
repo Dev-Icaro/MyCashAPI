@@ -2,6 +2,7 @@
 const { Model } = require("sequelize");
 const { hashString } = require("../utils/crypt-utils");
 const errorsConsts = require("../constants/error-constants");
+const ErrorMessageFormatter = require("../helpers/error-message-formatter");
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -30,16 +31,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: errorsConsts.ERROR_REQUIRED_FIELD.replace(
-              "{placeholder}",
-              "username"
-            ),
+            msg: ErrorMessageFormatter.notNull("username"),
           },
           notEmpty: {
-            msg: errorsConsts.ERROR_EMPTY_FIELD.replace(
-              "{placeholder}",
-              "username"
-            ),
+            msg: ErrorMessageFormatter.notEmpty("username"),
           },
         },
       },
@@ -48,16 +43,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: errorsConsts.ERROR_REQUIRED_FIELD.replace(
-              "{placeholder}",
-              "password"
-            ),
+            msg: ErrorMessageFormatter.notNull("password"),
           },
           notEmpty: {
-            msg: errorsConsts.ERROR_EMPTY_FIELD.replace(
-              "{placeholder}",
-              "password"
-            ),
+            msg: ErrorMessageFormatter.notEmpty("password"),
           },
         },
       },
@@ -67,22 +56,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: errorsConsts.ERROR_REQUIRED_FIELD.replace(
-              "{placeholder}",
-              "email"
-            ),
+            msg: ErrorMessageFormatter.notNull("email"),
           },
           notEmpty: {
-            msg: errorsConsts.ERROR_EMPTY_FIELD.replace(
-              "{placeholder}",
-              "email"
-            ),
+            msg: ErrorMessageFormatter.notEmpty("email"),
           },
           isEmail: {
-            msg: errorsConsts.ERROR_INVALID_FORMAT.replace(
-              "{placeholder}",
-              "email"
-            ),
+            msg: ErrorMessageFormatter.invalidEmail(this.email),
           },
         },
       },
@@ -91,16 +71,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: errorsConsts.ERROR_REQUIRED_FIELD.replace(
-              "{placeholder}",
-              "first_name"
-            ),
+            msg: ErrorMessageFormatter.notNull("first_name"),
           },
           notEmpty: {
-            msg: errorsConsts.ERROR_EMPTY_FIELD.replace(
-              "{placeholder}",
-              "first_name"
-            ),
+            msg: ErrorMessageFormatter.notEmpty("first_name"),
           },
         },
       },
@@ -109,16 +83,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: errorsConsts.ERROR_REQUIRED_FIELD.replace(
-              "{placeholder}",
-              "last_name"
-            ),
+            msg: ErrorMessageFormatter.notNull("last_name"),
           },
           notEmpty: {
-            msg: errorsConsts.ERROR_EMPTY_FIELD.replace(
-              "{placeholder}",
-              "last_name"
-            ),
+            msg: ErrorMessageFormatter.notEmpty("last_name"),
           },
         },
       },
@@ -130,7 +98,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "User",
-    }
+    },
   );
 
   User.addHook("beforeCreate", async (user, options) => {
