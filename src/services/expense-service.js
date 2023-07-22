@@ -1,17 +1,20 @@
 const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
 const Expense = require("../models").Expense;
+const { validateUserId } = require("../validators/auth-validator");
 
 /**
- * Classe responsável por fornecer serviços relacionados a despesas.
+ * Class responsible for providing expense-related services.
  */
 class ExpenseService {
   /**
-   * Obtém todas as despesas de um determinado usuário.
+   * Get all expenses of a specific user.
    *
-   * @param {number} userId - O ID do usuário para filtrar as despesas.
-   * @returns {Promise<Array>} Uma Promise que resolve em um array com todas as despesas do usuário.
+   * @param {number} userId - The ID of the user to filter expenses.
+   * @returns {Promise<Array>} A Promise that resolves to an array with all the user's expenses.
    */
   static async getAll(userId) {
+    await validateUserId(userId);
+
     return await Expense.findAll({
       where: {
         user_id: Number(userId),
@@ -20,13 +23,15 @@ class ExpenseService {
   }
 
   /**
-   * Obtém uma despesa específica com base no ID e no ID do usuário.
+   * Get a specific expense based on the ID and user ID.
    *
-   * @param {number} id - O ID da despesa.
-   * @param {number} userId - O ID do usuário dono da despesa.
-   * @returns {Promise<Object>} Uma Promise que resolve no objeto da despesa encontrada.
+   * @param {number} id - The ID of the expense.
+   * @param {number} userId - The ID of the user who owns the expense.
+   * @returns {Promise<Object>} A Promise that resolves to the found expense object.
    */
   static async getById(id, userId) {
+    await validateUserId(userId);
+
     return await Expense.findOne({
       where: {
         id: Number(id),
@@ -36,26 +41,31 @@ class ExpenseService {
   }
 
   /**
-   * Cria uma nova despesa.
+   * Create a new expense.
    *
-   * @param {Object} expense - O objeto da despesa a ser criada.
-   * @returns {Promise<Object>} Uma Promise que resolve no objeto da despesa criada.
+   * @param {Object} expense - The expense object to be created.
+   * @param {number} userId - The ID of the user who owns the expense.
+   * @returns {Promise<Object>} A Promise that resolves to the created expense object.
    */
   static async create(expense, userId) {
+    await validateUserId(userId);
+
     return await Expense.create({ ...expense, user_id: userId }).catch((err) =>
       SequelizeErrorWrapper.wrapError(err),
     );
   }
 
   /**
-   * Atualiza uma despesa existente com base no ID e no ID do usuário.
+   * Update an existing expense based on the ID and user ID.
    *
-   * @param {Object} expense - O objeto da despesa a ser atualizada.
-   * @param {number} id - O ID da despesa a ser atualizada.
-   * @param {number} userId - O ID do usuário dono da despesa.
-   * @returns {Promise<Object>} Uma Promise que resolve no objeto da despesa atualizada.
+   * @param {Object} expense - The expense object to be updated.
+   * @param {number} id - The ID of the expense to be updated.
+   * @param {number} userId - The ID of the user who owns the expense.
+   * @returns {Promise<Object>} A Promise that resolves to the updated expense object.
    */
   static async updateById(expense, id, userId) {
+    await validateUserId(userId);
+
     return await Expense.update(expense, {
       where: {
         id: Number(id),
@@ -71,13 +81,15 @@ class ExpenseService {
   }
 
   /**
-   * Exclui uma despesa existente com base no ID e no ID do usuário.
+   * Delete an existing expense based on the ID and user ID.
    *
-   * @param {number} id - O ID da despesa a ser excluída.
-   * @param {number} userId - O ID do usuário dono da despesa.
-   * @returns {Promise<number>} Uma Promise que resolve com o número de linhas excluídas (0 ou 1).
+   * @param {number} id - The ID of the expense to be deleted.
+   * @param {number} userId - The ID of the user who owns the expense.
+   * @returns {Promise<number>} A Promise that resolves with the number of deleted rows (0 or 1).
    */
   static async deleteById(id, userId) {
+    await validateUserId(userId);
+
     return await Expense.destroy({
       where: {
         id: Number(id),
