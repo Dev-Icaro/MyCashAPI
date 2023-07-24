@@ -20,6 +20,8 @@ module.exports = {
   ERROR_NOT_ALPHANUMERIC: "Expected a Alphanumeric value in {placeholder}",
   ERROR_MISSING_ARGUMENT: "Missing required argument {placeholder}",
   ERROR_REQUIRED_FIELD: "Missing required field {placeholder}",
+  ERROR_INVALID_ENUM:
+    "The value of {placeholder} must be in [{enumPlaceholder}]",
   MSG_VALIDATION_ERROR: "Validation error",
   MSG_UNIQUE_CONSTRAINT_ERROR: "Unique constraint error",
   ERROR_REQUEST_FAIL: "An error occurred during the request: \n",

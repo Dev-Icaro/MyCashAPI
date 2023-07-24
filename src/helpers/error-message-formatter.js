@@ -89,6 +89,13 @@ class ErrorMessageFormatter {
       placeholderValue,
     );
   }
+
+  static invalidEnum(placeholderValue, enumPlaceholderValue) {
+    return errorConsts.ERROR_INVALID_ENUM.replace(
+      "{placeholder}",
+      placeholderValue,
+    ).replace("{enumPlaceholder}", enumPlaceholderValue);
+  }
 }
 
 module.exports = ErrorMessageFormatter;

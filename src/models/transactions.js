@@ -1,5 +1,8 @@
 "use strict";
 const { Model } = require("sequelize");
+const ErrorMessageFormatter = require("../helpers/error-message-formatter");
+const TransactionTypesEnum = require("../enums/transaction-types-enum");
+
 module.exports = (sequelize, DataTypes) => {
   class Transaction extends Model {
     /**
@@ -16,15 +19,53 @@ module.exports = (sequelize, DataTypes) => {
   }
   Transaction.init(
     {
-      amount: DataTypes.DOUBLE,
-      date: DataTypes.DATE,
-      description: DataTypes.STRING,
-      transaction_type: DataTypes.STRING,
+      amount: {
+        type: DataTypes.DOUBLE,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: ErrorMessageFormatter.requiredField("amount"),
+          },
+          isFloat: {
+            msg: ErrorMessageFormatter.notFloat("amout"),
+          },
+        },
+      },
+      date: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: ErrorMessageFormatter.requiredField("date"),
+          },
+          isDate: {
+            msg: ErrorMessageFormatter.invalidDateTime("date"),
+          },
+        },
+      },
+      description: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: ErrorMessageFormatter.requiredField("description"),
+          },
+        },
+      },
+      transaction_type: {
+        type: DataTypes.ENUM(...Object.values(TransactionTypesEnum)),
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: ErrorMessageFormatter.requiredField("transaction_type"),
+          },
+        },
+      },
     },
     {
       sequelize,
       modelName: "Transaction",
-    }
+    },
   );
   return Transaction;
 };
