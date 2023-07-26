@@ -18,7 +18,7 @@ class AccountService {
 
     return await Account.findAll({
       where: {
-        user_id: Number(userId),
+        userId: Number(userId),
       },
     });
   }
@@ -36,7 +36,7 @@ class AccountService {
     return await Account.findOne({
       where: {
         id: Number(id),
-        user_id: Number(userId),
+        userId: Number(userId),
       },
     });
   }
@@ -51,7 +51,7 @@ class AccountService {
   static async create(account, userId) {
     await validateUserId(userId);
 
-    return await Account.create({ ...account, user_id: userId }).catch((err) =>
+    return await Account.create({ ...account, userId: userId }).catch((err) =>
       SequelizeErrorWrapper.wrapError(err),
     );
   }
@@ -70,7 +70,7 @@ class AccountService {
     return await Account.update(account, {
       where: {
         id: Number(id),
-        user_id: Number(userId),
+        userId: Number(userId),
       },
     })
       .then(async () => await this.getById(id, userId))
@@ -90,7 +90,7 @@ class AccountService {
     return await Account.destroy({
       where: {
         id: Number(id),
-        user_id: Number(userId),
+        userId: Number(userId),
       },
     }).catch((err) => SequelizeErrorWrapper.wrapError(err));
   }

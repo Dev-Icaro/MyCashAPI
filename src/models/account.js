@@ -1,7 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
-const errorConsts = require("../constants/error-constants");
 const ErrorMessageFormatter = require("../helpers/error-message-formatter");
+
 module.exports = (sequelize, DataTypes) => {
   class Account extends Model {
     static async addToBalance(amount) {
@@ -16,45 +16,45 @@ module.exports = (sequelize, DataTypes) => {
 
     static associate(models) {
       // define association here
-      Account.hasMany(models.Transaction, { foreignKey: "account_id" });
+      Account.hasMany(models.Transaction, { foreignKey: "accountId" });
 
-      Account.hasMany(models.Expense, { foreignKey: "account_id" });
+      Account.hasMany(models.Expense, { foreignKey: "accountId" });
 
-      Account.hasMany(models.Income, { foreignKey: "income_id" });
+      Account.hasMany(models.Income, { foreignKey: "accountId" });
 
-      Account.belongsTo(models.User, { foreignKey: "user_id" });
+      Account.belongsTo(models.User, { foreignKey: "userId" });
     }
   }
   Account.init(
     {
-      account_holder_name: {
+      accountHolderName: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      account_number: {
+      accountNumber: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.notNull("account_number"),
+            msg: ErrorMessageFormatter.notNull("accountNumber"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.notEmpty("account_number"),
+            msg: ErrorMessageFormatter.notEmpty("accountNumber"),
           },
           isInt: {
-            msg: ErrorMessageFormatter.notInteger("account_number"),
+            msg: ErrorMessageFormatter.notInteger("accountNumber"),
           },
         },
       },
-      account_type: {
+      accountType: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.notNull("account_type"),
+            msg: ErrorMessageFormatter.notNull("accountType"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.notNull("account_type"),
+            msg: ErrorMessageFormatter.notNull("accountType"),
           },
         },
       },
@@ -66,7 +66,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         defaultValue: "BRL",
       },
-      last_transaction: DataTypes.DATE,
+      lastTransaction: DataTypes.DATE,
       status: {
         type: DataTypes.STRING,
         defaultValue: "active",
@@ -88,13 +88,13 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      overdraft_limit: {
+      overdraftLimit: {
         type: DataTypes.DOUBLE,
         allowNull: true,
         defaultValue: 0.0,
         validate: {
           isFloat: {
-            msg: ErrorMessageFormatter.notFloat("overdraft_limit"),
+            msg: ErrorMessageFormatter.notFloat("overdraftLimit"),
           },
         },
       },

@@ -19,25 +19,25 @@ const transactionSchema = Yup.object().shape({
     ErrorMessageFormatter.requiredField("description"),
   ),
 
-  transaction_type: Yup.string().oneOf(
+  transactionType: Yup.string().oneOf(
     Object.values(TransactionTypesEnum),
-    ErrorMessageFormatter.invalidEnum("transaction_type", TransactionTypesEnum),
+    ErrorMessageFormatter.invalidEnum("transactionType", TransactionTypesEnum),
   ),
 
-  account_id: Yup.number()
-    .required(ErrorMessageFormatter.requiredField("account_id"))
-    .integer(ErrorMessageFormatter.notInteger("account_id"))
+  accountId: Yup.number()
+    .required(ErrorMessageFormatter.requiredField("accountId"))
+    .integer(ErrorMessageFormatter.notInteger("accountId"))
     .test("accountExists", accountConstants.MSG_NOT_FOUND, async () => {
-      const { account_id } = this.parent;
-      await AccountService.exists(account_id);
+      const { accountId, userId } = this.parent;
+      await AccountService.exists(accountId, userId);
     }),
 
-  user_id: Yup.number()
-    .required(ErrorMessageFormatter.requiredField("user_id"))
-    .integer(ErrorMessageFormatter.notInteger("user_id"))
+  userId: Yup.number()
+    .required(ErrorMessageFormatter.requiredField("userId"))
+    .integer(ErrorMessageFormatter.notInteger("userId"))
     .test("userExists", userConstants.MSG_NOT_FOUND, async () => {
-      const { user_id } = this.parent;
-      await UserService.exists(user_id);
+      const { userId } = this.parent;
+      await UserService.exists(userId);
     }),
 });
 

@@ -19,7 +19,7 @@ class CategoryService {
 
     return await Category.findAll({
       where: {
-        user_id: Number(userId),
+        userId: Number(userId),
       },
     });
   }
@@ -38,7 +38,7 @@ class CategoryService {
     return await Category.findOne({
       where: {
         id: Number(id),
-        user_id: Number(userId),
+        userId: Number(userId),
       },
     });
   }
@@ -53,8 +53,8 @@ class CategoryService {
   static async create(category, userId) {
     await validateUserId(userId);
 
-    return await Category.create({ ...category, user_id: userId }).catch(
-      (err) => SequelizeErrorWrapper.wrapError(err),
+    return await Category.create({ ...category, userId: userId }).catch((err) =>
+      SequelizeErrorWrapper.wrapError(err),
     );
   }
 
@@ -73,7 +73,7 @@ class CategoryService {
     return await Category.update(category, {
       where: {
         id: Number(id),
-        user_id: Number(userId),
+        userId: Number(userId),
       },
     })
       .then(async () => {
@@ -98,7 +98,7 @@ class CategoryService {
     return await Category.destroy({
       where: {
         id: Number(id),
-        user_id: Number(userId),
+        userId: Number(userId),
       },
     });
   }

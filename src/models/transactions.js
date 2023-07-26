@@ -13,9 +13,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Transaction.belongsTo(models.Account, { foreignKey: "account_id" });
+      Transaction.belongsTo(models.Account, { foreignKey: "accountId" });
 
-      Transaction.belongsTo(models.User, { foreignKey: "user_id" });
+      Transaction.belongsTo(models.User, { foreignKey: "userId" });
       // define association here
     }
   }
@@ -55,30 +55,30 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      transaction_type: {
+      transactionType: {
         type: DataTypes.ENUM(...Object.values(TransactionTypesEnum)),
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: ErrorMessageFormatter.requiredField("transaction_type"),
+            msg: ErrorMessageFormatter.requiredField("transactionType"),
           },
         },
       },
-      user_id: {
+      userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: ErrorMessageFormatter.requiredField("user_id"),
+            msg: ErrorMessageFormatter.requiredField("userId"),
           },
         },
       },
-      account_id: {
+      accountId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: ErrorMessageFormatter.requiredField("account_id"),
+            msg: ErrorMessageFormatter.requiredField("accountId"),
           },
         },
       },

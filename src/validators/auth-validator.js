@@ -45,19 +45,15 @@ const validatePass = () => [
 
 async function validateUserId(id) {
   if (!id)
-    throw new ApiInvalidArgumentError(
-      ErrorMessageFormatter.notEmpty("user_id"),
-    );
+    throw new ApiInvalidArgumentError(ErrorMessageFormatter.notEmpty("userId"));
 
   if (!typeof id === "number")
     throw new ApiInvalidArgumentError(
-      ErrorMessageFormatter.notInteger("user_id"),
+      ErrorMessageFormatter.notInteger("userId"),
     );
 
   if (!(await UserService.getById(id)))
-    throw new ApiInvalidArgumentError(
-      ErrorMessageFormatter.notFound("user_id"),
-    );
+    throw new ApiInvalidArgumentError(ErrorMessageFormatter.notFound("userId"));
 }
 
 module.exports = {

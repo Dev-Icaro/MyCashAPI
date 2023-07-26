@@ -22,7 +22,7 @@ class ExpenseService {
 
     return await Expense.findAll({
       where: {
-        user_id: Number(userId),
+        userId: Number(userId),
       },
     });
   }
@@ -40,7 +40,7 @@ class ExpenseService {
     return await Expense.findOne({
       where: {
         id: Number(id),
-        user_id: Number(userId),
+        userId: Number(userId),
       },
     });
   }
@@ -53,7 +53,7 @@ class ExpenseService {
    * @returns {Promise<Object>} A Promise that resolves to the created expense object.
    */
   static async create(expense, userId) {
-    expense = { ...expense, user_id: userId };
+    expense = { ...expense, userId: userId };
 
     await expenseSchema.validate(expense).catch((err) => {
       throw new ApiValidationError(
@@ -66,13 +66,13 @@ class ExpenseService {
       SequelizeErrorWrapper.wrapError(err),
     );
 
-    if (expense.is_paid) {
+    if (expense.isPaid) {
       await TransactionService.create({
         amount: expense.amount,
         description: expense.description,
-        transaction_type: TransactionTypesEnum.WITHDRAWL,
-        user_id: expense.user_id,
-        account_id: expense.account_id,
+        transactionType: TransactionTypesEnum.WITHDRAWL,
+        userId: expense.userId,
+        accountId: expense.accountId,
       });
     }
   }
@@ -91,7 +91,7 @@ class ExpenseService {
     return await Expense.update(expense, {
       where: {
         id: Number(id),
-        user_id: Number(userId),
+        userId: Number(userId),
       },
     })
       .then(async () => {
@@ -115,7 +115,7 @@ class ExpenseService {
     return await Expense.destroy({
       where: {
         id: Number(id),
-        user_id: Number(userId),
+        userId: Number(userId),
       },
     });
   }

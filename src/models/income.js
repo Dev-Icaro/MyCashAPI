@@ -9,11 +9,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Income.belongsTo(models.User, { foreignKey: "user_id" });
+      Income.belongsTo(models.User, { foreignKey: "userId" });
 
-      Income.belongsTo(models.Account, { foreignKey: "account_id" });
+      Income.belongsTo(models.Account, { foreignKey: "accountId" });
 
-      Income.belongsTo(models.Category, { foreignKey: "category_id" });
+      Income.belongsTo(models.Category, { foreignKey: "categoryId" });
     }
   }
   Income.init(
@@ -21,9 +21,9 @@ module.exports = (sequelize, DataTypes) => {
       amount: DataTypes.DOUBLE,
       date: DataTypes.DATE,
       description: DataTypes.STRING,
-      payment_method: DataTypes.STRING,
+      paymentMethod: DataTypes.STRING,
       receipt: DataTypes.STRING,
-      is_paid: {
+      isPaid: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,

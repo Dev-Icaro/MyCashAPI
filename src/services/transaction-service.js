@@ -31,16 +31,16 @@ class TransactionService {
   }
 
   static async processTransaction(transaction) {
-    const { amount, account_id, user_id } = transaction;
+    const { amount, accountId, userId } = transaction;
 
     try {
-      switch (transaction.transaction_type) {
+      switch (transaction.transactionType) {
         case TransactionTypesEnum.WITHDRAWL: {
-          await AccountService.withdrawl(account_id, amount, user_id);
+          await AccountService.withdrawl(accountId, amount, userId);
           break;
         }
         case TransactionTypesEnum.DEPOSIT: {
-          await AccountService.deposit(account_id, amount, user_id);
+          await AccountService.deposit(accountId, amount, userId);
           break;
         }
         default: {
