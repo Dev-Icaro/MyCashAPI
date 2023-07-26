@@ -1,17 +1,18 @@
 const Category = require("../models").Category;
+const categoryConstants = require("../constants/category-constants");
 const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
 const { validateUserId } = require("../validators/auth-validator");
 
 /**
- * Classe responsável por fornecer serviços relacionados a categorias.
+ * Class responsible for providing services related to categories.
  */
 class CategoryService {
   /**
-   * Obtém todas as categorias do usuário autenticado.
+   * Retrieves all categories for the authenticated user.
    *
-   * @param {number} userId - O ID do usuário para filtrar as categorias.
-   * @returns {Promise<Array>} Uma Promise que resolve em um array com todas as categorias do usuário.
-   * @throws {Error} Se ocorrer algum erro durante a execução do método.
+   * @param {number} userId - The ID of the user to filter categories.
+   * @returns {Promise<Array>} A Promise that resolves to an array with all the user's categories.
+   * @throws {Error} If an error occurs during the method execution.
    */
   static async getAll(userId) {
     await validateUserId(userId);
@@ -24,12 +25,12 @@ class CategoryService {
   }
 
   /**
-   * Obtém uma categoria específica com base no ID e no ID do usuário autenticado.
+   * Retrieves a specific category based on the ID and the ID of the authenticated user.
    *
-   * @param {number} id - O ID da categoria.
-   * @param {number} userId - O ID do usuário dono da categoria.
-   * @returns {Promise<Object>} Uma Promise que resolve no objeto da categoria encontrada.
-   * @throws {Error} Se ocorrer algum erro durante a execução do método.
+   * @param {number} id - The category ID.
+   * @param {number} userId - The ID of the user who owns the category.
+   * @returns {Promise<Object>} A Promise that resolves to the found category object.
+   * @throws {Error} If an error occurs during the method execution.
    */
   static async getById(id, userId) {
     await validateUserId(userId);
@@ -43,11 +44,11 @@ class CategoryService {
   }
 
   /**
-   * Cria uma nova categoria para o usuário autenticado.
+   * Creates a new category for the authenticated user.
    *
-   * @param {Object} category - O objeto da categoria a ser criada.
-   * @returns {Promise<Object>} Uma Promise que resolve no objeto da categoria criada.
-   * @throws {Error} Se ocorrer algum erro durante a execução do método.
+   * @param {Object} category - The category object to be created.
+   * @returns {Promise<Object>} A Promise that resolves to the created category object.
+   * @throws {Error} If an error occurs during the method execution.
    */
   static async create(category, userId) {
     await validateUserId(userId);
@@ -58,13 +59,13 @@ class CategoryService {
   }
 
   /**
-   * Atualiza uma categoria existente com base no ID e no ID do usuário autenticado.
+   * Updates an existing category based on the ID and the ID of the authenticated user.
    *
-   * @param {Object} category - O objeto da categoria a ser atualizada.
-   * @param {number} id - O ID da categoria a ser atualizada.
-   * @param {number} userId - O ID do usuário dono da categoria.
-   * @returns {Promise<Object>} Uma Promise que resolve no objeto da categoria atualizada.
-   * @throws {Error} Se ocorrer algum erro durante a execução do método.
+   * @param {Object} category - The category object to be updated.
+   * @param {number} id - The ID of the category to be updated.
+   * @param {number} userId - The ID of the user who owns the category.
+   * @returns {Promise<Object>} A Promise that resolves to the updated category object.
+   * @throws {Error} If an error occurs during the method execution.
    */
   static async updateById(category, id, userId) {
     await validateUserId(userId);
@@ -84,12 +85,12 @@ class CategoryService {
   }
 
   /**
-   * Exclui uma categoria existente com base no ID e no ID do usuário autenticado.
+   * Deletes an existing category based on the ID and the ID of the authenticated user.
    *
-   * @param {number} id - O ID da categoria a ser excluída.
-   * @param {number} userId - O ID do usuário dono da categoria.
-   * @returns {Promise<number>} Uma Promise que resolve com o número de linhas excluídas (0 ou 1).
-   * @throws {Error} Se ocorrer algum erro durante a execução do método.
+   * @param {number} id - The ID of the category to be deleted.
+   * @param {number} userId - The ID of the user who owns the category.
+   * @returns {Promise<number>} A Promise that resolves with the number of deleted rows (0 or 1).
+   * @throws {Error} If an error occurs during the method execution.
    */
   static async deleteById(id, userId) {
     await validateUserId(userId);
@@ -100,6 +101,23 @@ class CategoryService {
         user_id: Number(userId),
       },
     });
+  }
+
+  /**
+   * Checks if a user category exists.
+   *
+   * @param {number} categoryId - The category ID to check if it exists.
+   * @param {number} userId - The user ID related to the category.
+   * @returns {boolean} - A boolean indicating whether the category exists or not.
+   * @throws {Error} - Error indicating that the user wasn't found.
+   */
+  static async exists(categoryId, userId) {
+    await validateUserId(userId);
+
+    if (!(await this.getById(categoryId)))
+      throw new Error(categoryConstants.MSG_NOT_FOUND);
+
+    return true;
   }
 }
 

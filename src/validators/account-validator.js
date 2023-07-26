@@ -1,4 +1,3 @@
-const errorConsts = require("../constants/error-constants");
 const accountConsts = require("../constants/account-constants");
 const { param } = require("express-validator");
 const AccountService = require("../services/account-service");

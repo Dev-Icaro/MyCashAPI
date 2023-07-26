@@ -1,8 +1,11 @@
 const TransactionTypesEnum = require("../enums/transaction-types-enum");
 const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
 const Expense = require("../models").Expense;
+const { expenseSchema } = require("../validators/expense-validator");
 const TransactionService = require("../services/transaction-service");
 const { validateUserId } = require("../validators/auth-validator");
+const { ApiValidationError } = require("../errors/validation-errors");
+const errorConstants = require("../constants/error-constants");
 
 /**
  * Class responsible for providing expense-related services.
@@ -50,9 +53,16 @@ class ExpenseService {
    * @returns {Promise<Object>} A Promise that resolves to the created expense object.
    */
   static async create(expense, userId) {
-    await validateUserId(userId);
+    expense = { ...expense, user_id: userId };
 
-    await Expense.create({ ...expense, user_id: userId }).catch((err) =>
+    await expenseSchema.validate(expense).catch((err) => {
+      throw new ApiValidationError(
+        errorConstants.MSG_VALIDATION_ERROR,
+        err.message,
+      );
+    });
+
+    await Expense.create(expense).catch((err) =>
       SequelizeErrorWrapper.wrapError(err),
     );
 

@@ -7,15 +7,14 @@ const Sequelize = require("sequelize");
 const {
   ApiInvalidTransactionTypeError,
 } = require("../errors/transaction-errors");
+const { ApiValidationError } = require("../errors/validation-errors");
+const errorConstants = require("../constants/error-constants");
 
 class TransactionService {
   static async create(transaction) {
-    transactionSchema
-      .validate(transaction)
-      .then((validData) => {})
-      .catch((err) => {
-        console.log(err);
-      });
+    transactionSchema.validate(transaction).catch((err) => {
+      throw new ApiValidationError(errorConstants.MSG_VALIDATION_ERROR, err);
+    });
 
     Sequelize.transaction(async (dbTransaction) => {
       try {
@@ -29,10 +28,6 @@ class TransactionService {
         SequelizeErrorWrapper.wrapError(err);
       }
     });
-
-    //return await Transaction.create(transaction).catch((err) =>
-    //SequelizeErrorWrapper.wrapError(err),
-    //);
   }
 
   static async processTransaction(transaction) {
