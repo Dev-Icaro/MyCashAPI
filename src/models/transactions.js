@@ -2,6 +2,8 @@
 const { Model } = require("sequelize");
 const ErrorMessageFormatter = require("../helpers/error-message-formatter");
 const TransactionTypesEnum = require("../enums/transaction-types-enum");
+//const UserService = require("../services/user-service");
+//const AccountService = require("../services/account-service");
 
 module.exports = (sequelize, DataTypes) => {
   class Transaction extends Model {
@@ -34,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       date: {
         type: DataTypes.DATE,
         allowNull: false,
+        defaultValue: new Date(),
         validate: {
           notEmpty: {
             msg: ErrorMessageFormatter.requiredField("date"),
@@ -58,6 +61,24 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: {
             msg: ErrorMessageFormatter.requiredField("transaction_type"),
+          },
+        },
+      },
+      user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: ErrorMessageFormatter.requiredField("user_id"),
+          },
+        },
+      },
+      account_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: ErrorMessageFormatter.requiredField("account_id"),
           },
         },
       },

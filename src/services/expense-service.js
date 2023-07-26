@@ -1,5 +1,7 @@
+const TransactionTypesEnum = require("../enums/transaction-types-enum");
 const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
 const Expense = require("../models").Expense;
+const TransactionService = require("../services/transaction-service");
 const { validateUserId } = require("../validators/auth-validator");
 
 /**
@@ -50,9 +52,19 @@ class ExpenseService {
   static async create(expense, userId) {
     await validateUserId(userId);
 
-    return await Expense.create({ ...expense, user_id: userId }).catch((err) =>
+    await Expense.create({ ...expense, user_id: userId }).catch((err) =>
       SequelizeErrorWrapper.wrapError(err),
     );
+
+    if (expense.is_paid) {
+      await TransactionService.create({
+        amount: expense.amount,
+        description: expense.description,
+        transaction_type: TransactionTypesEnum.WITHDRAWL,
+        user_id: expense.user_id,
+        account_id: expense.account_id,
+      });
+    }
   }
 
   /**

@@ -9,6 +9,11 @@ module.exports = (sequelize, DataTypes) => {
       return await this.save();
     }
 
+    static async subtractToBalance(amount) {
+      this.balance -= amount;
+      return await this.save();
+    }
+
     static associate(models) {
       // define association here
       Account.hasMany(models.Transaction, { foreignKey: "account_id" });

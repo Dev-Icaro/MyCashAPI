@@ -10,7 +10,8 @@ const { ApiUnauthorizedError } = require("../errors/auth-errors");
 const EmailService = require("../services/email-service");
 const authConsts = require("../constants/auth-constants");
 const { createTransporter } = require("../helpers/email-helpers");
-const User = require("../models").User;
+const UserService = require("../services/user-service");
+//const User = require("../models").User;
 
 /**
  *  Serviço de Autenticação, Contém funcionalidades relacionadas.
@@ -28,7 +29,7 @@ class AuthService {
    * @returns {Promise<User>} - Retorna uma promime onde o resolve é o usuário criado.
    */
   static async signup(user) {
-    return await User.create(user)
+    return await UserService.create(user)
       .then((createdUser) => {
         return createdUser;
       })
@@ -45,15 +46,14 @@ class AuthService {
    * @returns {string} authToken - JWT referente a autenticação.
    */
   static async signin(credentials) {
-    let user = await User.findUserByEmail(credentials.email);
+    let user = await UserService.findByEmail(credentials.email);
 
     if (!(await isHashEqual(credentials.password, user.password))) {
       throw new ApiUnauthorizedError(authConsts.MSG_UNAUTHORIZED_SIGIN, [
         authConsts.MSG_INCORRECT_PASSWORD,
       ]);
     }
-    const authToken = generateAuthToken(user);
-    return authToken;
+    return generateAuthToken(user);
   }
 
   /**
@@ -65,7 +65,7 @@ class AuthService {
    */
   static async forgotPassword(email) {
     // Gero o reset token e guardo no banco
-    let user = await User.findUserByEmail(email);
+    let user = await UserService.findByEmail(email);
     let resetToken = generateResetToken();
 
     user.resetToken = resetToken.token;
@@ -88,7 +88,7 @@ class AuthService {
    */
   static async resetPassword(resetInformations) {
     const { email, token, password } = resetInformations;
-    const user = await User.findUserByEmail(email);
+    const user = await UserService.findByEmail(email);
 
     try {
       validateResetToken(token, user);
