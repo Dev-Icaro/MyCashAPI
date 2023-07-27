@@ -6,6 +6,7 @@ const TransactionService = require("../services/transaction-service");
 const { validateUserId } = require("../validators/user-validator");
 const { ApiValidationError } = require("../errors/validation-errors");
 const errorConstants = require("../constants/error-constants");
+const sequelize = require("sequelize");
 
 /**
  * Class responsible for providing expense-related services.
@@ -62,18 +63,31 @@ class ExpenseService {
       );
     });
 
-    await Expense.create(expense).catch((err) =>
-      SequelizeErrorWrapper.wrapError(err),
-    );
+    try {
+      const result = await sequelize.transaction(async (dbTransaction) => {
+        const createdExpense = await Expense.create(expense, {
+          transaction: dbTransaction,
+        });
 
-    if (expense.isPaid) {
-      await TransactionService.create({
-        amount: expense.amount,
-        description: expense.description,
-        transactionType: TransactionTypesEnum.WITHDRAWL,
-        userId: expense.userId,
-        accountId: expense.accountId,
+        if (createdExpense.isPaid) {
+          await TransactionService.create(
+            {
+              amount: createdExpense.amount,
+              description: createdExpense.description,
+              transactionType: TransactionTypesEnum.WITHDRAWL,
+              userId: createdExpense.userId,
+              accountId: createdExpense.accountId,
+            },
+            dbTransaction,
+          );
+        }
+
+        return createdExpense;
       });
+
+      return result;
+    } catch (err) {
+      SequelizeErrorWrapper.wrapError(err);
     }
   }
 
