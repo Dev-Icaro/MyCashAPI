@@ -1,7 +1,7 @@
 const Category = require("../models").Category;
 const categoryConstants = require("../constants/category-constants");
 const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
-const { validateUserId } = require("../validators/auth-validator");
+const { validateUserId } = require("../validators/user-validator");
 
 /**
  * Class responsible for providing services related to categories.

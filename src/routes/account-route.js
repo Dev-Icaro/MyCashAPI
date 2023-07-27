@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const authMiddleware = require("../middlewares/authentication-middleware");
 const AccountController = require("../controllers/account-controller");
-const { validateAccountId } = require("../validators/account-validator");
+const { validateAccountIdParam } = require("../validators/account-validator");
 const validationResultHandler = require("../middlewares/validation-result-handler");
 const { validationErrorHandler } = require("../middlewares/error-handlers");
 
@@ -16,7 +16,7 @@ router
 
 router
   .route("/api/account/:id")
-  .all(validateAccountId(), validationResultHandler)
+  .all(validateAccountIdParam(), validationResultHandler)
   .get(AccountController.getById)
   .put(AccountController.updateById)
   .delete(AccountController.deleteById);

@@ -1,7 +1,7 @@
 const accountConsts = require("../constants/account-constants");
 const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
 const Account = require("../models").Account;
-const { validateUserId } = require("../validators/auth-validator");
+const { validateUserId } = require("../validators/user-validator");
 
 /**
  * Bank account service.

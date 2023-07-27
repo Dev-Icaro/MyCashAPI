@@ -43,22 +43,8 @@ const validatePass = () => [
     .withMessage(ErrorMessageFormatter.notEmpty("password")),
 ];
 
-async function validateUserId(id) {
-  if (!id)
-    throw new ApiInvalidArgumentError(ErrorMessageFormatter.notEmpty("userId"));
-
-  if (!typeof id === "number")
-    throw new ApiInvalidArgumentError(
-      ErrorMessageFormatter.notInteger("userId"),
-    );
-
-  if (!(await UserService.getById(id)))
-    throw new ApiInvalidArgumentError(ErrorMessageFormatter.notFound("userId"));
-}
-
 module.exports = {
   validateSiginReq,
   validateEmail,
   validateResetPassReq,
-  validateUserId,
 };

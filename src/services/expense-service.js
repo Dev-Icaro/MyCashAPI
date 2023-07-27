@@ -3,7 +3,7 @@ const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
 const Expense = require("../models").Expense;
 const { expenseSchema } = require("../validators/expense-validator");
 const TransactionService = require("../services/transaction-service");
-const { validateUserId } = require("../validators/auth-validator");
+const { validateUserId } = require("../validators/user-validator");
 const { ApiValidationError } = require("../errors/validation-errors");
 const errorConstants = require("../constants/error-constants");
 

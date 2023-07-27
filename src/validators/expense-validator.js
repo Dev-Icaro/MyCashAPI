@@ -1,15 +1,14 @@
-const { validateIdParam } = require("../validators/generic-validator");
 const ExpenseService = require("../services/expense-service");
-const expenseConsts = require("../constants/expense-constants");
+const { validateIdParam } = require("../validators/generic-validator");
 const { param } = require("express-validator");
+const { yupAccountExists } = require("./account-validator");
+const { yupUserExists } = require("./user-validator");
+const { yupCategoryExists } = require("./category-validator");
 const Yup = require("yup");
-const ErrorMessageFormatter = require("../helpers/error-message-formatter");
+const expenseConsts = require("../constants/expense-constants");
 const userConstants = require("../constants/user-constants");
 const categoryConstants = require("../constants/category-constants");
 const accountConstants = require("../constants/account-constants");
-const UserService = require("../services/user-service");
-const AccountService = require("../services/account-service");
-const CategoryService = require("../services/category-service");
 
 const validateExpenseIdParam = () => [
   validateIdParam(),
@@ -29,29 +28,15 @@ const expenseSchema = Yup.object().shape({
   userId: Yup.number()
     .required()
     .integer()
-    .test("userExists", userConstants.MSG_NOT_FOUND, async function (userId) {
-      return await UserService.exists(userId);
-    }),
+    .test("userExists", userConstants.MSG_NOT_FOUND, yupUserExists),
   categoryId: Yup.number()
     .required()
     .integer()
-    .test(
-      "categoryExists",
-      categoryConstants.MSG_NOT_FOUND,
-      async function (categoryId) {
-        return await CategoryService.exists(categoryId, this.parent.userId);
-      },
-    ),
+    .test("categoryExists", categoryConstants.MSG_NOT_FOUND, yupCategoryExists),
   accountId: Yup.number()
     .required()
     .integer()
-    .test(
-      "accountExists",
-      accountConstants.MSG_NOT_FOUND,
-      async function (accountId) {
-        return await AccountService.exists(accountId, this.parent.userId);
-      },
-    ),
+    .test("accountExists", accountConstants.MSG_NOT_FOUND, yupAccountExists),
 });
 
 module.exports = {
