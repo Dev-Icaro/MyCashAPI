@@ -9,7 +9,7 @@ const emailConsts = require("../constants/email-constants");
 
 // Helpers / Utils
 const ApiValidationResult = require("./api-validation-result");
-const ErrorMessageFormatter = require("./error-message-formatter");
+const ErrorMessageFormatter = require("../utils/error-message-formatter");
 
 // Models
 const { ApiEmailConfigurationError } = require("../errors/email-errors");

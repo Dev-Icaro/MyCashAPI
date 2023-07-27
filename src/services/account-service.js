@@ -142,12 +142,13 @@ class AccountService {
   static async withdrawl(accountId, amount, userId) {
     await validateUserId(userId);
 
-    const account = await this.getById(accountId);
+    const account = await this.getById(accountId, userId);
     if (!account) {
       throw new Error(accountConsts.MSG_NOT_FOUND);
     }
 
-    return await account.subtractToBalance(amount);
+    await account.subtractToBalance(amount);
+    return await account.save();
   }
 }
 

@@ -1,6 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
-const ErrorMessageFormatter = require("../helpers/error-message-formatter");
+const ErrorMessageFormatter = require("../utils/error-message-formatter");
 module.exports = (sequelize, DataTypes) => {
   class Category extends Model {
     /**

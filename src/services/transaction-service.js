@@ -9,31 +9,40 @@ const {
 } = require("../errors/transaction-errors");
 const { ApiValidationError } = require("../errors/validation-errors");
 const errorConstants = require("../constants/error-constants");
+const { sequelize } = require("../models");
 
 class TransactionService {
   /**
    * Create an account transaction.
+   * Obs: Be attempt that transaction is referent to account transaction and
+   * dbTransaction is referent to the data base transaction.
    *
    * @param {Transaction} transaction - The account transaction that we
    * want to crate.
    * @param {Sequelize.transaction=} dbTransaction - The sequelize data base transaction
-   * to assign if the method [optional]
+   * to assign with the method [optional]
    */
   static async create(transaction, dbTransaction) {
     await transactionSchema.validate(transaction).catch((err) => {
-      throw new ApiValidationError(errorConstants.MSG_VALIDATION_ERROR, err);
+      throw new ApiValidationError(
+        errorConstants.MSG_VALIDATION_ERROR,
+        err.message,
+      );
     });
 
-    try {
-      if (dbTransaction) {
-        await Transaction.create(transaction, { transaction: dbTransaction });
-      } else {
-        await Transaction.create(transaction);
-      }
+    dbTransaction = dbTransaction || (await sequelize.transaction());
 
-      await this.processTransaction(transaction);
+    try {
+      const createdTransaction = await Transaction.create(transaction, {
+        transaction: dbTransaction,
+      });
+      //await this.processTransaction(createdTransaction);
+
+      await dbTransaction.commit();
+      return createdTransaction;
     } catch (err) {
       SequelizeErrorWrapper.wrapError(err);
+      await dbTransaction.rollback();
     }
   }
 

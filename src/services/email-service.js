@@ -14,7 +14,7 @@ const { ApiEmailSendError } = require("../errors/email-errors");
 // Helpers / Utils
 const { fileExists } = require("../utils/file-utils");
 const { validateEmail } = require("../helpers/email-helpers");
-const ErrorMessageFormatter = require("../helpers/error-message-formatter");
+const ErrorMessageFormatter = require("../utils/error-message-formatter");
 
 /**
  * Serviço de envio de emails.

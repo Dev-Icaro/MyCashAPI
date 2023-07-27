@@ -1,7 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 const { hashString } = require("../utils/crypt-utils");
-const ErrorMessageFormatter = require("../helpers/error-message-formatter");
+const ErrorMessageFormatter = require("../utils/error-message-formatter");
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {

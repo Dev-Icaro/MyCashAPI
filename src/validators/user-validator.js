@@ -1,5 +1,6 @@
 const { ApiInvalidArgumentError } = require("../errors/argument-errors");
 const UserService = require("../services/user-service");
+const ErrorMessageFormatter = require("../utils/error-message-formatter");
 
 /**
  * Validate an userId.

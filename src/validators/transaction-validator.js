@@ -8,7 +8,7 @@ const { yupUserExists } = require("./user-validator");
 
 const transactionSchema = Yup.object().shape({
   amount: Yup.number().required(),
-  date: Yup.date().required(),
+  date: Yup.date().optional(),
   description: Yup.string().required(),
   transactionType: Yup.string()
     .oneOf(

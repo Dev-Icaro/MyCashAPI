@@ -1,5 +1,5 @@
 const { param } = require("express-validator");
-const ErrorMessageFormatter = require("../helpers/error-message-formatter");
+const ErrorMessageFormatter = require("../utils/error-message-formatter");
 
 const validateIdParam = () => [
   param("id")

@@ -1,17 +1,17 @@
 "use strict";
 const { Model } = require("sequelize");
-const ErrorMessageFormatter = require("../helpers/error-message-formatter");
+const ErrorMessageFormatter = require("../utils/error-message-formatter");
 
 module.exports = (sequelize, DataTypes) => {
   class Account extends Model {
-    static async addToBalance(amount) {
+    async addToBalance(amount) {
       this.balance += amount;
-      return await this.save();
+      return this;
     }
 
-    static async subtractToBalance(amount) {
+    async subtractToBalance(amount) {
       this.balance -= amount;
-      return await this.save();
+      return this;
     }
 
     static associate(models) {

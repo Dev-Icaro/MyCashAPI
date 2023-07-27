@@ -1,6 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
-const ErrorMessageFormatter = require("../helpers/error-message-formatter");
+const ErrorMessageFormatter = require("../utils/error-message-formatter");
 const TransactionTypesEnum = require("../enums/transaction-types-enum");
 //const UserService = require("../services/user-service");
 //const AccountService = require("../services/account-service");

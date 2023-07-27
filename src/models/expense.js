@@ -2,7 +2,7 @@
 const { Model } = require("sequelize");
 const { formatMySqlDateTime } = require("../utils/date-utils");
 
-const ErrorMessageFormatter = require("../helpers/error-message-formatter");
+const ErrorMessageFormatter = require("../utils/error-message-formatter");
 module.exports = (sequelize, DataTypes) => {
   class Expense extends Model {
     /**
