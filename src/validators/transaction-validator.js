@@ -1,6 +1,6 @@
+const Yup = require("yup");
 const ErrorMessageFormatter = require("../helpers/error-message-formatter");
 const TransactionTypesEnum = require("../enums/transaction-types-enum");
-const Yup = require("yup");
 const UserService = require("../services/user-service");
 const AccountService = require("../services/account-service");
 const accountConstants = require("../constants/account-constants");
@@ -24,7 +24,7 @@ const transactionSchema = Yup.object().shape({
     ErrorMessageFormatter.invalidEnum("transactionType", TransactionTypesEnum),
   ),
 
-  accountId: Yup.number()
+  /* accountId: Yup.number()
     .required(ErrorMessageFormatter.requiredField("accountId"))
     .integer(ErrorMessageFormatter.notInteger("accountId"))
     .test("accountExists", accountConstants.MSG_NOT_FOUND, async () => {
@@ -38,7 +38,7 @@ const transactionSchema = Yup.object().shape({
     .test("userExists", userConstants.MSG_NOT_FOUND, async () => {
       const { userId } = this.parent;
       await UserService.exists(userId);
-    }),
+    }), */
 });
 
 module.exports = { transactionSchema };

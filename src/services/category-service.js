@@ -114,7 +114,7 @@ class CategoryService {
   static async exists(categoryId, userId) {
     await validateUserId(userId);
 
-    if (!(await this.getById(categoryId)))
+    if (!(await this.getById(categoryId, userId)))
       throw new Error(categoryConstants.MSG_NOT_FOUND);
 
     return true;

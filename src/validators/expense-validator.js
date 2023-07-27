@@ -29,8 +29,8 @@ const expenseSchema = Yup.object().shape({
   userId: Yup.number()
     .required()
     .integer()
-    .test("userExists", userConstants.MSG_NOT_FOUND, async (userId) => {
-      await UserService.exists(userId);
+    .test("userExists", userConstants.MSG_NOT_FOUND, async function (userId) {
+      return await UserService.exists(userId);
     }),
   categoryId: Yup.number()
     .required()
@@ -38,8 +38,8 @@ const expenseSchema = Yup.object().shape({
     .test(
       "categoryExists",
       categoryConstants.MSG_NOT_FOUND,
-      async (categoryId) => {
-        await CategoryService.exists(categoryId, this.parent.userId);
+      async function (categoryId) {
+        return await CategoryService.exists(categoryId, this.parent.userId);
       },
     ),
   accountId: Yup.number()
@@ -48,8 +48,8 @@ const expenseSchema = Yup.object().shape({
     .test(
       "accountExists",
       accountConstants.MSG_NOT_FOUND,
-      async (accountId) => {
-        await AccountService.exists(accountId, this.parent.userId);
+      async function (accountId) {
+        return await AccountService.exists(accountId, this.parent.userId);
       },
     ),
 });

@@ -90,7 +90,8 @@ class UserService {
    * @returns {boolean}  Boolean indicating if exists or not.
    */
   static async exists(userId) {
-    if (!this.getById(userId)) throw new Error(userConstants.MSG_NOT_FOUND);
+    if (!(await this.getById(userId)))
+      throw new Error(userConstants.MSG_NOT_FOUND);
 
     return true;
   }
