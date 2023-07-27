@@ -1,6 +1,6 @@
 const { param } = require("express-validator");
 const AccountService = require("../services/account-service");
-const ErrorMessageFormatter = require("../helpers/error-message-formatter");
+const ErrorMessageFormatter = require("../utils/error-message-formatter");
 
 /**
  * Use express validator to validate Account ID param in a request.

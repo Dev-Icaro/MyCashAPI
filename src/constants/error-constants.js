@@ -25,4 +25,5 @@ module.exports = {
   MSG_VALIDATION_ERROR: "Validation error",
   MSG_UNIQUE_CONSTRAINT_ERROR: "Unique constraint error",
   ERROR_REQUEST_FAIL: "An error occurred during the request: \n",
+  ERROR_INVALID_STRING: "Expected an string value in {placeholder}",
 };
