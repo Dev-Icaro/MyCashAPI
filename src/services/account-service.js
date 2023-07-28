@@ -139,7 +139,7 @@ class AccountService {
    * @returns {Promise<number>} A promise that resolves to the new current balance of the account.
    * @throws {Error} Throws an error if the account is not found.
    */
-  static async withdrawl(accountId, amount, userId) {
+  static async withdrawl(accountId, amount, userId, dbTransaction) {
     await validateUserId(userId);
 
     const account = await this.getById(accountId, userId);
@@ -148,7 +148,7 @@ class AccountService {
     }
 
     await account.subtractToBalance(amount);
-    return await account.save();
+    return await account.save({ transaction: dbTransaction });
   }
 }
 

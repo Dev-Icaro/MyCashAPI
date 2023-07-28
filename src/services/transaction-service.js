@@ -14,13 +14,9 @@ const { sequelize } = require("../models");
 class TransactionService {
   /**
    * Create an account transaction.
-   * Obs: Be attempt that transaction is referent to account transaction and
-   * dbTransaction is referent to the data base transaction.
    *
    * @param {Transaction} transaction - The account transaction that we
-   * want to crate.
-   * @param {Sequelize.transaction=} dbTransaction - The sequelize data base transaction
-   * to assign with the method [optional]
+   * want to create.
    */
   static async create(transaction, dbTransaction) {
     await transactionSchema.validate(transaction).catch((err) => {
@@ -30,33 +26,32 @@ class TransactionService {
       );
     });
 
-    dbTransaction = dbTransaction || (await sequelize.transaction());
-
-    try {
-      const createdTransaction = await Transaction.create(transaction, {
-        transaction: dbTransaction,
-      });
-      //await this.processTransaction(createdTransaction);
-
-      await dbTransaction.commit();
-      return createdTransaction;
-    } catch (err) {
-      SequelizeErrorWrapper.wrapError(err);
-      await dbTransaction.rollback();
-    }
+    return await Transaction.create(transaction, {
+      transaction: dbTransaction,
+    }).catch((err) => SequelizeErrorWrapper.wrapError(err));
   }
 
-  static async processTransaction(transaction) {
+  static async processTransaction(transaction, dbTransaction) {
     const { amount, accountId, userId } = transaction;
 
     try {
       switch (transaction.transactionType) {
         case TransactionTypesEnum.WITHDRAWL: {
-          await AccountService.withdrawl(accountId, amount, userId);
+          await AccountService.withdrawl(
+            accountId,
+            amount,
+            userId,
+            dbTransaction,
+          );
           break;
         }
         case TransactionTypesEnum.DEPOSIT: {
-          await AccountService.deposit(accountId, amount, userId);
+          await AccountService.deposit(
+            accountId,
+            amount,
+            userId,
+            dbTransaction,
+          );
           break;
         }
         default: {
