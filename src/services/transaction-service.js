@@ -9,7 +9,6 @@ const {
 } = require("../errors/transaction-errors");
 const { ApiValidationError } = require("../errors/validation-errors");
 const errorConstants = require("../constants/error-constants");
-const { sequelize } = require("../models");
 
 class TransactionService {
   /**
@@ -18,7 +17,7 @@ class TransactionService {
    * @param {Transaction} transaction - The account transaction that we
    * want to create.
    */
-  static async create(transaction, dbTransaction) {
+  static async create(transaction) {
     await transactionSchema.validate(transaction).catch((err) => {
       throw new ApiValidationError(
         errorConstants.MSG_VALIDATION_ERROR,
@@ -26,32 +25,24 @@ class TransactionService {
       );
     });
 
-    return await Transaction.create(transaction, {
-      transaction: dbTransaction,
-    }).catch((err) => SequelizeErrorWrapper.wrapError(err));
+    return await Transaction.create(transaction)
+      .then(async (createdTransaction) => {
+        await this.processTransaction(createdTransaction);
+      })
+      .catch((err) => SequelizeErrorWrapper.wrapError(err));
   }
 
-  static async processTransaction(transaction, dbTransaction) {
+  static async processTransaction(transaction) {
     const { amount, accountId, userId } = transaction;
 
     try {
       switch (transaction.transactionType) {
         case TransactionTypesEnum.WITHDRAWL: {
-          await AccountService.withdrawl(
-            accountId,
-            amount,
-            userId,
-            dbTransaction,
-          );
+          await AccountService.withdrawl(accountId, amount, userId);
           break;
         }
         case TransactionTypesEnum.DEPOSIT: {
-          await AccountService.deposit(
-            accountId,
-            amount,
-            userId,
-            dbTransaction,
-          );
+          await AccountService.deposit(accountId, amount, userId);
           break;
         }
         default: {

@@ -4,16 +4,6 @@ const ErrorMessageFormatter = require("../utils/error-message-formatter");
 
 module.exports = (sequelize, DataTypes) => {
   class Account extends Model {
-    async addToBalance(amount) {
-      this.balance += amount;
-      return this;
-    }
-
-    async subtractToBalance(amount) {
-      this.balance -= amount;
-      return this;
-    }
-
     static associate(models) {
       // define association here
       Account.hasMany(models.Transaction, { foreignKey: "accountId" });

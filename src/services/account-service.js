@@ -30,15 +30,18 @@ class AccountService {
    * @param {number} userId - The ID of the user who owns the account.
    * @returns {Promise<Object>} A promise that resolves to the details of the found bank account.
    */
-  static async getById(id, userId) {
+  static async getById(id, userId, dbTransaction) {
     await validateUserId(userId);
 
-    return await Account.findOne({
-      where: {
-        id: Number(id),
-        userId: Number(userId),
+    return await Account.findOne(
+      {
+        where: {
+          id: Number(id),
+          userId: Number(userId),
+        },
       },
-    });
+      { transaction: dbTransaction },
+    );
   }
 
   /**
@@ -122,12 +125,14 @@ class AccountService {
   static async deposit(accountId, amount, userId) {
     await validateUserId(userId);
 
-    const account = await this.getById(accountId);
+    const account = await this.getById(accountId, userId);
     if (!account) {
       throw new Error(accountConsts.MSG_NOT_FOUND);
     }
 
-    return await account.addToBalance(amount);
+    account.balance += amount;
+
+    return await account.save();
   }
 
   /**
@@ -142,13 +147,14 @@ class AccountService {
   static async withdrawl(accountId, amount, userId, dbTransaction) {
     await validateUserId(userId);
 
-    const account = await this.getById(accountId, userId);
+    const account = await this.getById(accountId, userId, dbTransaction);
     if (!account) {
       throw new Error(accountConsts.MSG_NOT_FOUND);
     }
 
-    await account.subtractToBalance(amount);
-    return await account.save({ transaction: dbTransaction });
+    account.balance -= amount;
+
+    await account.save();
   }
 }
 

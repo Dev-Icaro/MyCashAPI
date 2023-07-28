@@ -6,6 +6,8 @@ const TransactionService = require("../services/transaction-service");
 const { validateUserId } = require("../validators/user-validator");
 const { ApiValidationError } = require("../errors/validation-errors");
 const errorConstants = require("../constants/error-constants");
+const { sequelize } = require("../models");
+const { Transaction } = require("sequelize");
 
 /**
  * Class responsible for providing expense-related services.
@@ -55,28 +57,38 @@ class ExpenseService {
   static async create(expense, userId) {
     expense = { ...expense, userId: userId };
 
-    await expenseSchema.validate(expense).catch((err) => {
-      throw new ApiValidationError(
-        errorConstants.MSG_VALIDATION_ERROR,
-        err.message,
-      );
+    await expenseSchema
+      .validate(expense, { abortEarly: false })
+      .catch((err) => {
+        throw new ApiValidationError(
+          errorConstants.MSG_VALIDATION_ERROR,
+          err.message,
+        );
+      });
+
+    const dbTransaction = await sequelize.transaction({
+      isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
     });
 
     try {
-      const createdExpense = await Expense.create(expense);
+      const createdExpense = await Expense.create(expense, {
+        transaction: dbTransaction,
+      });
 
-      if (createdExpense.isPaid) {
-        await TransactionService.create({
-          amount: createdExpense.amount,
-          description: createdExpense.description,
-          transactionType: TransactionTypesEnum.WITHDRAWL,
-          userId: createdExpense.userId,
-          accountId: createdExpense.accountId,
+      /* if (createdExpense.isPaid) {
+        await createAccountTransactionFromExpense(
+          createdExpense,
+          dbTransaction,
+        ).then(async (createdTransaction) => {
+        
+          await dbTransaction.commit();
+          await TransactionService.processTransaction(createdTransaction);
         });
-      }
+      } */
 
       return createdExpense;
     } catch (err) {
+      await dbTransaction.rollback();
       SequelizeErrorWrapper.wrapError(err);
     }
   }
@@ -90,9 +102,18 @@ class ExpenseService {
    * @returns {Promise<Object>} A Promise that resolves to the updated expense object.
    */
   static async updateById(expense, id, userId) {
-    await validateUserId(userId);
+    await expenseSchema
+      .validate(expense, { abortEarly: false, stripUnknown: true })
+      .catch((err) => {
+        throw new ApiValidationError(
+          errorConstants.MSG_VALIDATION_ERROR,
+          err.message,
+        );
+      });
 
-    return await Expense.update(expense, {
+    const dbTransaction = sequelize.transaction();
+
+    const updatedExpense = await Expense.update(expense, {
       where: {
         id: Number(id),
         userId: Number(userId),
