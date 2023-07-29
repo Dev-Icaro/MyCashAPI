@@ -1,9 +1,5 @@
 "use strict";
 const { Model } = require("sequelize");
-// const {
-//   createAccountTransactionFromExpense,
-// } = require("../helpers/expense-helpers");
-
 const ErrorMessageFormatter = require("../utils/error-message-formatter");
 module.exports = (sequelize, DataTypes) => {
   class Expense extends Model {
@@ -129,20 +125,6 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "Expense",
     },
   );
-
-  Expense.addHook("afterCreate", async (expense, option) => {
-    if (expense.isPaid) {
-      //await createAccountTransactionFromExpense(expense);
-    }
-  });
-
-  Expense.addHook("afterUpdate", async (expense, option) => {
-    // if (expense.changed("isPaid")) {
-    //   // if oldValue = false and newValue = true then create
-    //   // if oldValue = true and newValue = false then rollback
-    //   await createAccountTransactionFromExpense(expense);
-    // }
-  });
 
   return Expense;
 };

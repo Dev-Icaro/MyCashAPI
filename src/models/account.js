@@ -4,6 +4,24 @@ const ErrorMessageFormatter = require("../utils/error-message-formatter");
 
 module.exports = (sequelize, DataTypes) => {
   class Account extends Model {
+    async addToBalance(amount, sequelizeTransaction) {
+      this.balance += amount;
+      return await this.save({ transaction: sequelizeTransaction });
+    }
+
+    async subtractToBalance(amount, sequelizeTransaction) {
+      this.balance -= amount;
+      return await this.save({ transaction: sequelizeTransaction });
+    }
+
+    hasOverdraftLimit() {
+      return this.overdraftLimit != null ? true : false;
+    }
+
+    amountExceedOverdraftLimit(amount) {
+      return this.balance - amount < this.overdraftLimit;
+    }
+
     static associate(models) {
       // define association here
       Account.hasMany(models.Transaction, { foreignKey: "accountId" });
@@ -81,7 +99,7 @@ module.exports = (sequelize, DataTypes) => {
       overdraftLimit: {
         type: DataTypes.DOUBLE,
         allowNull: true,
-        defaultValue: 0.0,
+        defaultValue: null,
         validate: {
           isFloat: {
             msg: ErrorMessageFormatter.notFloat("overdraftLimit"),

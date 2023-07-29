@@ -1,13 +1,10 @@
-const TransactionTypesEnum = require("../enums/transaction-types-enum");
 const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
 const Expense = require("../models").Expense;
 const { expenseSchema } = require("../validators/expense-validator");
-const TransactionService = require("../services/transaction-service");
 const { validateUserId } = require("../validators/user-validator");
 const { ApiValidationError } = require("../errors/validation-errors");
 const errorConstants = require("../constants/error-constants");
-const { sequelize } = require("../models");
-const { Transaction } = require("sequelize");
+const TransactionService = require("../services/transaction-service");
 
 /**
  * Class responsible for providing expense-related services.
@@ -66,31 +63,35 @@ class ExpenseService {
         );
       });
 
-    const dbTransaction = await sequelize.transaction({
-      isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-    });
+    const createdExpense = await Expense.create(expense).catch((err) =>
+      SequelizeErrorWrapper.wrapError(err),
+    );
 
-    try {
-      const createdExpense = await Expense.create(expense, {
-        transaction: dbTransaction,
-      });
-
-      /* if (createdExpense.isPaid) {
-        await createAccountTransactionFromExpense(
-          createdExpense,
-          dbTransaction,
-        ).then(async (createdTransaction) => {
-        
-          await dbTransaction.commit();
-          await TransactionService.processTransaction(createdTransaction);
+    if (createdExpense.isPaid) {
+      return await TransactionService.createFromExpense(createdExpense)
+        .then((createdTransaction) => {
+          return {
+            createdExpense: createdExpense,
+            accountTransaction: createdTransaction,
+          };
+        })
+        .catch(async (err) => {
+          /**
+           * If the amount overpass the account overdraftLimit this exception will occours
+           * in this way the expense will be set as unpaid but still created.
+           */
+          if (err.name === "AccountBalanceError") {
+            createdExpense.isPaid = false;
+            await createdExpense.save();
+            return {
+              createdExpense: createdExpense,
+              info: err.message,
+            };
+          } else throw err;
         });
-      } */
-
-      return createdExpense;
-    } catch (err) {
-      await dbTransaction.rollback();
-      SequelizeErrorWrapper.wrapError(err);
     }
+
+    return createdExpense;
   }
 
   /**

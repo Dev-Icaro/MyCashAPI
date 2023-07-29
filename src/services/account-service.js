@@ -2,6 +2,7 @@ const accountConsts = require("../constants/account-constants");
 const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
 const Account = require("../models").Account;
 const { validateUserId } = require("../validators/user-validator");
+const { AccountBalanceError } = require("../errors/account-errors");
 
 /**
  * Bank account service.
@@ -28,9 +29,10 @@ class AccountService {
    *
    * @param {number} id - The ID of the bank account to be retrieved.
    * @param {number} userId - The ID of the user who owns the account.
+   * @param {Sequelize.Transaction=} - The database that you want to link the operation [optional]
    * @returns {Promise<Object>} A promise that resolves to the details of the found bank account.
    */
-  static async getById(id, userId, dbTransaction) {
+  static async getById(id, userId, sequelizeTransaction) {
     await validateUserId(userId);
 
     return await Account.findOne(
@@ -40,7 +42,7 @@ class AccountService {
           userId: Number(userId),
         },
       },
-      { transaction: dbTransaction },
+      { transaction: sequelizeTransaction },
     );
   }
 
@@ -119,10 +121,12 @@ class AccountService {
    * @param {number} accountId - The ID of the bank account whose balance will be increased.
    * @param {number} amount - The value to be added to the current balance of the account.
    * @param {number} userId - The ID of the user who owns the account.
-   * @returns {Promise<number>} A promise that resolves to the new current balance of the account.
+   * @param {sequelize.Transaction=} sequelizeTransaction - The database transaction to apply
+   * atomicity for operations linking them to the it. [OPTIONAL]
+   * @returns {Account} The updated values of account.
    * @throws {Error} Throws an error if the account is not found.
    */
-  static async deposit(accountId, amount, userId) {
+  static async deposit(accountId, amount, userId, sequelizeTransaction) {
     await validateUserId(userId);
 
     const account = await this.getById(accountId, userId);
@@ -130,9 +134,7 @@ class AccountService {
       throw new Error(accountConsts.MSG_NOT_FOUND);
     }
 
-    account.balance += amount;
-
-    return await account.save();
+    return await account.addToBalance(amount, sequelizeTransaction);
   }
 
   /**
@@ -141,20 +143,34 @@ class AccountService {
    * @param {number} accountId - The ID of the bank account whose balance will be decreased.
    * @param {number} amount - The value to be withdral to the current balance of the account.
    * @param {number} userId - The ID of the user who owns the account.
-   * @returns {Promise<number>} A promise that resolves to the new current balance of the account.
+   * @param {sequelize.Transaction=} sequelizeTransaction - The database transaction to apply
+   * atomicity for operations linking them to the sequelizeTransaction. [OPTIONAL]
+   * @returns {Account} The updated values of account.
    * @throws {Error} Throws an error if the account is not found.
    */
-  static async withdrawl(accountId, amount, userId, dbTransaction) {
+  static async withdrawl(accountId, amount, userId, sequelizeTransaction) {
     await validateUserId(userId);
 
-    const account = await this.getById(accountId, userId, dbTransaction);
+    const account = await this.getById(accountId, userId);
     if (!account) {
       throw new Error(accountConsts.MSG_NOT_FOUND);
     }
 
-    account.balance -= amount;
+    if (
+      account.hasOverdraftLimit() &&
+      account.amountExceedOverdraftLimit(amount)
+    ) {
+      throw new AccountBalanceError(
+        accountConsts.MSG_OVERDRAFT_LIMIT_EXCEEDED,
+        [
+          `accountId: ${account.id}`,
+          `overdraftLimit: ${account.overdraftLimit}`,
+          `amount: ${amount}`,
+        ],
+      );
+    }
 
-    await account.save();
+    return await account.subtractToBalance(amount, sequelizeTransaction);
   }
 }
 

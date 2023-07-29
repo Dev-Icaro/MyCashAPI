@@ -3,7 +3,7 @@ const errorConsts = require("../constants/error-constants");
 
 function errorHandler(err, req, res, next) {
   logger.error(errorConsts.ERROR_REQUEST_FAIL, err);
-  return res.status(500).json({ message: err.message });
+  return res.status(500).json({ message: err.message, errors: err.errors });
 }
 
 function validationErrorHandler(err, req, res, next) {
