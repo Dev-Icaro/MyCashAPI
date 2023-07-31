@@ -56,8 +56,6 @@ class ExpenseController {
   static async create(req, res, next) {
     try {
       const createdExpense = await ExpenseService.create(req.body, req.userId);
-
-      console.log(createdExpense);
       return res.status(200).json(createdExpense);
     } catch (err) {
       next(err);

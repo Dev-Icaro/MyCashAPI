@@ -100,11 +100,11 @@ module.exports = (sequelize, DataTypes) => {
     },
   );
 
-  User.addHook("beforeCreate", async (user, options) => {
+  User.addHook("beforeCreate", async (user) => {
     user.password = await hashString(user.password);
   });
 
-  User.addHook("beforeUpdate", async (user, options) => {
+  User.addHook("beforeUpdate", async (user) => {
     if (user.changed("password")) {
       user.password = await hashString(user.password);
     }
