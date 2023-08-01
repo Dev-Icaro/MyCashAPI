@@ -18,6 +18,21 @@ router
   .put(ExpenseController.updateById)
   .delete(ExpenseController.deleteById);
 
+router.get(
+  "/api/expenses/account/:accountId",
+  ExpenseController.getByAccountId,
+);
+
+router.get(
+  "/api/expenses/category/:categoryId",
+  ExpenseController.getByCategoryId,
+);
+
+router.get(
+  "/api/expenses/account/:accountId/category/:categoryId",
+  ExpenseController.getByAccountIdAndCategoryId,
+);
+
 router.use("/api/expenses", validationErrorHandler);
 
 module.exports = router;

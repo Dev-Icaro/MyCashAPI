@@ -183,6 +183,91 @@ class ExpenseService {
       },
     });
   }
+
+  /**
+   * Get expenses by account ID.
+   *
+   * @param {number} accountId - The ID of the account to filter expenses.
+   * @param {number} userId - The ID of the user who owns the expenses.
+   * @returns {Promise<Array>} A Promise that resolves to an array with all the user's expenses for the specified account.
+   */
+  static async getByAccountId(accountId, userId) {
+    if (!userId)
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("userId"),
+      );
+
+    if (!accountId)
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("accountId"),
+      );
+
+    return await Expense.findAll({
+      where: {
+        accountId: Number(accountId),
+        userId: Number(userId),
+      },
+    });
+  }
+
+  /**
+   * Get expenses by category ID.
+   *
+   * @param {number} categoryId - The ID of the category to filter expenses.
+   * @param {number} userId - The ID of the user who owns the expenses.
+   * @returns {Promise<Array>} A Promise that resolves to an array with all the user's expenses for the specified category.
+   */
+  static async getByCategoryId(categoryId, userId) {
+    if (!userId)
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("userId"),
+      );
+
+    if (!categoryId)
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("categoryId"),
+      );
+
+    return await Expense.findAll({
+      where: {
+        categoryId: Number(categoryId),
+        userId: Number(userId),
+      },
+    });
+  }
+
+  /**
+   * Get expenses by both account ID and category ID.
+   *
+   * @param {number} accountId - The ID of the account to filter expenses.
+   * @param {number} categoryId - The ID of the category to filter expenses.
+   * @param {number} userId - The ID of the user who owns the expenses.
+   * @returns {Promise<Array>} A Promise that resolves to an array with all the user's expenses for the specified account and category.
+   */
+  static async getByAccountIdAndCategoryId(accountId, categoryId, userId) {
+    if (!userId)
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("userId"),
+      );
+
+    if (!categoryId)
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("categoryId"),
+      );
+
+    if (!accountId)
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("accountId"),
+      );
+
+    return await Expense.findAll({
+      where: {
+        accountId: Number(accountId),
+        categoryId: Number(categoryId),
+        userId: Number(userId),
+      },
+    });
+  }
 }
 
 module.exports = ExpenseService;
