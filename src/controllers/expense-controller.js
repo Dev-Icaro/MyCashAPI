@@ -114,10 +114,6 @@ class ExpenseController {
       const { id } = req.params;
       const { userId } = req;
 
-      if (!(await ExpenseService.getById(id, userId))) {
-        return res.status(404).json({ message: expenseConsts.MSG_NOT_FOUND });
-      }
-
       await ExpenseService.deleteById(id, userId);
 
       return res.status(200).json(expenseConsts.MSG_DELETED);

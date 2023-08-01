@@ -6,14 +6,18 @@ const {
 } = require("../helpers/expense-helpers");
 const {
   expenseSchema,
-  validatePresentExpenseProps,
+  validateExpensePresentProps,
 } = require("../validators/expense-validator");
-const { ApiValidationError } = require("../errors/validation-errors");
+const {
+  ApiValidationError,
+  ApiNotFoundError,
+} = require("../errors/validation-errors");
 const errorConstants = require("../constants/error-constants");
 const TransactionService = require("../services/transaction-service");
 const TransactionTypesEnum = require("../enums/transaction-types-enum");
 const { ApiInvalidArgumentError } = require("../errors/argument-errors");
 const ErrorMessageFormatter = require("../utils/error-message-formatter");
+const expenseConstants = require("../constants/expense-constants");
 
 /**
  * Class responsible for providing expense-related services.
@@ -118,7 +122,7 @@ class ExpenseService {
 
     expense = { ...expense, userId: userId };
 
-    const errors = await validatePresentExpenseProps(expense);
+    const errors = await validateExpensePresentProps(expense);
     if (!errors.isEmpty())
       throw new ApiValidationError(
         errorConstants.MSG_VALIDATION_ERROR,
@@ -160,6 +164,17 @@ class ExpenseService {
       throw new ApiInvalidArgumentError(
         ErrorMessageFormatter.missingArgument("userId"),
       );
+
+    const expense = await this.getById(id, userId);
+    if (!expense) throw new ApiNotFoundError(expenseConstants.MSG_NOT_FOUND);
+
+    // Create an deposit if the expense that has bee deleted was paid.
+    if (expense.isPaid) {
+      TransactionService.createFromExpense(
+        expense,
+        TransactionTypesEnum.DEPOSIT,
+      );
+    }
 
     return await Expense.destroy({
       where: {
