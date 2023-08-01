@@ -45,11 +45,11 @@ class TransactionService {
    * @param {Expense} expense - The expense that we want to create a transaction from.
    * @returns {Transaction} - The created account transaction.
    */
-  static async createFromExpense(expense) {
+  static async createFromExpense(expense, transactionType) {
     const transaction = {
       amount: expense.amount,
       description: expense.description,
-      transactionType: TransactionTypesEnum.WITHDRAWL,
+      transactionType: transactionType,
       userId: expense.userId,
       accountId: expense.accountId,
     };
@@ -69,34 +69,30 @@ class TransactionService {
   static async processTransaction(transaction, sequelizeTransaction) {
     const { amount, accountId, userId } = transaction;
 
-    try {
-      switch (transaction.transactionType) {
-        case TransactionTypesEnum.WITHDRAWL: {
-          await AccountService.withdrawl(
-            accountId,
-            amount,
-            userId,
-            sequelizeTransaction,
-          );
-          break;
-        }
-        case TransactionTypesEnum.DEPOSIT: {
-          await AccountService.deposit(
-            accountId,
-            amount,
-            userId,
-            sequelizeTransaction,
-          );
-          break;
-        }
-        default: {
-          throw new ApiInvalidTransactionTypeError(
-            "Invalid Transaction type while creating transaction",
-          );
-        }
+    switch (transaction.transactionType) {
+      case TransactionTypesEnum.WITHDRAWL: {
+        await AccountService.withdrawl(
+          accountId,
+          amount,
+          userId,
+          sequelizeTransaction,
+        );
+        break;
       }
-    } catch (err) {
-      throw err;
+      case TransactionTypesEnum.DEPOSIT: {
+        await AccountService.deposit(
+          accountId,
+          amount,
+          userId,
+          sequelizeTransaction,
+        );
+        break;
+      }
+      default: {
+        throw new ApiInvalidTransactionTypeError(
+          "Invalid Transaction type while creating transaction",
+        );
+      }
     }
   }
 }

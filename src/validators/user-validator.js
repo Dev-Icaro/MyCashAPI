@@ -1,28 +1,4 @@
-const { ApiInvalidArgumentError } = require("../errors/argument-errors");
 const UserService = require("../services/user-service");
-const ErrorMessageFormatter = require("../utils/error-message-formatter");
-
-/**
- * Validate an userId.
- *
- * @param {number} id - The user ID that you want to validate.
- * @returns {boolean} - An convention bool to indicate that its valid
- * @throws {ApiInvalidArgumentError} - Error indicating that it's not valid.
- */
-async function validateUserId(id) {
-  if (!id)
-    throw new ApiInvalidArgumentError(ErrorMessageFormatter.notEmpty("userId"));
-
-  if (!typeof id === "number")
-    throw new ApiInvalidArgumentError(
-      ErrorMessageFormatter.notInteger("userId"),
-    );
-
-  if (!(await UserService.getById(id)))
-    throw new ApiInvalidArgumentError(ErrorMessageFormatter.notFound("userId"));
-
-  return true;
-}
 
 /**
  * Function used to validate an user ID in Yup validation Schema
@@ -36,4 +12,5 @@ async function validateUserId(id) {
 const yupUserExists = async function (userId) {
   return await UserService.exists(userId);
 };
-module.exports = { validateUserId, yupUserExists };
+
+module.exports = { yupUserExists };

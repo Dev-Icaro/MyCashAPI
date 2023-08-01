@@ -6,11 +6,15 @@ module.exports = (sequelize, DataTypes) => {
   class Account extends Model {
     async addToBalance(amount, sequelizeTransaction) {
       this.balance += amount;
+      this.lastTransaction = Date.now();
+
       return await this.save({ transaction: sequelizeTransaction });
     }
 
     async subtractToBalance(amount, sequelizeTransaction) {
       this.balance -= amount;
+      this.lastTransaction = Date.now();
+
       return await this.save({ transaction: sequelizeTransaction });
     }
 

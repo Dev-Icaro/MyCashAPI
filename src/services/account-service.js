@@ -1,7 +1,6 @@
 const accountConsts = require("../constants/account-constants");
 const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
 const Account = require("../models").Account;
-const { validateUserId } = require("../validators/user-validator");
 const { AccountBalanceError } = require("../errors/account-errors");
 
 /**
@@ -15,8 +14,6 @@ class AccountService {
    * @returns {Promise<Array>} A promise that resolves to a list of bank accounts.
    */
   static async getAll(userId) {
-    await validateUserId(userId);
-
     return await Account.findAll({
       where: {
         userId: Number(userId),
@@ -33,8 +30,6 @@ class AccountService {
    * @returns {Promise<Object>} A promise that resolves to the details of the found bank account.
    */
   static async getById(id, userId, sequelizeTransaction) {
-    await validateUserId(userId);
-
     return await Account.findOne(
       {
         where: {
@@ -54,8 +49,6 @@ class AccountService {
    * @returns {Promise<Object>} A promise that resolves to the details of the newly created account.
    */
   static async create(account, userId) {
-    await validateUserId(userId);
-
     return await Account.create({ ...account, userId: userId }).catch((err) =>
       SequelizeErrorWrapper.wrapError(err),
     );
@@ -70,8 +63,6 @@ class AccountService {
    * @returns {Promise<Object>} A promise that resolves to the updated details of the bank account.
    */
   static async updateById(account, id, userId) {
-    await validateUserId(userId);
-
     return await Account.update(account, {
       where: {
         id: Number(id),
@@ -90,8 +81,6 @@ class AccountService {
    * @returns {Promise<boolean>} A promise that resolves to true if the account was successfully deleted.
    */
   static async deleteById(id, userId) {
-    await validateUserId(userId);
-
     return await Account.destroy({
       where: {
         id: Number(id),
@@ -127,8 +116,6 @@ class AccountService {
    * @throws {Error} Throws an error if the account is not found.
    */
   static async deposit(accountId, amount, userId, sequelizeTransaction) {
-    await validateUserId(userId);
-
     const account = await this.getById(accountId, userId);
     if (!account) {
       throw new Error(accountConsts.MSG_NOT_FOUND);
@@ -149,8 +136,6 @@ class AccountService {
    * @throws {Error} Throws an error if the account is not found.
    */
   static async withdrawl(accountId, amount, userId, sequelizeTransaction) {
-    await validateUserId(userId);
-
     const account = await this.getById(accountId, userId);
     if (!account) {
       throw new Error(accountConsts.MSG_NOT_FOUND);

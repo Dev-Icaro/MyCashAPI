@@ -1,7 +1,6 @@
 const Category = require("../models").Category;
 const categoryConstants = require("../constants/category-constants");
 const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
-const { validateUserId } = require("../validators/user-validator");
 
 /**
  * Class responsible for providing services related to categories.
@@ -15,8 +14,6 @@ class CategoryService {
    * @throws {Error} If an error occurs during the method execution.
    */
   static async getAll(userId) {
-    await validateUserId(userId);
-
     return await Category.findAll({
       where: {
         userId: Number(userId),
@@ -33,8 +30,6 @@ class CategoryService {
    * @throws {Error} If an error occurs during the method execution.
    */
   static async getById(id, userId) {
-    await validateUserId(userId);
-
     return await Category.findOne({
       where: {
         id: Number(id),
@@ -51,8 +46,6 @@ class CategoryService {
    * @throws {Error} If an error occurs during the method execution.
    */
   static async create(category, userId) {
-    await validateUserId(userId);
-
     return await Category.create({ ...category, userId: userId }).catch((err) =>
       SequelizeErrorWrapper.wrapError(err),
     );
@@ -68,8 +61,6 @@ class CategoryService {
    * @throws {Error} If an error occurs during the method execution.
    */
   static async updateById(category, id, userId) {
-    await validateUserId(userId);
-
     return await Category.update(category, {
       where: {
         id: Number(id),
@@ -93,8 +84,6 @@ class CategoryService {
    * @throws {Error} If an error occurs during the method execution.
    */
   static async deleteById(id, userId) {
-    await validateUserId(userId);
-
     return await Category.destroy({
       where: {
         id: Number(id),
@@ -112,8 +101,6 @@ class CategoryService {
    * @throws {Error} - Error indicating that the user wasn't found.
    */
   static async exists(categoryId, userId) {
-    await validateUserId(userId);
-
     if (!(await this.getById(categoryId, userId)))
       throw new Error(categoryConstants.MSG_NOT_FOUND);
 

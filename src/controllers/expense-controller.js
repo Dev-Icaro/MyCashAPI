@@ -16,7 +16,8 @@ class ExpenseController {
    */
   static async getAll(req, res, next) {
     try {
-      const expenses = await ExpenseService.getAll(req.userId);
+      const { userId } = req;
+      const expenses = await ExpenseService.getAll(userId);
 
       return res.status(200).json(expenses);
     } catch (err) {
@@ -36,7 +37,12 @@ class ExpenseController {
   static async getById(req, res, next) {
     try {
       const { id } = req.params;
-      const expense = await ExpenseService.getById(id, req.userId);
+      const { userId } = req;
+
+      const expense = await ExpenseService.getById(id, userId);
+      if (!expense) {
+        return res.status(404).json({ message: expenseConsts.MSG_NOT_FOUND });
+      }
 
       return res.status(200).json(expense);
     } catch (err) {
@@ -55,7 +61,9 @@ class ExpenseController {
    */
   static async create(req, res, next) {
     try {
-      const createdExpense = await ExpenseService.create(req.body, req.userId);
+      const { userId } = req;
+
+      const createdExpense = await ExpenseService.create(req.body, userId);
       return res.status(200).json(createdExpense);
     } catch (err) {
       next(err);
@@ -74,10 +82,16 @@ class ExpenseController {
   static async updateById(req, res, next) {
     try {
       const { id } = req.params;
+      const { userId } = req;
+
+      if (!(await ExpenseService.getById(id, userId))) {
+        return res.status(404).json({ message: expenseConsts.MSG_NOT_FOUND });
+      }
+
       const updatedExpense = await ExpenseService.updateById(
         req.body,
         id,
-        req.userId,
+        userId,
       );
 
       return res.status(200).json(updatedExpense);
@@ -98,7 +112,13 @@ class ExpenseController {
   static async deleteById(req, res, next) {
     try {
       const { id } = req.params;
-      await ExpenseService.deleteById(id, req.userId);
+      const { userId } = req;
+
+      if (!(await ExpenseService.getById(id, userId))) {
+        return res.status(404).json({ message: expenseConsts.MSG_NOT_FOUND });
+      }
+
+      await ExpenseService.deleteById(id, userId);
 
       return res.status(200).json(expenseConsts.MSG_DELETED);
     } catch (err) {
