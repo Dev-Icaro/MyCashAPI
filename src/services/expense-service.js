@@ -4,10 +4,8 @@ const {
   handleAccountBalanceError,
   handleIsPaidChange,
 } = require("../helpers/expense-helpers");
-const {
-  expenseSchema,
-  validateExpensePresentProps,
-} = require("../validators/expense-validator");
+const { expenseSchema } = require("../validators/expense-validator");
+const { validatePresentProps } = require("../validators/generic-validator");
 const {
   ApiValidationError,
   ApiNotFoundError,
@@ -122,7 +120,7 @@ class ExpenseService {
 
     expense = { ...expense, userId: userId };
 
-    const errors = await validateExpensePresentProps(expense);
+    const errors = await validatePresentProps(expense, expenseSchema);
     if (!errors.isEmpty())
       throw new ApiValidationError(
         errorConstants.MSG_VALIDATION_ERROR,
