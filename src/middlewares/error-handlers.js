@@ -1,7 +1,7 @@
 const logger = require("../utils/logger");
 const errorConsts = require("../constants/error-constants");
 
-function errorHandler(err, req, res, next) {
+function errorHandler(err, req, res) {
   logger.error(errorConsts.ERROR_REQUEST_FAIL, err);
   return res.status(500).json({ message: err.message, errors: err.errors });
 }
@@ -13,6 +13,12 @@ function validationErrorHandler(err, req, res, next) {
     }
     case "ApiUniqueConstraintError": {
       return res.status(409).json({ message: err.message, errors: err.errors });
+    }
+    case "ApiInvalidArgumentError": {
+      return res.status(500).json({ message: err.message, errors: err.errors });
+    }
+    case "ApiNotFoundError": {
+      return res.status(404).json({ message: err.message, errors: err.errors });
     }
     default: {
       next(err);

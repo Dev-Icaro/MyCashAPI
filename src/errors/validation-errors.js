@@ -14,4 +14,16 @@ class ApiUniqueConstraintError extends Error {
   }
 }
 
-module.exports = { ApiUniqueConstraintError, ApiValidationError };
+class ApiNotFoundError extends Error {
+  constructor(message, errors) {
+    super(message);
+    this.errors = errors;
+    this.name = "ApiNotFoundError";
+  }
+}
+
+module.exports = {
+  ApiUniqueConstraintError,
+  ApiValidationError,
+  ApiNotFoundError,
+};
