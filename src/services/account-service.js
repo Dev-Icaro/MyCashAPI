@@ -97,11 +97,14 @@ class AccountService {
    * @returns {boolean} - A boolean indicating if the account exists.
    */
   static async exists(accountId, userId) {
-    if (!(await this.getById(accountId, userId))) {
-      throw new Error(accountConsts.MSG_NOT_FOUND);
-    }
-
-    return true;
+    return (
+      (await Account.count({
+        where: {
+          id: Number(accountId),
+          userId: Number(userId),
+        },
+      })) > 0
+    );
   }
 
   /**

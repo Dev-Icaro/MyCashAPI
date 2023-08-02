@@ -1,5 +1,4 @@
 const Category = require("../models").Category;
-const categoryConstants = require("../constants/category-constants");
 const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
 
 /**
@@ -101,10 +100,14 @@ class CategoryService {
    * @throws {Error} - Error indicating that the user wasn't found.
    */
   static async exists(categoryId, userId) {
-    if (!(await this.getById(categoryId, userId)))
-      throw new Error(categoryConstants.MSG_NOT_FOUND);
-
-    return true;
+    return (
+      (await Category.count({
+        where: {
+          id: Number(categoryId),
+          userId: Number(userId),
+        },
+      })) > 0
+    );
   }
 }
 
