@@ -115,7 +115,7 @@ class IncomeController {
    *
    * @param {Object} req - The Express request object.
    * @param {Object} res - The Express response object.
-   * @param {Object} next - The next middleware in the chain.
+   * @param {Function} next - The next middleware in the chain.
    * @returns {Array<Income>} A JSON object containing all incomes matched.
    */
   static async getByAccountIdAndCategoryId(req, res, next) {

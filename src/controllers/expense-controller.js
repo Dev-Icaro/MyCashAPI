@@ -172,7 +172,7 @@ class ExpenseController {
    *
    * @param {Object} req - The Express request object.
    * @param {Object} res - The Express response object.
-   * @param {Object} next - The next middleware in the chain.
+   * @param {Function} next - The next middleware in the chain.
    * @returns {Array<Expense>} - A JSON object containing all expesnes matched.
    */
   static async getByAccountIdAndCategoryId(req, res, next) {
