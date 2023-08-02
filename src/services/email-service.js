@@ -12,7 +12,7 @@ const { ApiInvalidArgumentError } = require("../errors/argument-errors");
 const { ApiEmailSendError } = require("../errors/email-errors");
 
 // Helpers / Utils
-const { fileExists } = require("../utils/file-utils");
+const fs = require("fs");
 const {
   validateEmail,
   getEmailAddressInConfigFile,
@@ -179,7 +179,7 @@ class Email {
       );
     }
 
-    if (!fileExists(path)) {
+    if (!fs.existsSync(path)) {
       throw new ApiInvalidFileError(
         errorConsts.ERROR_FILE_NOT_FOUND.replace("{placeholder}", path),
       );

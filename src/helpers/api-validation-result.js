@@ -1,23 +1,20 @@
 /**
- * Classe helper para ajudar na manipulação de resultados de validações, contém
- * mecanismo parecido com o validationResult do expressValidator.
+ * Helper class to assist in handling validation results, similar to the expressValidator's validationResult.
  */
 class ApiValidationResult {
   /**
-   * Cria uma instãncia de ApiValidationResult
+   * Creates an instance of ApiValidationResult.
    *
-   * @param {void}
-   * @returns {void}
+   * @constructor
    */
   constructor() {
     this.errors = [];
   }
 
   /**
-   * Adiciona um erro.
+   * Adds an error message.
    *
-   * @param {string} error - Mensagem de erro.
-   * @returns {void}
+   * @param {string} error - The error message.
    */
   addError(error) {
     if (!error) {
@@ -28,19 +25,18 @@ class ApiValidationResult {
   }
 
   /**
-   * Retorna os erros adicionados.
+   * Returns the added errors.
    *
-   * @param {void}
-   * @returns {Array} - Array contendo os erros adicionados
+   * @returns {Array} - Array containing the added errors.
    */
   getErrors() {
     return this.errors;
   }
 
   /**
-   * Verifica se foi adicionado algum erro.
+   * Checks if any error has been added.
    *
-   * @returns {boolean} - Booleana indicando se está vazio ou não
+   * @returns {boolean} - Boolean indicating whether the instance is empty or not.
    */
   isEmpty() {
     return this.errors.length === 0;
