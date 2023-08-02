@@ -22,8 +22,7 @@ async function handleIncomeIsPaidChange(income) {
 }
 
 /**
- * Handle account balance error, putting the field isPaid to false,
- * and returning the income with an info message about what occours.
+ * Handle account balance error, mantaining the isPaid as the previus value.
  *
  * @param {AccountBalanceError} err - The Account balance error to handle.
  * @param {Income} expense - The income that involved on the operation.
@@ -31,7 +30,7 @@ async function handleIncomeIsPaidChange(income) {
  * message.
  */
 async function handleAccountBalanceError(err, income) {
-  income.isPaid = false;
+  income.isPaid = true;
   await income.save();
 
   return {

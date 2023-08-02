@@ -50,6 +50,89 @@ class IncomeService {
     });
   }
 
+  static async getByAccountId(accountId, userId) {
+    if (!userId)
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("userId"),
+      );
+
+    if (!accountId)
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("accountId"),
+      );
+
+    return await Income.findAll({
+      where: {
+        accountId: Number(accountId),
+        userId: Number(userId),
+      },
+    });
+  }
+
+  static async getByCategoryId(categoryId, userId) {
+    if (!userId)
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("userId"),
+      );
+
+    if (!categoryId)
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("categoryId"),
+      );
+
+    return await Income.findAll({
+      where: {
+        categoryId: Number(categoryId),
+        userId: Number(userId),
+      },
+    });
+  }
+
+  static async getByAccountIdAndCategoryId(accountId, categoryId, userId) {
+    if (!userId)
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("userId"),
+      );
+
+    if (!categoryId)
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("categoryId"),
+      );
+
+    if (!accountId)
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("accountId"),
+      );
+
+    return await Income.findAll({
+      where: {
+        accountId: Number(accountId),
+        categoryId: Number(categoryId),
+        userId: Number(userId),
+      },
+    });
+  }
+
+  static async exists(id, userId) {
+    if (!id) {
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("id"),
+      );
+    }
+
+    if (!userId) {
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("userId"),
+      );
+    }
+
+    return (
+      (await Income.count({
+        where: { id: Number(id), userId: Number(userId) },
+      })) > 0
+    );
+  }
+
   static async create(income, userId) {
     if (!userId) {
       throw new ApiInvalidArgumentError(
@@ -113,7 +196,7 @@ class IncomeService {
       },
     });
 
-    const updatedIncome = await this.getById(id);
+    const updatedIncome = await this.getById(id, userId);
 
     const hasChangedIsPaidField =
       incomeBeforeUpdt.isPaid !== updatedIncome.isPaid;
@@ -126,6 +209,50 @@ class IncomeService {
       });
 
     return updatedIncome;
+  }
+
+  static async deleteById(id, userId) {
+    if (!userId) {
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("userId"),
+      );
+    }
+
+    if (!id) {
+      throw new ApiInvalidArgumentError(
+        ErrorMessageFormatter.missingArgument("id"),
+      );
+    }
+
+    const income = await this.getById(id, userId);
+    if (!income)
+      throw new ApiNotFoundError(ErrorMessageFormatter.notFound("income"));
+
+    let canDeleteIncome = true;
+
+    if (income.isPaid) {
+      await createTransactionFromIncome(
+        income,
+        TransactionTypesEnum.WITHDRAWL,
+      ).catch((err) => {
+        canDeleteIncome = false;
+
+        if (err.name === "AccountBalanceError") {
+          throw new ApiValidationError(
+            "Cant delete income it will exceed the account overdraft limit",
+          );
+        } else throw err;
+      });
+    }
+
+    if (canDeleteIncome) {
+      return await Income.destroy({
+        where: {
+          id: Number(id),
+          userId: Number(userId),
+        },
+      });
+    }
   }
 }
 

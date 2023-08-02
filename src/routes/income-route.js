@@ -12,6 +12,24 @@ router
   .get(IncomeController.getAll)
   .post(IncomeController.create);
 
+router
+  .route("/api/incomes/:id")
+  .get(IncomeController.getById)
+  .put(IncomeController.updateById)
+  .delete(IncomeController.deleteById);
+
+router.get("/api/incomes/account/:accountId", IncomeController.getByAccountId);
+
+router.get(
+  "/api/incomes/category/:categoryId",
+  IncomeController.getByCategoryId,
+);
+
+router.get(
+  "/api/incomes/account/:accountId/category/:categoryId",
+  IncomeController.getByAccountIdAndCategoryId,
+);
+
 router.use("/api/incomes", validationErrorHandler);
 
 module.exports = router;
