@@ -1,7 +1,6 @@
 const { body } = require("express-validator");
 const { MSG_NOT_FOUND } = require("../constants/user-constants.js");
 const ErrorMessageFormatter = require("../utils/error-message-formatter.js");
-const { ApiInvalidArgumentError } = require("../errors/argument-errors.js");
 const UserService = require("../services/user-service.js");
 
 const validateSiginReq = () => [validateEmail(), validatePass()];
@@ -27,7 +26,7 @@ const validateEmail = () =>
     .withMessage(ErrorMessageFormatter.notEmpty("email"))
     .bail()
     .isEmail()
-    .withMessage((email, { req }) => ErrorMessageFormatter.invalidEmail(email))
+    .withMessage((email) => ErrorMessageFormatter.invalidEmail(email))
     .bail()
     .custom(async (value) => {
       if (!(await UserService.findByEmail(value))) throw MSG_NOT_FOUND;
