@@ -28,7 +28,7 @@ const validateCategoryIdParam = () => [
  * @throws {Error} - Yup convention to indicate that its fail.
  */
 const yupCategoryExists = async function (categoryId) {
-  return await CategoryService.exists(categoryId, this.parent.userId);
+  return CategoryService.exists(categoryId, this.parent.userId);
 };
 
 module.exports = { validateCategoryIdParam, yupCategoryExists };

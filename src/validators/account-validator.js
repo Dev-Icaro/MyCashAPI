@@ -36,6 +36,8 @@ const validateAccountIdParam = () => [
  */
 const yupAccountExists = async function (accountId) {
   return await AccountService.exists(accountId, this.parent.userId);
+  //if (await AccountService.exists(accountId, this.parent.userId)) return true;
+  //else throw new Error(accountConstants.MSG_NOT_FOUND);
 };
 
 module.exports = { validateAccountIdParam, yupAccountExists };
