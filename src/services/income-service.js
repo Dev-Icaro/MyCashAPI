@@ -15,7 +15,16 @@ const TransactionTypesEnum = require("../enums/transaction-types-enum");
 const { validatePresentProps } = require("../validators/generic-validator");
 const { handleAccountBalanceError } = require("../helpers/income-helpers");
 
+/**
+ * Class responsible for providing income-related services.
+ */
 class IncomeService {
+  /**
+   * Get all incomes of a specific user.
+   *
+   * @param {number} userId - The ID of the user to filter incomes.
+   * @returns {Promise<Array>} A Promise that resolves to an array with all the user's incomes.
+   */
   static async getAll(userId) {
     if (!userId)
       throw new ApiInvalidArgumentError(
@@ -29,6 +38,13 @@ class IncomeService {
     });
   }
 
+  /**
+   * Get a specific income based on the ID and user ID.
+   *
+   * @param {number} id - The ID of the income.
+   * @param {number} userId - The ID of the user who owns the income.
+   * @returns {Promise<Object>} A Promise that resolves to the found income object.
+   */
   static async getById(id, userId) {
     if (!id) {
       throw new ApiInvalidArgumentError(
@@ -50,6 +66,13 @@ class IncomeService {
     });
   }
 
+  /**
+   * Get incomes by account ID.
+   *
+   * @param {number} accountId - The ID of the account to filter incomes.
+   * @param {number} userId - The ID of the user who owns the incomes.
+   * @returns {Promise<Array>} A Promise that resolves to an array with all the user's incomes for the specified account.
+   */
   static async getByAccountId(accountId, userId) {
     if (!userId)
       throw new ApiInvalidArgumentError(
@@ -69,6 +92,13 @@ class IncomeService {
     });
   }
 
+  /**
+   * Get incomes by category ID.
+   *
+   * @param {number} categoryId - The ID of the category to filter incomes.
+   * @param {number} userId - The ID of the user who owns the incomes.
+   * @returns {Promise<Array>} A Promise that resolves to an array with all the user's incomes for the specified category.
+   */
   static async getByCategoryId(categoryId, userId) {
     if (!userId)
       throw new ApiInvalidArgumentError(
@@ -88,6 +118,14 @@ class IncomeService {
     });
   }
 
+  /**
+   * Get incomes by both account ID and category ID.
+   *
+   * @param {number} accountId - The ID of the account to filter incomes.
+   * @param {number} categoryId - The ID of the category to filter incomes.
+   * @param {number} userId - The ID of the user who owns the incomes.
+   * @returns {Promise<Array>} A Promise that resolves to an array with all the user's incomes for the specified account and category.
+   */
   static async getByAccountIdAndCategoryId(accountId, categoryId, userId) {
     if (!userId)
       throw new ApiInvalidArgumentError(
@@ -113,6 +151,13 @@ class IncomeService {
     });
   }
 
+  /**
+   * Check if an income with the given ID and user ID exists.
+   *
+   * @param {number} id - The ID of the income to check for existence.
+   * @param {number} userId - The ID of the user who owns the income.
+   * @returns {Promise<boolean>} A Promise that resolves to true if the income exists, otherwise false.
+   */
   static async exists(id, userId) {
     if (!id) {
       throw new ApiInvalidArgumentError(
@@ -133,6 +178,13 @@ class IncomeService {
     );
   }
 
+  /**
+   * Create a new income.
+   *
+   * @param {Object} income - The income object to be created.
+   * @param {number} userId - The ID of the user who owns the income.
+   * @returns {Promise<Object>} A Promise that resolves to the created income object.
+   */
   static async create(income, userId) {
     if (!userId) {
       throw new ApiInvalidArgumentError(
@@ -164,6 +216,14 @@ class IncomeService {
     return createdIncome;
   }
 
+  /**
+   * Update an existing income based on the ID and user ID.
+   *
+   * @param {Object} income - The income object to be updated.
+   * @param {number} id - The ID of the income to be updated.
+   * @param {number} userId - The ID of the user who owns the income.
+   * @returns {Promise<Object>} A Promise that resolves to the updated income object.
+   */
   static async updateById(income, id, userId) {
     if (!userId) {
       throw new ApiInvalidArgumentError(
@@ -211,6 +271,13 @@ class IncomeService {
     return updatedIncome;
   }
 
+  /**
+   * Delete an existing income based on the ID and user ID.
+   *
+   * @param {number} id - The ID of the income to be deleted.
+   * @param {number} userId - The ID of the user who owns the income.
+   * @returns {Promise<number>} A Promise that resolves with the number of deleted rows (0 or 1).
+   */
   static async deleteById(id, userId) {
     if (!userId) {
       throw new ApiInvalidArgumentError(
