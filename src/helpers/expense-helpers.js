@@ -27,14 +27,10 @@ async function handleAccountBalanceError(err, expense) {
  *
  * @param {Expense} expense - The expense that changed the isPaid field.
  */
-async function handleIsPaidChange(expense) {
-  let transactionType;
-
-  if (expense.isPaid) {
-    transactionType = TransactionTypesEnum.WITHDRAWL;
-  } else {
-    transactionType = TransactionTypesEnum.DEPOSIT;
-  }
+async function handleExpenseIsPaidChange(expense) {
+  let transactionType = expense.isPaid
+    ? TransactionTypesEnum.WITHDRAWL
+    : TransactionTypesEnum.DEPOSIT;
 
   await TransactionService.createFromExpense(expense, transactionType).catch(
     async (err) => {
@@ -49,4 +45,4 @@ async function handleIsPaidChange(expense) {
   );
 }
 
-module.exports = { handleAccountBalanceError, handleIsPaidChange };
+module.exports = { handleAccountBalanceError, handleExpenseIsPaidChange };

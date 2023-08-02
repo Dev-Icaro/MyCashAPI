@@ -2,7 +2,7 @@ const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
 const Expense = require("../models").Expense;
 const {
   handleAccountBalanceError,
-  handleIsPaidChange,
+  handleExpenseIsPaidChange,
 } = require("../helpers/expense-helpers");
 const { expenseSchema } = require("../validators/expense-validator");
 const { validatePresentProps } = require("../validators/generic-validator");
@@ -143,9 +143,7 @@ class ExpenseService {
     const hasChangedIsPaidField =
       expenseBeforeUpdt.isPaid !== updatedExpense.isPaid;
 
-    if (hasChangedIsPaidField) {
-      await handleIsPaidChange(updatedExpense);
-    }
+    if (hasChangedIsPaidField) await handleExpenseIsPaidChange(updatedExpense);
 
     return updatedExpense;
   }
