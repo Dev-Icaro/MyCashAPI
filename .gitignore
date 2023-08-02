@@ -3,3 +3,4 @@
 /src/.vscode
 /src/logs.log
 /src/config/email-config.json
+/src/.env

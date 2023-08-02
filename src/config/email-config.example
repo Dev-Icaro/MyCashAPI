@@ -1,0 +1,30 @@
+/*
+  Email Configuration Example
+
+  This is an example configuration file for sending emails.
+  Create a file called "email-config.json" in the "config" folder of your project and fill in the information as needed.
+
+  [GMAIL]
+  If you are using Gmail as your email provider, fill in the information as follows:
+
+  {
+    "service": "gmail",
+    "auth": {
+      "user": "[your-email-address]",
+      "pass": "[your-email-password]"
+    }
+  }
+
+  [DEFAULT]
+  If you are using a standard email provider, fill in the information as follows:
+
+  {
+    "host": "[smtp-server]",
+    "port": [smtp-port],
+    "secure": [true-or-false],
+    "auth": {
+      "user": "[your-email-address]",
+      "pass": "[your-email-password]"
+    }
+  }
+*/
