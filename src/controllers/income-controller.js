@@ -1,6 +1,18 @@
 const IncomeService = require("../services/income-service");
 
+/**
+ * Controller handling HTTP requests related to incomes in the application.
+ */
 class IncomeController {
+  /**
+   * Get all incomes for the authenticated user.
+   *
+   * @param {Object} req - The Express request object.
+   * @param {Object} res - The Express response object.
+   * @param {Function} next - The next middleware in the chain.
+   * @returns {Array<Income>} A JSON object containing all user incomes.
+   * @throws {Error} If an error occurs during the method execution.
+   */
   static async getAll(req, res, next) {
     try {
       const { userId } = req;
@@ -12,6 +24,15 @@ class IncomeController {
     }
   }
 
+  /**
+   * Create a new income for the authenticated user.
+   *
+   * @param {Object} req - The Express request object containing the data of the income to be created.
+   * @param {Object} res - The Express response object.
+   * @param {Function} next - The next middleware in the chain.
+   * @returns {Income} A JSON object containing the created income.
+   * @throws {Error} If an error occurs during the method execution.
+   */
   static async create(req, res, next) {
     try {
       const { userId } = req;
@@ -23,6 +44,15 @@ class IncomeController {
     }
   }
 
+  /**
+   * Get a specific income based on the ID and the ID of the authenticated user.
+   *
+   * @param {Object} req - The Express request object.
+   * @param {Object} res - The Express response object.
+   * @param {Function} next - The next middleware in the chain.
+   * @returns {Income} A JSON object containing the found income.
+   * @throws {Error} If an error occurs during the method execution.
+   */
   static async getById(req, res, next) {
     try {
       const { userId } = req;
@@ -36,6 +66,15 @@ class IncomeController {
     }
   }
 
+  /**
+   * Get all incomes associated with the specified account ID and the ID of the authenticated user.
+   *
+   * @param {Object} req - The Express request object.
+   * @param {Object} res - The Express response object.
+   * @param {Function} next - The next middleware in the chain.
+   * @returns {Array<Income>} A JSON object containing all user incomes associated with the account ID.
+   * @throws {Error} If an error occurs during the method execution.
+   */
   static async getByAccountId(req, res, next) {
     try {
       const { accountId } = req.params;
@@ -49,6 +88,15 @@ class IncomeController {
     }
   }
 
+  /**
+   * Get all incomes associated with the specified category ID and the ID of the authenticated user.
+   *
+   * @param {Object} req - The Express request object.
+   * @param {Object} res - The Express response object.
+   * @param {Function} next - The next middleware in the chain.
+   * @returns {Array<Income>} A JSON object containing all user incomes associated with the category ID.
+   * @throws {Error} If an error occurs during the method execution.
+   */
   static async getByCategoryId(req, res, next) {
     try {
       const { categoryId } = req.params;
@@ -62,6 +110,14 @@ class IncomeController {
     }
   }
 
+  /**
+   * Get all incomes by Account ID, Category ID, related to the authenticated user.
+   *
+   * @param {Object} req - The Express request object.
+   * @param {Object} res - The Express response object.
+   * @param {Object} next - The next middleware in the chain.
+   * @returns {Array<Income>} A JSON object containing all incomes matched.
+   */
   static async getByAccountIdAndCategoryId(req, res, next) {
     try {
       const { accountId, categoryId } = req.params;
@@ -79,6 +135,15 @@ class IncomeController {
     }
   }
 
+  /**
+   * Update an existing income based on the ID and the ID of the authenticated user.
+   *
+   * @param {Object} req - The Express request object containing the data of the income to be updated.
+   * @param {Object} res - The Express response object.
+   * @param {Function} next - The next middleware in the chain.
+   * @returns {Income} A JSON object containing the updated income.
+   * @throws {Error} If an error occurs during the method execution.
+   */
   static async updateById(req, res, next) {
     try {
       const { userId } = req;
@@ -96,6 +161,15 @@ class IncomeController {
     }
   }
 
+  /**
+   * Delete an existing income based on the ID and the ID of the authenticated user.
+   *
+   * @param {Object} req - The Express request object.
+   * @param {Object} res - The Express response object.
+   * @param {Function} next - The next middleware in the chain.
+   * @returns {string} Message indicating that the income was deleted.
+   * @throws {Error} If an error occurs during the method execution.
+   */
   static async deleteById(req, res, next) {
     try {
       const { userId } = req;
