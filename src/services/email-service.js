@@ -13,11 +13,14 @@ const { ApiEmailSendError } = require("../errors/email-errors");
 
 // Helpers / Utils
 const { fileExists } = require("../utils/file-utils");
-const { validateEmail } = require("../helpers/email-helpers");
+const {
+  validateEmail,
+  getEmailAddressInConfigFile,
+} = require("../helpers/email-helpers");
 const ErrorMessageFormatter = require("../utils/error-message-formatter");
 
 /**
- * Serviço de envio de emails.
+ * Email service for sending emails.
  */
 class EmailService {
   constructor(transporter) {
@@ -31,13 +34,13 @@ class EmailService {
   }
 
   /**
-   * Método para enviar emails.
+   * Method for sending emails.
    *
-   * @param {Email} email - Instância de Email que desejamos enviar.
-   * @returns {Promise<import('nodemailer').SentMessageInfo>} - Uma promessa que resolve
-   * em um objeto contendo informações do envio.
-   * @throws {ApiValidationError} - Erro relacionados a validação dos dados.
-   * @throws {ApiEmailSendError} - Erro relacionado ao envio do email.
+   * @param {Email} email - Email instance to be sent.
+   * @returns {Promise<import('nodemailer').SentMessageInfo>} - A promise that resolves
+   * to an object containing sending information.
+   * @throws {ApiValidationError} - Errors related to data validation.
+   * @throws {ApiEmailSendError} - Error related to email sending.
    */
   async sendEmail(email) {
     const errors = validateEmail(email);
@@ -48,10 +51,9 @@ class EmailService {
       );
     }
 
-    // Antes de enviar o email verifico se as configurações de email são válidas.
     await this.transporter
       .verify()
-      .then(async (info) => {
+      .then(async () => {
         await this.transporter.sendMail(email);
       })
       .then((emailInfo) => {
@@ -66,16 +68,16 @@ class EmailService {
   }
 
   /**
-   * Envia um email contento o resetToken para o usuário paramêtro.
+   * Send an email containing the resetToken to the provided user.
    *
-   * @param {User} - Usuário que desejamos enviar o ResetToken
-   * @returns {Promise<Object>} - Um objeto contento informações sobre o envio do email.
+   * @param {User} user - User for whom the resetToken email is to be sent.
+   * @returns {Promise<Object>} - An object containing information about the email sending.
    */
   async sendResetTokenEmail(user) {
     const email = new Email();
 
     email
-      .setFrom("projectmycash0@gmail.com")
+      .setFrom(await getEmailAddressInConfigFile())
       .setSubject("MyCash - Recuperation email")
       .addReceiverAddress(user.email)
       .setHtml(
@@ -88,15 +90,12 @@ class EmailService {
 }
 
 /**
- * Classe representando um Email, que poderá ser enviado
- * pelo EmailService no método SendMail.
+ * Class representing an Email, which can be sent
+ * by the EmailService in the sendMail method.
  */
 class Email {
   /**
-   * Cria uma instância de email;
-   *
-   * @param {void}
-   * @return {void}
+   * Create an instance of Email.
    */
   constructor() {
     this.from = "";
@@ -108,10 +107,10 @@ class Email {
   }
 
   /**
-   * Define o from do email.
+   * Set the from address of the email.
    *
-   * @param {string} from - Email de quem está enviando.
-   * @returns {Object} - Retorno this para permitir o chaining.
+   * @param {string} from - Email of the sender.
+   * @returns {Object} - Return this to allow chaining.
    */
   setFrom(from) {
     this.from = from.trim();
@@ -119,10 +118,10 @@ class Email {
   }
 
   /**
-   * Define o subject(assunto) do email.
+   * Set the subject of the email.
    *
-   * @param {string} subject - Assunto do email.
-   * @returns {this} - Retorno this para permitir o chaining.
+   * @param {string} subject - Subject of the email.
+   * @returns {this} - Return this to allow chaining.
    */
   setSubject(subject) {
     this.subject = subject;
@@ -130,11 +129,10 @@ class Email {
   }
 
   /**
-   * Define o conteúdo HTML do email.
+   * Set the HTML content of the email.
    *
-   * @param {string} html - Conteúdo HTML que dejamos
-   * inserir no corpo do email.
-   * @returns {this} - Retorno this para permitir o chaining.
+   * @param {string} html - HTML content to be inserted into the email body.
+   * @returns {this} - Return this to allow chaining.
    *
    * @example
    * const email = new Email();
@@ -145,7 +143,6 @@ class Email {
    *       </p>
    *    </div>
    * );
-   *
    */
   setHtml(html) {
     this.html = html;
@@ -153,11 +150,10 @@ class Email {
   }
 
   /**
-   * Define o conteúdo texto do email.
+   * Set the text content of the email.
    *
-   * @param {string} text - Conteúdo texto doque desejamos
-   * inserir no corpo do email.
-   * @returns {this} - Retorno this para permitir o chaining.
+   * @param {string} text - Text content to be inserted into the email body.
+   * @returns {this} - Returns 'this' to allow chaining.
    */
   setText(text) {
     this.text = text;
@@ -165,19 +161,18 @@ class Email {
   }
 
   /**
-   * Adiciona um anexo ao email, podendo anexar inúmeros
-   * anexos invocando o método novamente.
+   * Add an attachment to the email, allowing multiple attachments by invoking the method again.
    *
-   * @param {string} path - Local do arquivo computador.
-   * @param {string} [filename] - Nome do arquivo (opcional).
-   * @returns {this} - Retorno this para permitir o chaining.
-   * @throws {ApiValidationError} - Exceção contendo o erro de validação.
+   * @param {string} path - Path to the file on the computer.
+   * @param {string} [filename] - File name (optional).
+   * @returns {this} - Returns 'this' to allow chaining.
+   * @throws {ApiValidationError} - Exception containing the validation error.
    *
    * @example
    * const email = new Email();
-   * email.addAtthachment('C:\RelatorioBancario.xls', 'Relatório bancário');
+   * email.addAttachment('C:\RelatorioBancario.xls', 'Relatório bancário');
    */
-  addAtthachment(path, filename) {
+  addAttachment(path, filename) {
     if (validator.isEmpty(path)) {
       throw new ApiValidationError(
         ErrorMessageFormatter.missingArgument("path"),
@@ -194,7 +189,7 @@ class Email {
       path: path,
     };
 
-    // Uso a atribuição condicional para criar a propriedade apenas se filename tiver um valor
+    // Use conditional assignment to create the property only if 'filename' has a value
     filename !== undefined && (attachment["filename"] = filename);
 
     this.attachments.push(attachment);
@@ -203,17 +198,16 @@ class Email {
   }
 
   /**
-   * Adiciona um email de destino, você pode adicionar mais de um email,
-   * basta invocar o método multiplas vezes ou criar uma string com os emails separados
-   * por vírgulas.
+   * Add a recipient email address. You can add multiple email addresses by invoking the method multiple times
+   * or by providing a comma-separated string of email addresses.
    *
-   * @param {string} emailAddress - Email de destíno
-   * @returns {this} - Retorno this para permitir o chaining.
-   * @throws {ApiValidationError} - Exceção contendo o erro de validação.
+   * @param {string} emailAddress - Destination email address.
+   * @returns {this} - Returns 'this' to allow chaining.
+   * @throws {ApiValidationError} - Exception containing the validation error.
    *
    * @example
    * const email = new Email();
-   * Email.addReceiverAdress('projetomycash@gmail.com');
+   * email.addReceiverAddress('projetomycash@gmail.com');
    */
   addReceiverAddress(emailAddress) {
     if (validator.isEmpty(emailAddress)) {
@@ -228,31 +222,29 @@ class Email {
       );
     }
 
-    // Verifico se já existe algum endereço, se sim adiciono com "," para manter a formatação
+    // Check if there is already an address, if so, add with "," to maintain the formatting
     this.to += this.hasReceiverAddress() ? `, ${emailAddress}` : emailAddress;
 
     return this;
   }
 
   /**
-   * Verifica se exite um email de destino setado.
+   * Check if a recipient email address is set.
    *
-   * @param {void}
-   * @returns {boolean} - Booleana indicando se existe um email de destino setado
+   * @returns {boolean} - Boolean indicating if a recipient email address is set.
    */
   hasReceiverAddress() {
     return this.to.length > 0;
   }
 
   /**
-   * Método que valida as informações contidas em sua instância.
+   * Method to validate the information contained in its instance.
    *
-   * @param {void}
    * @returns {void}
-   * @throws {ApiValidationError} - Exceção contendo os erros de validação
+   * @throws {ApiValidationError} - Exception containing the validation errors.
    * @example
    * const email = new Email();
-   * email.validate(); // Saída: ApiValidationError devido a não ter dados válidos.
+   * email.validate(); // Output: ApiValidationError due to not having valid data.
    */
   validate() {
     const errors = validateEmail(this);
