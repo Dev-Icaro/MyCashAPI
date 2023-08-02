@@ -7,7 +7,4 @@ module.exports = {
 
   // User error
   MSG_NOT_FOUND: "User not found in our database",
-
-  // User validation errors:
-  //ERROR_MISSING_FIELD: ""
 };
