@@ -30,6 +30,8 @@ A API estará disponível na porta configurada no .env ou http://localhost:8080.
 
 A API do MyCash possui as seguintes rotas:
 
+As rotas poderão ser importadas no postman com o arquivo MyCash.postman_collection.json:
+
 Autenticação
 
     POST /api/auth/signup: Cria um novo usuário.
