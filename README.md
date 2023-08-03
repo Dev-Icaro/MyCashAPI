@@ -143,6 +143,8 @@ The API will be available at port configured on .env or http://localhost:8080.
 
 The MyCash API has the following routes:
 
+The postman collection could be imported by the file MyCash.postman_collection.json:
+
 Authentication
 
     POST /api/auth/signup: Creates a new user.
