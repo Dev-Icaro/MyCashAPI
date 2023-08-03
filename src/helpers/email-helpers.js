@@ -4,22 +4,22 @@ const nodemailer = require("nodemailer");
 const fs = require("fs");
 
 // Constants
-const errorConsts = require("../constants/error-constants");
 const emailConsts = require("../constants/email-constants");
 
 // Helpers / Utils
 const ApiValidationResult = require("./api-validation-result");
-const ErrorMessageFormatter = require("./error-message-formatter");
+const ErrorMessageFormatter = require("../utils/error-message-formatter");
 
 // Models
 const { ApiEmailConfigurationError } = require("../errors/email-errors");
 
+const emailConfigPath = "./config/email-config.json";
+
 /**
- * Valida uma instânica de Email
+ * Validate the instance of Email class.
  *
- * @param {Email} email - Instância da classe email que desejamos validar.
- * @returns {ApiValidationResult} - Instância de ApiValidationResult, um helper que visa
- * manipular os resultados da validação, consulte sua documentação para maior entendimento.
+ * @param {Email} email - The Email that we want to validate.
+ * @returns {ApiValidationResult} - Instance of a error helper class.
  *
  * @example
  * const isValidEmail = validateEmail(email);
@@ -29,9 +29,7 @@ function validateEmail(email) {
 
   if (validator.isEmpty(email.from)) {
     errors.addError(ErrorMessageFormatter.notEmpty("from"));
-  }
-  // Apenas valido o formato do email se ele passar pela condição anterior
-  else if (!validator.isEmail(email.from)) {
+  } else if (!validator.isEmail(email.from)) {
     errors.addError(
       emailConsts.ERROR_INVALID_EMAIL.replace("{placeholder}", email.from),
     );
@@ -53,19 +51,17 @@ function validateEmail(email) {
 }
 
 /**
- * Retorna uma instânica do Transporter da lib nodemailer configurado
- * com o email padrão definido no model EmailConfig
+ * Return an Instance nodemailer transporter configurated with
+ * the email config in config file.
  *
  * @param {void}
- * @returns {Transport} - Instância de transporter.
+ * @returns {Transport} - The transporter instance.
  *
  * @example
  * const transporter = createTransporter();
  * transporter.sendEmail(email);
  */
 async function createTransporter() {
-  const emailConfigPath = "./config/email-config.json";
-
   if (!fs.existsSync(emailConfigPath)) {
     throw new ApiEmailConfigurationError(
       emailConsts.ERROR_EMAIL_NOT_CONFIGURATED,
@@ -78,7 +74,26 @@ async function createTransporter() {
   return nodemailer.createTransport(emailConfig);
 }
 
+/**
+ * Gets the email adress on config file.
+ *
+ * @returns {string} - The email adress.
+ */
+async function getEmailAddressInConfigFile() {
+  if (!fs.existsSync(emailConfigPath)) {
+    throw new ApiEmailConfigurationError(
+      emailConsts.ERROR_EMAIL_NOT_CONFIGURATED,
+      'Missing "email-config.json" in config folder',
+    );
+  }
+
+  const emailConfig = JSON.parse(fs.readFileSync(emailConfigPath, "utf-8"));
+
+  return emailConfig.auth.user;
+}
+
 module.exports = {
   validateEmail,
   createTransporter,
+  getEmailAddressInConfigFile,
 };

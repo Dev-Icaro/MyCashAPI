@@ -18,23 +18,23 @@ module.exports = {
       description: {
         type: Sequelize.STRING,
       },
-      payment_method: {
+      paymentMethod: {
         type: Sequelize.STRING,
       },
       receipt: {
         type: Sequelize.STRING,
       },
-      user_id: {
+      userId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: { model: "Users", key: "id" },
       },
-      Category_id: {
+      categoryId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: { model: "Categories", key: "id" },
       },
-      Account_id: {
+      accountId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: { model: "Accounts", key: "id" },

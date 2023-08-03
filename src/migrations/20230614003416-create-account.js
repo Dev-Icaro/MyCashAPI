@@ -9,13 +9,13 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      account_holder_name: {
+      accountHolderName: {
         type: Sequelize.STRING,
       },
-      account_number: {
+      accountNumber: {
         type: Sequelize.STRING,
       },
-      account_type: {
+      accountType: {
         type: Sequelize.STRING,
       },
       balance: {
@@ -24,7 +24,7 @@ module.exports = {
       currency: {
         type: Sequelize.STRING,
       },
-      last_transaction: {
+      lastTransaction: {
         type: Sequelize.DATE,
       },
       status: {
@@ -33,10 +33,10 @@ module.exports = {
       institution: {
         type: Sequelize.STRING,
       },
-      overdraft_limit: {
+      overdraftLimit: {
         type: Sequelize.DOUBLE,
       },
-      user_id: {
+      userId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: { model: "Users", key: "id" },

@@ -18,15 +18,15 @@ module.exports = {
       description: {
         type: Sequelize.STRING,
       },
-      transaction_type: {
+      transactionType: {
         type: Sequelize.STRING,
       },
-      Account_id: {
+      accountId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: { model: "Accounts", key: "id" },
       },
-      user_id: {
+      userId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: { model: "Users", key: "id" },

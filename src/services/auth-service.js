@@ -1,4 +1,3 @@
-// Helpers / Utils
 const { isHashEqual } = require("../utils/crypt-utils");
 const {
   generateResetToken,
@@ -10,62 +9,60 @@ const { ApiUnauthorizedError } = require("../errors/auth-errors");
 const EmailService = require("../services/email-service");
 const authConsts = require("../constants/auth-constants");
 const { createTransporter } = require("../helpers/email-helpers");
-const User = require("../models").User;
+const UserService = require("../services/user-service");
 
 /**
- *  Serviço de Autenticação, Contém funcionalidades relacionadas.
+ * Authentication service, containing related functionalities.
  */
 class AuthService {
   /**
-   * Cria um novo usuário / Conta.
+   * Create a new user/account.
    *
-   * Obs: As validações dos dados foram definidas no model, pode consulta-las no arquivo
-   * models/user.js.
+   * Note: Data validations are defined in the model; you can check them in the file models/user.js.
    *
-   * Obs2: O Hashing do password também foi definido no model, utilizando os Hooks do sequelize.
+   * Note2: Password hashing is also defined in the model using Sequelize Hooks.
    *
-   * @param {User} user - JSON contendo as informações do novo usuário.
-   * @returns {Promise<User>} - Retorna uma promime onde o resolve é o usuário criado.
+   * @param {User} user - JSON containing the information of the new user.
+   * @returns {Promise<User>} - Returns a promise where the resolve is the created user.
    */
   static async signup(user) {
-    return await User.create(user)
+    return await UserService.create(user)
       .then((createdUser) => {
         return createdUser;
       })
       .catch((e) => {
-        // Empacoto os erros lançados pelo Sequelize, incluindo os de validação.
+        // Wrap errors thrown by Sequelize, including validation errors.
         SequelizeErrorWrapper.wrapError(e);
       });
   }
 
   /**
-   *  Efetua o autenticação do usuário validando suas informações e gerando um JWT.
+   * Authenticate the user by validating their information and generating a JWT.
    *
-   * @param {Object} credentials - As credenciais de login {email, password}
-   * @returns {string} authToken - JWT referente a autenticação.
+   * @param {Object} credentials - Login credentials {email, password}.
+   * @returns {string} authToken - JWT related to the authentication.
    */
   static async signin(credentials) {
-    let user = await User.findUserByEmail(credentials.email);
+    let user = await UserService.findByEmail(credentials.email);
 
     if (!(await isHashEqual(credentials.password, user.password))) {
       throw new ApiUnauthorizedError(authConsts.MSG_UNAUTHORIZED_SIGIN, [
         authConsts.MSG_INCORRECT_PASSWORD,
       ]);
     }
-    const authToken = generateAuthToken(user);
-    return authToken;
+    return generateAuthToken(user);
   }
 
   /**
-   * Método responsável por lidar com recuperação de senhas,
-   * gerando um resetToken e enviando-o para o email do usuário.
+   * Method responsible for handling password recovery,
+   * generating a resetToken, and sending it to the user's email.
    *
-   * @param {string} email - Email da conta que deseja recuperar o pass.
-   * @returns {Object} EmailInfo - Informações sobre o envio do email de recuperação
+   * @param {string} email - Email of the account requesting password recovery.
+   * @returns {Object} EmailInfo - Information about the password recovery email sending.
    */
   static async forgotPassword(email) {
-    // Gero o reset token e guardo no banco
-    let user = await User.findUserByEmail(email);
+    // Generate the reset token and store it in the database.
+    let user = await UserService.findByEmail(email);
     let resetToken = generateResetToken();
 
     user.resetToken = resetToken.token;
@@ -80,24 +77,19 @@ class AuthService {
   }
 
   /**
-   * Método responsável resetar a senha do usuário caso as informações de reset sejam
-   * válidas.
+   * Method responsible for resetting the user's password if the reset information is valid.
    *
-   * @param {Object} resetInformations - Objeto contendo email, token, nova senha.
+   * @param {Object} resetInformations - Object containing email, token, new password.
    * @returns {void}
    */
   static async resetPassword(resetInformations) {
     const { email, token, password } = resetInformations;
-    const user = await User.findUserByEmail(email);
+    const user = await UserService.findByEmail(email);
 
-    try {
-      validateResetToken(token, user);
+    validateResetToken(token, user);
 
-      user.password = password;
-      await user.save();
-    } catch (e) {
-      throw e;
-    }
+    user.password = password;
+    await user.save();
   }
 }
 

@@ -5,13 +5,13 @@ const { verifyToken } = require("../utils/auth-utils");
 const authConsts = require("../constants/auth-constants");
 
 /**
- * Middleware de autenticação.
+ * Authentication middleware.
  *
- * @param {Express.Request} req
- * @param {Express.Response} res
- * @param {Express.next} next
- * @returns {void} - Retorna uma resposta com erro ou next, dependendo
- * do fluxo que a função seguir.
+ * @param {Express.Request} req - The Express request object.
+ * @param {Express.Response} res - The Express response object.
+ * @param {import("express").NextFunction} next - The next function to call.
+ * @returns {void} - Returns a response with an error or calls next, depending
+ * on the function flow.
  */
 async function authenticationMiddleware(req, res, next) {
   const authorization = req.headers.authorization;
@@ -32,21 +32,19 @@ async function authenticationMiddleware(req, res, next) {
 
   const token = authValues[1];
 
-  await verifyToken(token)
-    .then((decoded) => {
-      // Armazeno o userId em um contexto compartilhado.
-      req.userId = decoded.userId;
-    })
-    .catch((err) => {
-      const errMessage =
-        err.name === "TokenExpiredError"
-          ? authConsts.ERROR_TOKEN_EXPIRED
-          : authConsts.MSG_INVALID_TOKEN;
+  try {
+    const decoded = await verifyToken(token);
+    // Store the userId in a shared context.
+    req.userId = decoded.userId;
+    return next();
+  } catch (err) {
+    const errMessage =
+      err.name === "TokenExpiredError"
+        ? authConsts.ERROR_TOKEN_EXPIRED
+        : authConsts.MSG_INVALID_TOKEN;
 
-      return res.status(401).json({ message: errMessage });
-    });
-
-  return next();
+    return res.status(401).json({ message: errMessage });
+  }
 }
 
 function isAuthFormatValid(authValues) {

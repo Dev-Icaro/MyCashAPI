@@ -18,12 +18,12 @@ module.exports = {
       allowNull: false,
     });
 
-    await queryInterface.changeColumn("Users", "first_name", {
+    await queryInterface.changeColumn("Users", "firstName", {
       type: Sequelize.STRING,
       allowNull: false,
     });
 
-    await queryInterface.changeColumn("Users", "last_name", {
+    await queryInterface.changeColumn("Users", "lastName", {
       type: Sequelize.STRING,
       allowNull: false,
     });
@@ -45,12 +45,12 @@ module.exports = {
       allowNull: true,
     });
 
-    await queryInterface.changeColumn("Users", "first_name", {
+    await queryInterface.changeColumn("Users", "firstName", {
       type: Sequelize.STRING,
       allowNull: true,
     });
 
-    await queryInterface.changeColumn("Users", "last_name", {
+    await queryInterface.changeColumn("Users", "lastName", {
       type: Sequelize.STRING,
       allowNull: true,
     });

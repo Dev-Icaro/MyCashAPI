@@ -1,76 +1,72 @@
 const accountConsts = require("../constants/account-constants");
 const SequelizeErrorWrapper = require("../helpers/sequelize-error-wrapper");
 const Account = require("../models").Account;
-const { validateUserId } = require("../validators/auth-validator");
+const { AccountBalanceError } = require("../errors/account-errors");
 
 /**
- * Serviço de contas bancárias.
+ * Bank account service.
  */
 class AccountService {
   /**
-   * Obtém todas as contas bancárias associadas a um determinado usuário.
+   * Gets all bank accounts associated with a specific user.
    *
-   * @param {number} userId - O ID do usuário proprietário das contas.
-   * @returns {Promise<Array>} Uma promise que resolve para uma lista de contas bancárias.
+   * @param {number} userId - The ID of the user who owns the accounts.
+   * @returns {Promise<Array>} A promise that resolves to a list of bank accounts.
    */
   static async getAll(userId) {
-    await validateUserId(userId);
-
     return await Account.findAll({
       where: {
-        user_id: Number(userId),
+        userId: Number(userId),
       },
     });
   }
 
   /**
-   * Obtém os detalhes de uma conta bancária específica com base no ID da conta e no ID do usuário proprietário.
+   * Gets the details of a specific bank account based on the account ID and the owner's user ID.
    *
-   * @param {number} id - O ID da conta bancária a ser buscada.
-   * @param {number} userId - O ID do usuário proprietário da conta.
-   * @returns {Promise<Object>} Uma promise que resolve para os detalhes da conta bancária encontrada.
+   * @param {number} id - The ID of the bank account to be retrieved.
+   * @param {number} userId - The ID of the user who owns the account.
+   * @param {Sequelize.Transaction=} - The database that you want to link the operation [optional]
+   * @returns {Promise<Object>} A promise that resolves to the details of the found bank account.
    */
-  static async getById(id, userId) {
-    await validateUserId(userId);
-
-    return await Account.findOne({
-      where: {
-        id: Number(id),
-        user_id: Number(userId),
+  static async getById(id, userId, sequelizeTransaction) {
+    return await Account.findOne(
+      {
+        where: {
+          id: Number(id),
+          userId: Number(userId),
+        },
       },
-    });
+      { transaction: sequelizeTransaction },
+    );
   }
 
   /**
-   * Cria uma nova conta bancária associada a um usuário.
+   * Creates a new bank account associated with a user.
    *
-   * @param {Object} account - Um objeto contendo as informações da nova conta bancária.
-   * @param {number} userId - O ID do usuário proprietário da nova conta.
-   * @returns {Promise<Object>} Uma promise que resolve para os detalhes da nova conta criada.
+   * @param {Object} account - An object containing the information of the new bank account.
+   * @param {number} userId - The ID of the user who owns the new account.
+   * @returns {Promise<Object>} A promise that resolves to the details of the newly created account.
    */
   static async create(account, userId) {
-    await validateUserId(userId);
-
-    return await Account.create({ ...account, user_id: userId }).catch((err) =>
+    return await Account.create({ ...account, userId: userId }).catch((err) =>
       SequelizeErrorWrapper.wrapError(err),
     );
   }
 
   /**
-   * Atualiza os detalhes de uma conta bancária existente com base no ID da conta e do usuário proprietário.
+   * Updates the details of an existing bank account based on the account ID and the owner's user ID.
    *
-   * @param {Object} account - Um objeto contendo as informações atualizadas da conta bancária.
-   * @param {number} id - O ID da conta bancária a ser atualizada.
-   * @param {number} userId - O ID do usuário proprietário da conta.
-   * @returns {Promise<Object>} Uma promise que resolve para os detalhes atualizados da conta bancária.
+   * @param {Object} account - An object containing the updated information of the bank account.
+   * @param {number} id - The ID of the bank account to be updated.
+   * @param {number} userId - The ID of the user who owns the account.
+   * @returns {Promise<Object>} A promise that resolves to the updated details of the bank account.
    */
   static async updateById(account, id, userId) {
-    await validateUserId(userId);
-
     return await Account.update(account, {
       where: {
         id: Number(id),
-        user_id: Number(userId),
+        userId: Number(userId),
       },
     })
       .then(async () => await this.getById(id, userId))
@@ -78,41 +74,91 @@ class AccountService {
   }
 
   /**
-   * Exclui uma conta bancária existente com base no ID da conta e do usuário proprietário.
+   * Deletes an existing bank account based on the account ID and the owner's user ID.
    *
-   * @param {number} id - O ID da conta bancária a ser excluída.
-   * @param {number} userId - O ID do usuário proprietário da conta.
-   * @returns {Promise<boolean>} Uma promise que resolve para verdadeiro (true) se a conta foi excluída com sucesso.
+   * @param {number} id - The ID of the bank account to be deleted.
+   * @param {number} userId - The ID of the user who owns the account.
+   * @returns {Promise<boolean>} A promise that resolves to true if the account was successfully deleted.
    */
   static async deleteById(id, userId) {
-    await validateUserId(userId);
-
     return await Account.destroy({
       where: {
         id: Number(id),
-        user_id: Number(userId),
+        userId: Number(userId),
       },
     }).catch((err) => SequelizeErrorWrapper.wrapError(err));
   }
 
   /**
-   * Aumenta o saldo de uma conta bancária específica.
+   * Check if the user account exists.
    *
-   * @param {number} accountId - O ID da conta bancária cujo saldo será aumentado.
-   * @param {number} amount - O valor a ser adicionado ao saldo atual da conta.
-   * @param {number} userId - O ID do usuário proprietário da conta.
-   * @returns {Promise<number>} Uma promise que resolve para o novo saldo atual da conta.
-   * @throws {Error} Lança um erro se a conta não for encontrada.
+   * @param {number} accountId - The ID of the account to check if exists.
+   * @param {number} userId - The id of the user account owner.
+   * @returns {boolean} - A boolean indicating if the account exists.
    */
-  static async increaseAccountBalance(accountId, amount, userId) {
-    await validateUserId(userId);
+  static async exists(accountId, userId) {
+    return (
+      (await Account.count({
+        where: {
+          id: Number(accountId),
+          userId: Number(userId),
+        },
+      })) > 0
+    );
+  }
 
-    const account = await this.getById(accountId);
+  /**
+   * Increases the balance of a specific bank account.
+   *
+   * @param {number} accountId - The ID of the bank account whose balance will be increased.
+   * @param {number} amount - The value to be added to the current balance of the account.
+   * @param {number} userId - The ID of the user who owns the account.
+   * @param {sequelize.Transaction=} sequelizeTransaction - The database transaction to apply
+   * atomicity for operations linking them to the it. [OPTIONAL]
+   * @returns {Account} The updated values of account.
+   * @throws {Error} Throws an error if the account is not found.
+   */
+  static async deposit(accountId, amount, userId, sequelizeTransaction) {
+    const account = await this.getById(accountId, userId);
     if (!account) {
       throw new Error(accountConsts.MSG_NOT_FOUND);
     }
 
-    return await account.addToBalance(amount);
+    return await account.addToBalance(amount, sequelizeTransaction);
+  }
+
+  /**
+   * Decrease the balance of a specific bank account
+   *
+   * @param {number} accountId - The ID of the bank account whose balance will be decreased.
+   * @param {number} amount - The value to be withdral to the current balance of the account.
+   * @param {number} userId - The ID of the user who owns the account.
+   * @param {sequelize.Transaction=} sequelizeTransaction - The database transaction to apply
+   * atomicity for operations linking them to the sequelizeTransaction. [OPTIONAL]
+   * @returns {Account} The updated values of account.
+   * @throws {Error} Throws an error if the account is not found.
+   */
+  static async withdrawl(accountId, amount, userId, sequelizeTransaction) {
+    const account = await this.getById(accountId, userId);
+    if (!account) {
+      throw new Error(accountConsts.MSG_NOT_FOUND);
+    }
+
+    if (
+      account.hasOverdraftLimit() &&
+      account.amountExceedOverdraftLimit(amount)
+    ) {
+      throw new AccountBalanceError(
+        accountConsts.MSG_OVERDRAFT_LIMIT_EXCEEDED,
+        [
+          `accountId: ${account.id}`,
+          `overdraftLimit: ${account.overdraftLimit}`,
+          `amount: ${amount}`,
+        ],
+      );
+    }
+
+    return await account.subtractToBalance(amount, sequelizeTransaction);
   }
 }
 

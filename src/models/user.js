@@ -1,8 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 const { hashString } = require("../utils/crypt-utils");
-const errorsConsts = require("../constants/error-constants");
-const ErrorMessageFormatter = require("../helpers/error-message-formatter");
+const ErrorMessageFormatter = require("../utils/error-message-formatter");
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -12,15 +11,15 @@ module.exports = (sequelize, DataTypes) => {
 
     static associate(models) {
       // define association here
-      User.hasMany(models.Account, { foreignKey: "user_id" });
+      User.hasMany(models.Account, { foreignKey: "userId" });
 
-      User.hasMany(models.Transaction, { foreignKey: "user_id" });
+      User.hasMany(models.Transaction, { foreignKey: "userId" });
 
-      User.hasMany(models.Expense, { foreignKey: "user_id" });
+      User.hasMany(models.Expense, { foreignKey: "userId" });
 
-      User.hasMany(models.Income, { foreignKey: "user_id" });
+      User.hasMany(models.Income, { foreignKey: "userId" });
 
-      User.hasMany(models.Category, { foreignKey: "user_id" });
+      User.hasMany(models.Category, { foreignKey: "userId" });
     }
   }
   User.init(
@@ -66,27 +65,27 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      first_name: {
+      firstName: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.notNull("first_name"),
+            msg: ErrorMessageFormatter.notNull("firstName"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.notEmpty("first_name"),
+            msg: ErrorMessageFormatter.notEmpty("firstName"),
           },
         },
       },
-      last_name: {
+      lastName: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.notNull("last_name"),
+            msg: ErrorMessageFormatter.notNull("lastName"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.notEmpty("last_name"),
+            msg: ErrorMessageFormatter.notEmpty("lastName"),
           },
         },
       },
@@ -101,11 +100,11 @@ module.exports = (sequelize, DataTypes) => {
     },
   );
 
-  User.addHook("beforeCreate", async (user, options) => {
+  User.addHook("beforeCreate", async (user) => {
     user.password = await hashString(user.password);
   });
 
-  User.addHook("beforeUpdate", async (user, options) => {
+  User.addHook("beforeUpdate", async (user) => {
     if (user.changed("password")) {
       user.password = await hashString(user.password);
     }

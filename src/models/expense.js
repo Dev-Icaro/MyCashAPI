@@ -1,8 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
-const { formatMySqlDateTime } = require("../utils/date-utils");
-
-const ErrorMessageFormatter = require("../helpers/error-message-formatter");
+const ErrorMessageFormatter = require("../utils/error-message-formatter");
 module.exports = (sequelize, DataTypes) => {
   class Expense extends Model {
     /**
@@ -12,11 +10,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Expense.belongsTo(models.User, { foreignKey: "user_id" });
+      Expense.belongsTo(models.User, { foreignKey: "userId" });
 
-      Expense.belongsTo(models.Account, { foreignKey: "account_id" });
+      Expense.belongsTo(models.Account, { foreignKey: "accountId" });
 
-      Expense.belongsTo(models.Category, { foreignKey: "category_id" });
+      Expense.belongsTo(models.Category, { foreignKey: "categoryId" });
     }
   }
   Expense.init(
@@ -58,64 +56,64 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      payment_method: {
+      paymentMethod: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.notNull("payment_method"),
+            msg: ErrorMessageFormatter.notNull("paymentMethod"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.notEmpty("payment_method"),
+            msg: ErrorMessageFormatter.notEmpty("paymentMethod"),
           },
         },
       },
-      account_id: {
+      accountId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.notNull("account_id"),
+            msg: ErrorMessageFormatter.notNull("accountId"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.notEmpty("account_id"),
+            msg: ErrorMessageFormatter.notEmpty("accountId"),
           },
           isInt: {
-            msg: ErrorMessageFormatter.notInteger("account_id"),
+            msg: ErrorMessageFormatter.notInteger("accountId"),
           },
         },
       },
-      user_id: {
+      userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.notNull("user_id"),
+            msg: ErrorMessageFormatter.notNull("userId"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.notEmpty("user_id"),
+            msg: ErrorMessageFormatter.notEmpty("userId"),
           },
           isInt: {
-            msg: ErrorMessageFormatter.notInteger("user_id"),
+            msg: ErrorMessageFormatter.notInteger("userId"),
           },
         },
       },
-      category_id: {
+      categoryId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
           notNull: {
-            msg: ErrorMessageFormatter.notNull("category_id"),
+            msg: ErrorMessageFormatter.notNull("categoryId"),
           },
           notEmpty: {
-            msg: ErrorMessageFormatter.notEmpty("category_id"),
+            msg: ErrorMessageFormatter.notEmpty("categoryId"),
           },
           isInt: {
-            msg: ErrorMessageFormatter.notInteger("category_id"),
+            msg: ErrorMessageFormatter.notInteger("categoryId"),
           },
         },
       },
-      is_paid: {
+      isPaid: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,
@@ -127,5 +125,6 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "Expense",
     },
   );
+
   return Expense;
 };
