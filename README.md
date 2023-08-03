@@ -135,7 +135,7 @@ To get started with the MyCash API, follow these steps:
     - Run the command "npx sequelize db:migrate" to perform all migrations to the database.
     - Run the command "npm run start" to start the API.
 
-The API will be available at http://localhost:{PORT FROM .ENV FILE} or http://localhost:8080.
+The API will be available at port configured on .env or http://localhost:8080.
 
 # 📚 Routes
 
